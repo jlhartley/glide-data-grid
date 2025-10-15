@@ -9,7 +9,7 @@
         "serve-docs": "http-server packages/core/gen-docs",
         "storybook:run": "storybook dev -p 9009 --no-open",
         "watch:core": "npm run watch -w packages/core",
-        "storybook": "concurrently \"npm run storybook:run\" \"npm run watch:core\"",
+        "storybook": "concurrently \"pnpm run storybook:run\" \"pnpm run watch:core\"",
         "build-storybook": "npm run build --workspaces && storybook build -o storybook-build/",
         "prod-storybook": "npm run build-storybook && npx http-server storybook-build -p 9009",
         "test": "cd packages/core && npm run test --",
@@ -90,6 +90,7 @@
         "tsc-esm-fix": "^3.1.2",
         "typedoc": "^0.28.5",
         "typescript": "^5.8.3",
+        "vite": "^7.1.10",
         "vitest": "^0.34.6",
         "vitest-canvas-mock": "^0.3.3",
         "webpack": "^5.99.9"
@@ -97,5 +98,5 @@
     "overrides": {
         "storybook": "$storybook"
     },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "packageManager": "pnpm@10.18.1"
 }
