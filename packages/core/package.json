@@ -59,6 +59,7 @@
     "dependencies": {
         "@linaria/react": "^6.3.0",
         "canvas-hypertxt": "^1.0.3",
+        "color2k": "^2.0.3",
         "react-number-format": "^5.4.4"
     },
     "peerDependencies": {

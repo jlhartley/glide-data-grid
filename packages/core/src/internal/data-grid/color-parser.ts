@@ -1,5 +1,6 @@
 // Shamelessly stolen from https://github.com/ricokahler/color2k
 // We don't need all the color functions but we deeply appreciate their work.
+import { parseToRgba as color2kParseToRgba } from "color2k";
 
 const cache: {
     [color: string]: [number, number, number, number];
@@ -18,7 +19,7 @@ function createDiv() {
 }
 
 /** @category Drawing */
-export function parseToRgba(color: string): readonly [number, number, number, number] {
+function domFallbackParseToRgba(color: string): readonly [number, number, number, number] {
     // normalize the color
     const normalizedColor = color.toLowerCase().trim();
 
@@ -49,13 +50,36 @@ export function parseToRgba(color: string): readonly [number, number, number, nu
         const isNaN = Number.isNaN(x);
         if (process.env.NODE_ENV !== "production" && isNaN) {
             // eslint-disable-next-line no-console
-            console.warn("Could not parse color", color);
+            console.warn("Could not parse color, even with DOM", color);
         }
         return isNaN ? 0 : x;
     }) as typeof result;
 
     cache[normalizedColor] = result;
     return result;
+}
+
+/** @category Drawing */
+export function parseToRgba(color: string): readonly [number, number, number, number] {
+    if (typeof color !== "string") return [0, 0, 0, 1];
+
+    const normalized = color.trim().toLowerCase();
+    if (cache[normalized] !== undefined) return cache[normalized];
+
+    let rgba: [number, number, number, number];
+    try {
+        rgba = color2kParseToRgba(normalized) as [number, number, number, number];
+    } catch {
+        if (process.env.NODE_ENV !== "production") {
+            // eslint-disable-next-line no-console
+            console.warn("Could not parse color", color);
+        }
+        // Fallback to DOM function if color2k throws (invalid color)
+        return domFallbackParseToRgba(color);
+    }
+
+    cache[normalized] = rgba;
+    return rgba;
 }
 
 /** @category Drawing */
