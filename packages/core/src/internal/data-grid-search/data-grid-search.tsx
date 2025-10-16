@@ -141,17 +141,17 @@ const DataGridSearch: React.FunctionComponent<DataGridSearchProps> = p => {
         }
     }, [rows, searchResultsIn]);
 
-    const abortControllerRef = React.useRef() as React.MutableRefObject<AbortController>;
-    if (abortControllerRef.current === undefined) abortControllerRef.current = new AbortController();
+    const abortControllerRef = React.useRef<AbortController>(null) as React.RefObject<AbortController>;
+    if (abortControllerRef.current === null) abortControllerRef.current = new AbortController();
 
-    const searchHandle = React.useRef<number>();
+    const searchHandle = React.useRef<number>(null);
     const [searchResultsInner, setSearchResultsInner] = React.useState<readonly Item[]>([]);
     const searchResults = searchResultsIn ?? searchResultsInner;
 
     const cancelSearch = React.useCallback(() => {
-        if (searchHandle.current !== undefined) {
+        if (searchHandle.current !== null) {
             window.cancelAnimationFrame(searchHandle.current);
-            searchHandle.current = undefined;
+            searchHandle.current = null;
         }
         // Always abort and replace the controller to ensure a fresh, non-aborted signal
         if (abortControllerRef.current !== undefined) {

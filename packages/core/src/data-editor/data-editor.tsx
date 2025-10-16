@@ -786,7 +786,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
     const searchInputRef = React.useRef<HTMLInputElement | null>(null);
     const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
     const [mouseState, setMouseState] = React.useState<MouseState>();
-    const lastSent = React.useRef<[number, number]>();
+    const lastSent = React.useRef<[number, number]>(null);
 
     const safeWindow = typeof window === "undefined" ? null : window;
 
@@ -971,8 +971,8 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
     }, [gridSelectionOuter, rowMarkerOffset]);
     const gridSelection = gridSelectionOuterMangled ?? gridSelectionInner;
 
-    const abortControllerRef = React.useRef() as React.MutableRefObject<AbortController>;
-    if (abortControllerRef.current === undefined) abortControllerRef.current = new AbortController();
+    const abortControllerRef = React.useRef<AbortController>(null) as React.RefObject<AbortController>;
+    if (abortControllerRef.current === null) abortControllerRef.current = new AbortController();
 
     React.useEffect(() => () => abortControllerRef?.current.abort(), []);
 
@@ -1815,8 +1815,8 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         [columns, columnsIn, hasRowMarkers, trailingRowOptions?.targetColumn]
     );
 
-    const lastSelectedRowRef = React.useRef<number>();
-    const lastSelectedColRef = React.useRef<number>();
+    const lastSelectedRowRef = React.useRef<number>(null);
+    const lastSelectedColRef = React.useRef<number>(null);
 
     const themeForCell = React.useCallback(
         (cell: InnerGridCell, pos: Item): FullTheme => {
@@ -1846,7 +1846,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
             const [cellCol, cellRow] = gridSelection.current?.cell ?? [];
             // eslint-disable-next-line unicorn/prefer-switch
             if (args.kind === "cell") {
-                lastSelectedColRef.current = undefined;
+                lastSelectedColRef.current = null;
 
                 lastMouseSelectLocation.current = [col, row];
 
@@ -1886,7 +1886,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                     if (
                         rowSelect === "multi" &&
                         (args.shiftKey || args.isLongTouch === true) &&
-                        lastHighlighted !== undefined &&
+                        lastHighlighted !== null &&
                         selectedRows.hasIndex(lastHighlighted)
                     ) {
                         const newSlice: Slice = [Math.min(lastHighlighted, row), Math.max(lastHighlighted, row) + 1];
@@ -1973,7 +1973,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                                 isMultiKey,
                                 "click"
                             );
-                            lastSelectedRowRef.current = undefined;
+                            lastSelectedRowRef.current = null;
                             focus();
                         } else {
                             setCurrent(
@@ -1985,7 +1985,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                                 isMultiKey,
                                 "click"
                             );
-                            lastSelectedRowRef.current = undefined;
+                            lastSelectedRowRef.current = null;
                             setOverlay(undefined);
                             focus();
                         }
@@ -1995,8 +1995,8 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 lastMouseSelectLocation.current = [col, row];
                 setOverlay(undefined);
                 if (hasRowMarkers && col === 0) {
-                    lastSelectedRowRef.current = undefined;
-                    lastSelectedColRef.current = undefined;
+                    lastSelectedRowRef.current = null;
+                    lastSelectedColRef.current = null;
                     if (!headerRowMarkerDisabled && rowSelect === "multi") {
                         if (selectedRows.length !== rows) {
                             setSelectedRows(CompactSelection.fromSingleSelection([0, rows]), undefined, isMultiKey);
@@ -2010,7 +2010,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                     if (
                         columnSelect === "multi" &&
                         (args.shiftKey || args.isLongTouch === true) &&
-                        lastCol !== undefined &&
+                        lastCol !== null &&
                         selectedColumns.hasIndex(lastCol)
                     ) {
                         // Support for selecting a slice of columns:
@@ -2042,7 +2042,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                         }
                         lastSelectedColRef.current = col;
                     }
-                    lastSelectedRowRef.current = undefined;
+                    lastSelectedRowRef.current = null;
                     focus();
                 }
             } else if (args.kind === groupHeaderKind) {
@@ -2052,8 +2052,8 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 setOverlay(undefined);
                 focus();
                 onSelectionCleared?.();
-                lastSelectedRowRef.current = undefined;
-                lastSelectedColRef.current = undefined;
+                lastSelectedRowRef.current = null;
+                lastSelectedColRef.current = null;
             }
         },
         [
@@ -2086,19 +2086,19 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         ]
     );
     const isActivelyDraggingHeader = React.useRef(false);
-    const lastMouseSelectLocation = React.useRef<readonly [number, number]>();
+    const lastMouseSelectLocation = React.useRef<readonly [number, number]>(null);
     const touchDownArgs = React.useRef(visibleRegion);
     const mouseDownData = React.useRef<{
         time: number;
         button: number;
         location: Item;
-    }>();
+    }>(null);
     const onMouseDown = React.useCallback(
         (args: GridMouseEventArgs) => {
             isPrevented.current = false;
             touchDownArgs.current = visibleRegionRef.current;
             if (args.button !== 0 && args.button !== 1) {
-                mouseDownData.current = undefined;
+                mouseDownData.current = null;
                 return;
             }
 
@@ -2121,7 +2121,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 previousSelection: gridSelection,
                 fillHandle: fh,
             });
-            lastMouseSelectLocation.current = undefined;
+            lastMouseSelectLocation.current = null;
 
             if (!args.isTouch && args.button === 0 && !fh) {
                 handleSelect(args);
@@ -2512,7 +2512,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 handleMaybeClick(args);
             }
 
-            lastMouseSelectLocation.current = undefined;
+            lastMouseSelectLocation.current = null;
         },
         [
             mouseState,
@@ -2724,7 +2724,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         [mapper, rowGroupingSelectionBehavior]
     );
 
-    const hoveredRef = React.useRef<GridMouseEventArgs>();
+    const hoveredRef = React.useRef<GridMouseEventArgs>(null);
     const onItemHoveredImpl = React.useCallback(
         (args: GridMouseEventArgs) => {
             // make sure we still have a button down
@@ -2825,7 +2825,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
 
     const adjustSelectionOnScroll = React.useCallback(() => {
         const args = hoveredRef.current;
-        if (args === undefined) return;
+        if (args === null) return;
         const [xDir, yDir] = args.scrollEdge;
         let [col, row] = args.location;
         const visible = visibleRegionRef.current;
@@ -3059,8 +3059,8 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 );
             }
 
-            if (lastSent.current !== undefined && lastSent.current[0] === col && lastSent.current[1] === row) {
-                lastSent.current = undefined;
+            if (lastSent.current !== null && lastSent.current[0] === col && lastSent.current[1] === row) {
+                lastSent.current = null;
             }
 
             if (scrollToActiveCellRef.current) {
@@ -3919,7 +3919,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
             if (results.length === 0 || navIndex === -1) return;
 
             const [col, row] = results[navIndex];
-            if (lastSent.current !== undefined && lastSent.current[0] === col && lastSent.current[1] === row) {
+            if (lastSent.current !== null && lastSent.current[0] === col && lastSent.current[1] === row) {
                 return;
             }
             lastSent.current = [col, row];
@@ -3983,7 +3983,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 group={group}
                 canvasBounds={canvasBounds}
                 onClose={() => setRenameGroup(undefined)}
-                onFinish={newVal => {
+                onFinish={(newVal: string) => {
                     setRenameGroup(undefined);
                     onGroupHeaderRenamed?.(group, newVal);
                 }}

@@ -136,7 +136,7 @@ export interface DragHandler {
 /** @category Types */
 export type GridDragEventArgs = GridMouseEventArgs & DragHandler;
 
-export function mouseEventArgsAreEqual(args: GridMouseEventArgs | undefined, other: GridMouseEventArgs | undefined) {
+export function mouseEventArgsAreEqual(args: GridMouseEventArgs | undefined | null, other: GridMouseEventArgs | undefined | null) {
     if (args === other) return true;
 
     if (args?.kind === "out-of-bounds") {
