@@ -1,4 +1,4 @@
 packages:
-  - "./packages/core"
-  - "./packages/cells"
-  - "./packages/source"
+  - ./packages/core
+  - ./packages/cells
+  - ./packages/source
