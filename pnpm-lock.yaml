@@ -198,8 +198,8 @@ importers:
   packages/cells:
     dependencies:
       '@glideapps/glide-data-grid':
-        specifier: 6.0.4-alpha24
-        version: 6.0.4-alpha24(lodash@4.17.21)(marked@16.4.2)(react-dom@19.2.4(react@19.2.4))(react-responsive-carousel@3.2.23)(react@19.2.4)
+        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha24
+        version: link:../core
       '@linaria/react':
         specifier: ^6.3.0
         version: 6.3.0(react@19.2.4)
@@ -1432,15 +1432,6 @@ packages:
 
   '@gerrit0/mini-shiki@3.14.0':
     resolution: {integrity: sha512-c5X8fwPLOtUS8TVdqhynz9iV0GlOtFUT1ppXYzUUlEXe4kbZ/mvMT8wXoT8kCwUka+zsiloq7sD3pZ3+QVTuNQ==}
-
-  '@glideapps/glide-data-grid@6.0.4-alpha24':
-    resolution: {integrity: sha512-o3hq7n5XKS1R7lXZ5vGyTG6O/11qPmu9DQyxPnqOej3UMuQDEe4bJth75pcnYueLCAoffpa8vTB2hz5Q0qZLHg==}
-    peerDependencies:
-      lodash: ^4.17.19
-      marked: ^16.0.10
-      react: ^16.12.0 || 17.x || 18.x || 19.x
-      react-dom: ^16.12.0 || 17.x || 18.x || 19.x
-      react-responsive-carousel: ^3.2.7
 
   '@glideapps/graphs@0.0.3':
     resolution: {integrity: sha512-E38F+b4dA6jxXH0vlAsrjEPuY7kEow1iN7kJIoJd82cbBPOTwmw6ORM2hYlFfdmg3WuGDqpSICa5AKDys5/JkA==}
@@ -3805,11 +3796,6 @@ packages:
 
   marked@16.4.1:
     resolution: {integrity: sha512-ntROs7RaN3EvWfy3EZi14H4YxmT6A5YvywfhO+0pm+cH/dnSQRmdAmoFIc3B9aiwTehyk7pESH4ofyBY+V5hZg==}
-    engines: {node: '>= 20'}
-    hasBin: true
-
-  marked@16.4.2:
-    resolution: {integrity: sha512-TI3V8YYWvkVf3KJe1dRkpnjs68JUPyEa5vjKrp1XEEJUAOaQc+Qj+L1qWbPd0SJuAdQkFU0h73sXXqwDYxsiDA==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -6552,19 +6538,6 @@ snapshots:
       '@shikijs/themes': 3.14.0
       '@shikijs/types': 3.14.0
       '@shikijs/vscode-textmate': 10.0.2
-
-  '@glideapps/glide-data-grid@6.0.4-alpha24(lodash@4.17.21)(marked@16.4.2)(react-dom@19.2.4(react@19.2.4))(react-responsive-carousel@3.2.23)(react@19.2.4)':
-    dependencies:
-      '@linaria/react': 6.3.0(react@19.2.4)
-      canvas-hypertxt: 1.0.3
-      lodash: 4.17.21
-      marked: 16.4.2
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      react-number-format: 5.4.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-responsive-carousel: 3.2.23
-    transitivePeerDependencies:
-      - supports-color
 
   '@glideapps/graphs@0.0.3':
     dependencies:
@@ -9523,8 +9496,6 @@ snapshots:
 
   marked@16.4.1: {}
 
-  marked@16.4.2: {}
-
   math-intrinsics@1.1.0: {}
 
   mdurl@2.0.0: {}
@@ -10047,11 +10018,6 @@ snapshots:
     dependencies:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
-
-  react-number-format@5.4.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
 
   react-refresh@0.18.0: {}
 
