@@ -515,11 +515,35 @@ function drawHeaderInner(
         ctx.textAlign = "right";
     }
     if (headerLayout.textBounds !== undefined) {
-        ctx.fillText(
-            c.title,
-            isRtl ? headerLayout.textBounds.x + headerLayout.textBounds.width : headerLayout.textBounds.x,
-            y + height / 2 + getMiddleCenterBias(ctx, theme.headerFontFull)
-        );
+
+        const orientation = c.headerOrientation;
+        ctx.save();
+
+        if (orientation === "vertical") {
+            ctx.translate(x + width / 2, y + height / 2);
+            ctx.rotate(-Math.PI / 2);
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            ctx.fillText(c.title, 0, 0);
+        } else if (orientation === "diagonal") {
+            ctx.translate(x + width / 2, (y + height / 2) + 3);
+            ctx.rotate(-80 * Math.PI / 180);
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            ctx.fillText(c.title, 0, 0);
+        } else {
+            ctx.fillText(
+                c.title,
+                isRtl ? headerLayout.textBounds.x + headerLayout.textBounds.width : headerLayout.textBounds.x,
+                y + height / 2 + getMiddleCenterBias(ctx, theme.headerFontFull)
+            );
+        }
+
+        ctx.restore();
     }
     if (isRtl) {
         ctx.textAlign = "left";

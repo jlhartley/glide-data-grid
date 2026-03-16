@@ -145,6 +145,8 @@ export type CellArray = readonly (readonly GridCell[])[];
  */
 export type Item = readonly [col: number, row: number];
 
+export type HeaderTextOrientation = "horizontal" | "vertical" | "diagonal";
+
 export interface BaseGridColumn {
     readonly title: string;
     readonly group?: string;
@@ -163,6 +165,7 @@ export interface BaseGridColumn {
         readonly themeOverride?: Partial<Theme>;
         readonly disabled?: boolean;
     };
+    readonly headerOrientation?: HeaderTextOrientation;
 }
 
 /** @category Columns */

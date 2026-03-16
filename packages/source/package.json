@@ -1,6 +1,6 @@
 {
     "name": "@jlhartley/glide-data-grid-source",
-    "version": "6.0.4-alpha24",
+    "version": "6.0.4-alpha25",
     "publishConfig": {
         "access": "restricted",
         "registry": "https://npm.pkg.github.com"
@@ -46,7 +46,7 @@
         "canvas"
     ],
     "dependencies": {
-        "@glideapps/glide-data-grid": "workspace:@jlhartley/glide-data-grid@6.0.4-alpha24"
+        "@glideapps/glide-data-grid": "workspace:@jlhartley/glide-data-grid@6.0.4-alpha25"
     },
     "peerDependencies": {
         "lodash": "^4.17.19",
