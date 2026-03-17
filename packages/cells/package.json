@@ -1,6 +1,6 @@
 {
     "name": "@jlhartley/glide-data-grid-cells",
-    "version": "6.0.4-alpha25",
+    "version": "6.0.4-alpha26",
     "publishConfig": {
         "access": "restricted",
         "registry": "https://npm.pkg.github.com"
@@ -54,7 +54,7 @@
         "canvas"
     ],
     "dependencies": {
-        "@glideapps/glide-data-grid": "workspace:@jlhartley/glide-data-grid@6.0.4-alpha25",
+        "@glideapps/glide-data-grid": "workspace:@jlhartley/glide-data-grid@6.0.4-alpha26",
         "@linaria/react": "^6.3.0",
         "@toast-ui/editor": "3.2.2",
         "@toast-ui/react-editor": "3.2.3",

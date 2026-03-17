@@ -82,6 +82,15 @@ export function parseToRgba(color: string): readonly [number, number, number, nu
     return rgba;
 }
 
+
+function clamp255(v: number) {
+  return Math.max(0, Math.min(255, Math.round(v)));
+}
+
+function clampAlpha(a: number) {
+  return Math.max(0, Math.min(1, a));
+}
+
 /** @category Drawing */
 export function withAlpha(color: string, alpha: number): string {
     const [r, g, b] = parseToRgba(color);
@@ -101,6 +110,8 @@ export function blendCache(color: string, background: string | undefined): strin
     return result;
 }
 
+
+
 /** @category Drawing */
 export function blend(color: string, background: string | undefined): string {
     if (background === undefined) return color;
@@ -112,7 +123,7 @@ export function blend(color: string, background: string | undefined): string {
     const ro = (a * r + ba * br * (1 - a)) / ao;
     const go = (a * g + ba * bg * (1 - a)) / ao;
     const bo = (a * b + ba * bb * (1 - a)) / ao;
-    return `rgba(${ro}, ${go}, ${bo}, ${ao})`;
+    return `rgba(${clamp255(ro)}, ${clamp255(go)}, ${clamp255(bo)}, ${clampAlpha(ao)})`;
 }
 
 /** @category Drawing */

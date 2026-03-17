@@ -3361,7 +3361,8 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 } else if (isHotkey(keys.goToLastColumn, event, details)) {
                     col = Number.MAX_SAFE_INTEGER;
                 } else if (isHotkey(keys.goToFirstColumn, event, details)) {
-                    col = Number.MIN_SAFE_INTEGER;
+                    // Go to the first non-frozen column
+                    col = freezeColumns + 1;
                 } else if (rangeSelect === "rect" || rangeSelect === "multi-rect") {
                     if (isHotkey(keys.selectGrowDown, event, details)) {
                         adjustSelection([0, 1]);
@@ -3478,6 +3479,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
             fillDown,
             fillRight,
             adjustSelection,
+            freezeColumns
         ]
     );
 
