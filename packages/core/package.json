@@ -79,6 +79,7 @@
         "@skypack/package-check": "^0.2.2",
         "@vitest/coverage-v8": "^0.34.6",
         "@wyw-in-js/cli": "^1.0.6",
+        "baseline-browser-mapping": "^2.10.8",
         "eslint": "^9.39.0",
         "react-resize-detector": "^12.1.0",
         "tsc-esm-fix": "^3.1.2",
