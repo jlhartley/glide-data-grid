@@ -1,7 +1,21 @@
-import { renderHook, cleanup } from "@testing-library/react-hooks";
-import { act } from "react-dom/test-utils";
+import { renderHook, cleanup, act } from "@testing-library/react";
+import { useLayoutEffect } from "react";
 import { useStateWithReactiveInput } from "../src/common/utils.js";
-import { expect, describe, test, afterEach } from "vitest";
+import { expect, describe, test, afterEach, vi } from "vitest";
+
+function renderStateHook(initialValue: number) {
+    const onCommit = vi.fn();
+    const hook = renderHook(
+        ({ initialValue }) => {
+            const state = useStateWithReactiveInput(initialValue);
+            // Count committed renders, not React's speculative render attempts.
+            useLayoutEffect(onCommit);
+            return state;
+        },
+        { initialProps: { initialValue } }
+    );
+    return { ...hook, onCommit };
+}
 
 describe("useStateWithReactiveInput", () => {
     afterEach(async () => {
@@ -77,51 +91,45 @@ describe("useStateWithReactiveInput", () => {
     });
 
     test("set state with identity does not re-render", () => {
-        const { result } = renderHook(({ initialValue }) => useStateWithReactiveInput(initialValue), {
-            initialProps: { initialValue: 20 },
-        });
+        const { result, onCommit } = renderStateHook(20);
 
-        expect(result.all.length).toBe(1);
+        expect(onCommit).toHaveBeenCalledTimes(1);
 
         act(() => {
             result.current[1](x => x);
         });
 
-        expect(result.all.length).toBe(1);
+        expect(onCommit).toHaveBeenCalledTimes(1);
     });
 
     test("set state with increment re-render", () => {
-        const { result } = renderHook(({ initialValue }) => useStateWithReactiveInput(initialValue), {
-            initialProps: { initialValue: 20 },
-        });
+        const { result, onCommit } = renderStateHook(20);
 
-        expect(result.all.length).toBe(1);
+        expect(onCommit).toHaveBeenCalledTimes(1);
 
         act(() => {
             result.current[1](x => x + 1);
         });
 
-        expect(result.all.length).toBe(2);
+        expect(onCommit).toHaveBeenCalledTimes(2);
     });
 
     test("set state with identity does not re-render after state change", () => {
-        const { result, rerender } = renderHook(({ initialValue }) => useStateWithReactiveInput(initialValue), {
-            initialProps: { initialValue: 20 },
-        });
+        const { result, rerender, onCommit } = renderStateHook(20);
 
-        expect(result.all.length).toBe(1);
+        expect(onCommit).toHaveBeenCalledTimes(1);
 
         rerender({ initialValue: 50 });
 
         expect(result.current[0]).toBe(50);
 
-        expect(result.all.length).toBe(2);
+        expect(onCommit).toHaveBeenCalledTimes(2);
 
         act(() => {
             result.current[1](x => x);
         });
 
         expect(result.current[0]).toBe(50);
-        expect(result.all.length).toBe(2);
+        expect(onCommit).toHaveBeenCalledTimes(2);
     });
 });

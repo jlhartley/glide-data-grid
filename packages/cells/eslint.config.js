@@ -1,18 +1,20 @@
-{
-    "extends": [
+import { createConfig } from "../../config/eslint-config.mjs";
+
+export default createConfig(import.meta.dirname, {
+    extends: [
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/recommended",
         "plugin:import/typescript",
-        "plugin:react-hooks/recommended"
+        "plugin:react-hooks/recommended",
     ],
-    "plugins": ["react", "@typescript-eslint", "import"],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": ["./tsconfig.json"]
+    plugins: ["react", "@typescript-eslint", "import"],
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        project: ["./tsconfig.json"],
     },
-    "rules": {
+    rules: {
         "no-console": "warn",
         "guard-for-in": "error",
         "no-empty": "error",
@@ -20,7 +22,7 @@
         "import/no-cycle": "off",
         "import/namespace": "off",
         "import/named": "off",
-        "import/no-unresolved": "off", // FIXME: Figure out how to make this enabled
+        "import/no-unresolved": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-empty-interface": "off",
@@ -34,24 +36,25 @@
         "@typescript-eslint/no-misused-promises": [
             "error",
             {
-                "checksVoidReturn": false
-            }
+                checksVoidReturn: false,
+            },
         ],
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/ban-types": "off"
+        "@typescript-eslint/ban-types": "off",
     },
-    "overrides": [
+    overrides: [
         {
-            "files": ["*.ts"],
-            "rules": {
-                "@typescript-eslint/strict-boolean-expressions": "error"
-            }
-        }
+            files: ["*.ts"],
+            rules: {
+                "@typescript-eslint/strict-boolean-expressions": "error",
+            },
+        },
     ],
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
-    }
-}
+    settings: {
+        react: {
+            version: "detect",
+        },
+    },
+    ignorePatterns: ["build.cjs", "node_modules/", "dist/", "vitest.*.ts"],
+});
