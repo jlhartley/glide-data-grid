@@ -1,46 +1,61 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Build
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+    contents: read
+
+env:
+    CI: true
+    # The existing ESLint configuration uses the legacy eslintrc format.
+    ESLINT_USE_FLAT_CONFIG: 'false'
 
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Use Node.js 20
-              uses: actions/setup-node@v4
               with:
-                  node-version: 20.10.0
-            - run: npm install
-            - run: npm run build
-            - run: npm run test -- --coverage
-            - run: npm run test-source
-            - run: npm run test-cells
-            - run: npm run test-projects
-            - name: Coveralls
-              uses: coverallsapp/github-action@master
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  path-to-lcov: ./packages/core/coverage/lcov.info
-                  base-path: ./packages/core
-    test-react-18:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+                  persist-credentials: false
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20.10.0
-            - run: npm install
-            - run: npm run test-18
-    test-react-19:
+                  node-version: '22'
+            - name: Enable repository pnpm version
+              run: corepack enable && pnpm --version
+            - name: Install locked dependencies
+              run: pnpm install --frozen-lockfile
+            - id: build
+              run: pnpm run build
+            - run: pnpm run lint
+            - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+              run: pnpm run test --run --coverage
+            - uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: core-coverage
+                  path: packages/core/coverage
+                  if-no-files-found: ignore
+            - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+              run: pnpm run test-source --run
+            - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+              run: pnpm run test-cells --run
+            # These standalone legacy consumers retain their own npm lockfiles.
+            - run: pnpm run test-projects
+    react-compatibility:
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                react: [18, 19]
         steps:
             - uses: actions/checkout@v4
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20.10.0
-            - run: npm install
-            - run: npm run test-19
+                  node-version: '22'
+            - name: Enable repository pnpm version
+              run: corepack enable && pnpm --version
+            - name: Install locked dependencies
+              run: pnpm install --frozen-lockfile
+            - run: pnpm run test-${{ matrix.react }}
