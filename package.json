@@ -13,11 +13,8 @@
         "build-storybook": "pnpm run build && storybook build -o storybook-build/",
         "prod-storybook": "pnpm run build-storybook && pnpm exec http-server storybook-build -p 9009",
         "test": "pnpm --dir packages/core run test",
-        "test-18": "./setup-react-18-test.sh && pnpm --dir packages/core run test --run",
-        "test-19": "./setup-react-19-test.sh && pnpm --dir packages/core run test --run",
         "test-source": "pnpm --dir packages/source run test",
         "test-cells": "pnpm --dir packages/cells run test",
-        "test-projects": "cd test-projects/ && ./bootstrap-projects.sh",
         "lint": "pnpm -r run lint"
     },
     "type": "commonjs",
