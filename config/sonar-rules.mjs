@@ -1,0 +1,45 @@
+// Explicit policy: plugin upgrades must not silently enable a new recommended ruleset.
+// See .github/SONAR-POLICY.md for scope and intentionally excluded checks.
+export const sonarRules = {
+    // Concrete control-flow and value mistakes
+    "sonarjs/no-identical-conditions": "error",
+    "sonarjs/no-identical-expressions": "error",
+    "sonarjs/no-all-duplicated-branches": "error",
+    "sonarjs/no-collection-size-mischeck": "error",
+    "sonarjs/no-element-overwrite": "error",
+    "sonarjs/no-empty-collection": "error",
+    "sonarjs/no-use-of-empty-return-value": "error",
+    "sonarjs/no-useless-increment": "error",
+    "sonarjs/no-dead-store": "error",
+    "sonarjs/no-unused-vars": "error",
+    "sonarjs/no-globals-shadowing": "error",
+    "sonarjs/no-array-delete": "error",
+    "sonarjs/no-delete-var": "error",
+    "sonarjs/no-in-misuse": "error",
+    "sonarjs/no-unthrown-error": "error",
+    "sonarjs/no-ignored-return": "error",
+    "sonarjs/no-try-promise": "error",
+    "sonarjs/for-loop-increment-sign": "error",
+    "sonarjs/misplaced-loop-counter": "error",
+    "sonarjs/no-duplicate-in-composite": "error",
+    // Regex matching correctness
+    "sonarjs/anchor-precedence": "error",
+    "sonarjs/empty-string-repetition": "error",
+    "sonarjs/no-empty-alternatives": "error",
+    "sonarjs/no-invalid-regexp": "error",
+    "sonarjs/no-misleading-character-class": "error",
+    "sonarjs/unicode-aware-regex": "error",
+    "sonarjs/existing-groups": "error",
+    "sonarjs/stateful-regex": "error",
+    // Promise and React mistakes
+    "sonarjs/no-async-constructor": "error",
+    "sonarjs/no-useless-react-setstate": "error",
+    "sonarjs/no-hook-setter-in-body": "error",
+    "sonarjs/no-uniq-key": "error",
+    // Chosen readability rules; preserve evaluation order when refactoring
+    "sonarjs/no-nested-conditional": "error",
+    "sonarjs/no-nested-assignment": "error",
+    "sonarjs/no-nested-functions": "error",
+    "sonarjs/no-inverted-boolean-check": "error",
+    "sonarjs/no-commented-code": "error",
+};

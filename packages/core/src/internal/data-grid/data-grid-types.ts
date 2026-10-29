@@ -33,10 +33,8 @@ export const BooleanEmpty = null;
 export const BooleanIndeterminate = undefined;
 
 /** @category Types */
-// eslint-disable-next-line sonarjs/redundant-type-aliases -- Preserve this documented public type name.
 export type BooleanEmpty = null;
 /** @category Types */
-// eslint-disable-next-line sonarjs/redundant-type-aliases -- Preserve this documented public type name.
 export type BooleanIndeterminate = undefined;
 
 /** @category Types */
