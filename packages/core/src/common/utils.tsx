@@ -227,7 +227,7 @@ export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<
 
     const [state, setState] = React.useState(inputState);
     // crimes against humanity here
-    const [, forceRender] = React.useState<NonNullable<unknown> | undefined>();
+    const [, forceRender] = React.useReducer(count => count + 1, 0);
     const setStateOuter = React.useCallback<typeof setState>(nv => {
         // this takes care of the case where the inputState was set, then setState gets called again but back to what
         // the state was before the inputState changed. Since the useState effect wont trigger a render in this case
@@ -238,7 +238,7 @@ export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<
             nv = typeof nv === "function" ? (nv as (pv: T) => T)(s) : nv;
             if (nv === s) return; // they are setting it to what the inputState is anyway so we can just do nothing
         }
-        if (s !== empty) forceRender({});
+        if (s !== empty) forceRender();
         setState(pv => {
             if (typeof nv === "function") {
                 return (nv as (pv: T) => T)(s === empty ? pv : s);
@@ -250,7 +250,7 @@ export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<
 
     const onEmpty = React.useCallback(() => {
         inputStateRef.current[0] = empty;
-        forceRender({});
+        forceRender();
     }, []);
 
     return [inputStateRef.current[0] === empty ? state : inputStateRef.current[0], setStateOuter, onEmpty];

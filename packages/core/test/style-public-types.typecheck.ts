@@ -7,7 +7,7 @@ type Assert<T extends true> = T;
 
 // The pre-existing {} contract accepts primitives as well as objects, but excludes nullish values.
 export type DefaultCustomData = Assert<Equal<CustomCell["data"], {}>>;
-export type RendererData = Assert<Equal<PrepResult["renderer"], {}>>;
+export type RendererData = Assert<Equal<PrepResult["renderer"], object>>;
 export type PrimitiveCustomData = Assert<
     Equal<CustomCell<string | number | boolean | symbol | bigint>["data"], string | number | boolean | symbol | bigint>
 >;
