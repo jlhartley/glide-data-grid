@@ -112,7 +112,9 @@ export function blendCache(color: string, background: string | undefined): strin
 
 
 
-/** @category Drawing */
+/** Composites source over background, rounding calculated RGB channels to 8-bit integers.
+ * @category Drawing
+ */
 export function blend(color: string, background: string | undefined): string {
     if (background === undefined) return color;
     const [r, g, b, a] = parseToRgba(color);
