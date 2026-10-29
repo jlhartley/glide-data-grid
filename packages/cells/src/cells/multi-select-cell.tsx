@@ -120,7 +120,7 @@ export const resolveValues = (
     });
 };
 
-interface CustomMenuProps extends MenuProps<any> {}
+type CustomMenuProps = MenuProps<any>;
 
 const CustomMenu: React.FC<CustomMenuProps> = p => {
     const { Menu } = components;

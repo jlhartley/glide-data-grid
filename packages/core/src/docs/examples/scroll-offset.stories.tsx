@@ -8,7 +8,7 @@ import {
     defaultProps,
 } from "../../data-editor/stories/utils.js";
 import { SimpleThemeWrapper } from "../../stories/story-utils.js";
-import _ from "lodash";
+import "lodash";
 
 export default {
     title: "Glide-Data-Grid/DataEditor Demos",

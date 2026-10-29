@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { assertNever } from "../common/support.js";
 import {
     BooleanEmpty,
@@ -34,19 +33,25 @@ function convertCellToBuffer(cell: GridCell): CellBuffer {
         };
     }
     switch (cell.kind) {
-        case GridCellKind.Boolean:
+        case GridCellKind.Boolean: {
+            let formatted = "";
+            switch (cell.data) {
+                case true:
+                    formatted = "TRUE";
+                    break;
+                case false:
+                    formatted = "FALSE";
+                    break;
+                case BooleanIndeterminate:
+                    formatted = "INDETERMINATE";
+                    break;
+            }
             return {
-                formatted:
-                    cell.data === true
-                        ? "TRUE"
-                        : cell.data === false
-                        ? "FALSE"
-                        : cell.data === BooleanIndeterminate
-                        ? "INDETERMINATE"
-                        : "",
+                formatted,
                 rawValue: cell.data,
                 format: "boolean",
             };
+        }
         case GridCellKind.Custom:
             return {
                 formatted: cell.copyData,

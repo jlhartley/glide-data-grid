@@ -35,7 +35,10 @@ export const UnevenRows: React.VFC = () => {
     return (
         <DataEditor
             {...defaultProps}
-            rowHeight={r => (r % 3 === 0 ? 30 : r % 2 ? 50 : 60)}
+            rowHeight={r => {
+                if (r % 3 === 0) return 30;
+                return r % 2 ? 50 : 60;
+            }}
             getCellContent={getCellContent}
             columns={cols}
             rows={1000}

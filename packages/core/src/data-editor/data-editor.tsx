@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import * as React from "react";
 import { assert, assertNever, maybe } from "../common/support.js";
 import clamp from "lodash/clamp.js";
@@ -2755,7 +2754,6 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 (rangeSelect === "rect" || rangeSelect === "multi-rect")
             ) {
                 const [selectedCol, selectedRow] = gridSelection.current.cell;
-                // eslint-disable-next-line prefer-const
                 let [col, row] = args.location;
 
                 if (row < 0) {

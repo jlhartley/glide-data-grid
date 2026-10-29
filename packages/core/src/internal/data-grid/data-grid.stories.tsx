@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-identical-functions */
 import * as React from "react";
 
 import { BuilderThemeWrapper } from "../../stories/story-utils.js";
@@ -112,10 +111,10 @@ export function Simplenotest() {
             headerHeight={44}
             rowHeight={34}
             columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"].map(
-                t => ({
-                    title: t,
-                    width: 122 + (x += 10),
-                })
+                t => {
+                    x += 10;
+                    return { title: t, width: 122 + x };
+                }
             )}
             getCellContent={([col, row]) => ({
                 kind: GridCellKind.Text,
@@ -197,10 +196,10 @@ export function SelectedCellnotest() {
             rows={1000}
             headerHeight={44}
             rowHeight={34}
-            columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map(t => ({
-                title: t,
-                width: 122 + (x += 10),
-            }))}
+            columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map(t => {
+                x += 10;
+                return { title: t, width: 122 + x };
+            })}
             getCellContent={([col, row]) => ({
                 kind: GridCellKind.Text,
                 displayData: `${col},${row} Testing things that are way too long`,
@@ -289,10 +288,10 @@ export function SelectedRownotest() {
             rows={1000}
             headerHeight={44}
             rowHeight={34}
-            columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map(t => ({
-                title: t,
-                width: 122 + (x += 10),
-            }))}
+            columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map(t => {
+                x += 10;
+                return { title: t, width: 122 + x };
+            })}
             getCellContent={([col, row]) => ({
                 kind: GridCellKind.Text,
                 displayData: `${col},${row} Testing things that are way too long`,
@@ -377,10 +376,10 @@ export const SelectedColumnnotest = () => {
             rows={1000}
             headerHeight={44}
             rowHeight={34}
-            columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map(t => ({
-                title: t,
-                width: 122 + (x += 10),
-            }))}
+            columns={["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map(t => {
+                x += 10;
+                return { title: t, width: 122 + x };
+            })}
             getCellContent={([col, row]) => ({
                 kind: GridCellKind.Text,
                 displayData: `${col},${row} Testing things that are way too long`,

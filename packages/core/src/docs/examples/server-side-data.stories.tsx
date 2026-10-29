@@ -38,7 +38,7 @@ function useAsyncData<TRowType>(
     getRowData: RowCallback<TRowType>,
     toCell: RowToCell<TRowType>,
     onEdited: RowEditedCallback<TRowType>,
-    gridRef: React.MutableRefObject<DataEditorRef | null>
+    gridRef: React.RefObject<DataEditorRef | null>
 ): Pick<DataEditorProps, "getCellContent" | "onVisibleRegionChanged" | "onCellEdited" | "getCellsForSelection"> {
     pageSize = Math.max(pageSize, 1);
     const loadingRef = React.useRef(CompactSelection.empty());

@@ -33,8 +33,10 @@ export const BooleanEmpty = null;
 export const BooleanIndeterminate = undefined;
 
 /** @category Types */
+// eslint-disable-next-line sonarjs/redundant-type-aliases -- Preserve this documented public type name.
 export type BooleanEmpty = null;
 /** @category Types */
+// eslint-disable-next-line sonarjs/redundant-type-aliases -- Preserve this documented public type name.
 export type BooleanIndeterminate = undefined;
 
 /** @category Types */
@@ -437,7 +439,7 @@ export type ValidatedGridCell = EditableGridCell & {
 };
 
 /** @category Cells */
-export interface CustomCell<T extends {} = {}> extends BaseGridCell {
+export interface CustomCell<T extends NonNullable<unknown> = NonNullable<unknown>> extends BaseGridCell {
     readonly kind: GridCellKind.Custom;
     readonly data: T;
     readonly copyData: string;

@@ -63,10 +63,10 @@ export function Simplenotest() {
 
     const columns = React.useMemo(() => {
         let j = 0;
-        return ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"].map(t => ({
-            title: t,
-            width: 122 + (j += 50),
-        }));
+        return ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"].map(t => {
+            j += 50;
+            return { title: t, width: 122 + j };
+        });
     }, []);
 
     const getCellContent = React.useCallback(

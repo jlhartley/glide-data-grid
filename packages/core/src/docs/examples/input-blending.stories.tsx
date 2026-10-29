@@ -1,4 +1,5 @@
 import React from "react";
+import type { SelectionBlending } from "../../internal/data-grid/use-selection-behavior.js";
 import { DataEditorAll as DataEditor } from "../../data-editor-all.js";
 import { BeautifulWrapper, Description, useMockDataGenerator, defaultProps } from "../../data-editor/stories/utils.js";
 import { SimpleThemeWrapper } from "../../stories/story-utils.js";
@@ -25,9 +26,9 @@ export default {
 };
 
 interface InputBlendingGridProps {
-    rangeBlending: "mixed" | "exclusive" | "additive";
-    columnBlending: "mixed" | "exclusive" | "additive";
-    rowBlending: "mixed" | "exclusive" | "additive";
+    rangeBlending: SelectionBlending;
+    columnBlending: SelectionBlending;
+    rowBlending: SelectionBlending;
     rangeMultiSelect: "none" | "cell" | "rect" | "multi-cell" | "multi-rect";
     columnMultiSelect: "none" | "single" | "multi";
     rowMultiSelect: "none" | "single" | "multi";

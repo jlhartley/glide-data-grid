@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/consistent-destructuring */
 import * as React from "react";
 import {
     type CellArray,
@@ -85,7 +84,7 @@ export interface DataGridSearchProps extends Omit<ScrollingDataGridProps, "preli
      * @param newVal The new search value
      */
     readonly onSearchValueChange?: (newVal: string) => void;
-    readonly searchInputRef: React.MutableRefObject<HTMLInputElement | null>;
+    readonly searchInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const targetSearchTimeMS = 10;
@@ -389,10 +388,12 @@ const DataGridSearch: React.FunctionComponent<DataGridSearchProps> = p => {
 
         let resultString: string | undefined;
         if (searchStatus !== undefined) {
-            resultString =
-                searchStatus.results >= 1000
-                    ? `over 1000`
-                    : `${searchStatus.results} result${searchStatus.results !== 1 ? "s" : ""}`;
+            if (searchStatus.results >= 1000) {
+                resultString = `over 1000`;
+            } else {
+                const suffix = searchStatus.results !== 1 ? "s" : "";
+                resultString = `${searchStatus.results} result${suffix}`;
+            }
             if (searchStatus.selectedIndex >= 0) {
                 resultString = `${searchStatus.selectedIndex + 1} of ${resultString}`;
             }
