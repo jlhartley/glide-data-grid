@@ -1,4 +1,5 @@
 import { createConfig } from "../../config/eslint-config.mjs";
+import { sonarRules } from "../../config/sonar-rules.mjs";
 
 export default createConfig(import.meta.dirname, {
     extends: [
@@ -8,7 +9,6 @@ export default createConfig(import.meta.dirname, {
         "plugin:import/recommended",
         "plugin:import/typescript",
         "plugin:react-hooks/recommended",
-        "plugin:sonarjs/recommended-legacy",
         "plugin:unicorn/recommended",
     ],
     plugins: ["react", "@typescript-eslint", "import", "sonarjs"],
@@ -27,8 +27,7 @@ export default createConfig(import.meta.dirname, {
         "import/named": "off",
         "import/no-unresolved": "off",
         "@typescript-eslint/no-unused-vars": "off",
-        "sonarjs/cognitive-complexity": "off",
-        "sonarjs/no-inverted-boolean-check": "error",
+        ...sonarRules,
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-empty-interface": "off",
         "@typescript-eslint/no-inferrable-types": "off",
