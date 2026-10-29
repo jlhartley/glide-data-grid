@@ -3362,7 +3362,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                     col = Number.MAX_SAFE_INTEGER;
                 } else if (isHotkey(keys.goToFirstColumn, event, details)) {
                     // Go to the first non-frozen column
-                    col = freezeColumns + 1;
+                    col = freezeColumns + rowMarkerOffset;
                 } else if (rangeSelect === "rect" || rangeSelect === "multi-rect") {
                     if (isHotkey(keys.selectGrowDown, event, details)) {
                         adjustSelection([0, 1]);
