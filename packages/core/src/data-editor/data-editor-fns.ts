@@ -181,7 +181,6 @@ export function copyToClipboard(
         if (window.navigator.clipboard?.write === undefined) return false;
         void window.navigator.clipboard.write([
             new ClipboardItem({
-                // eslint-disable-next-line sonarjs/no-duplicate-string
                 "text/plain": new Blob([s], { type: "text/plain" }),
                 "text/html": new Blob([html], {
                     type: "text/html",
@@ -206,9 +205,9 @@ export function copyToClipboard(
     };
 
     if (window.navigator.clipboard?.write !== undefined || e?.clipboardData !== undefined) {
-        void copyWithClipboardData(copyBuffer.textPlain, copyBuffer.textHtml);
+        copyWithClipboardData(copyBuffer.textPlain, copyBuffer.textHtml);
     } else {
-        void copyWithWriteText(copyBuffer.textPlain);
+        copyWithWriteText(copyBuffer.textPlain);
     }
 
     e?.preventDefault();

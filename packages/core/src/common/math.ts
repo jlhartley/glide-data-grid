@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-ternary */
 import { itemIsInRect } from "../internal/data-grid/render/data-grid-lib.js";
 import type { FillHandleDirection, Rectangle } from "../internal/data-grid/data-grid-types.js";
 

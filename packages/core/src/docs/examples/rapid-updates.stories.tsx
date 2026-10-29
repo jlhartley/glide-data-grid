@@ -27,7 +27,8 @@ export default {
 
 let num: number = 1;
 function rand(): number {
-    return (num = (num * 16_807) % 2_147_483_647);
+    num = (num * 16_807) % 2_147_483_647;
+    return num;
 }
 
 export const RapidUpdates: React.VFC = () => {

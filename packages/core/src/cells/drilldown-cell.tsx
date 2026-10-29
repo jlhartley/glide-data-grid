@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import * as React from "react";
 import DrilldownOverlayEditor from "../internal/data-grid-overlay-editor/private/drilldown-overlay-editor.js";
 import {

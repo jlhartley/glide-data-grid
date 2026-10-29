@@ -1,0 +1,11 @@
+{
+    "extends": "./tsconfig.esm.json",
+    "include": ["./test/**/*.typecheck.ts", "./test/number-cell.test.ts"],
+    "exclude": [],
+    "compilerOptions": {
+        "rootDir": ".",
+        "composite": false,
+        "incremental": false,
+        "noEmit": true
+    }
+}
