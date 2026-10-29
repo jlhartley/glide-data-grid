@@ -1,29 +1,31 @@
-{
-    "extends": [
+import { createConfig } from "../../config/eslint-config.mjs";
+
+export default createConfig(import.meta.dirname, {
+    extends: [
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/recommended",
         "plugin:import/typescript",
         "plugin:react-hooks/recommended",
-        "plugin:sonarjs/recommended",
-        "plugin:unicorn/recommended"
+        "plugin:sonarjs/recommended-legacy",
+        "plugin:unicorn/recommended",
     ],
-    "plugins": ["react", "@typescript-eslint", "import", "sonarjs"],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": ["./tsconfig.json"]
+    plugins: ["react", "@typescript-eslint", "import", "sonarjs"],
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        project: ["./tsconfig.json"],
     },
-    "rules": {
+    rules: {
         "no-console": "warn",
         "guard-for-in": "error",
         "no-empty": "error",
-        "eqeqeq": ["error", "always"],
+        eqeqeq: ["error", "always"],
         "no-shadow": "off",
         "import/no-cycle": "off",
         "import/namespace": "off",
         "import/named": "off",
-        "import/no-unresolved": "off", // FIXME: Figure out how to make this enabled
+        "import/no-unresolved": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "sonarjs/cognitive-complexity": "off",
         "sonarjs/no-inverted-boolean-check": "error",
@@ -51,18 +53,18 @@
         "@typescript-eslint/no-misused-promises": [
             "error",
             {
-                "checksVoidReturn": false
-            }
+                checksVoidReturn: false,
+            },
         ],
         "@typescript-eslint/strict-boolean-expressions": "error",
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/ban-types": "off"
+        "@typescript-eslint/ban-types": "off",
     },
-    "ignorePatterns": ["**/node_modules/*", "**/dist/*"],
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
-    }
-}
+    ignorePatterns: ["**/node_modules/*", "**/dist/*", "jest.config.js", "node_modules/", "build.cjs", "vitest.*.ts"],
+    settings: {
+        react: {
+            version: "detect",
+        },
+    },
+});

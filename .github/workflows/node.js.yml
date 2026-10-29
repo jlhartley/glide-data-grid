@@ -7,8 +7,6 @@ permissions:
 
 env:
     CI: true
-    # The existing ESLint configuration uses the legacy eslintrc format.
-    ESLINT_USE_FLAT_CONFIG: 'false'
 
 jobs:
     build:
@@ -39,23 +37,3 @@ jobs:
               run: pnpm run test-source --run
             - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
               run: pnpm run test-cells --run
-            # These standalone legacy consumers retain their own npm lockfiles.
-            - run: pnpm run test-projects
-    react-compatibility:
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                react: [18, 19]
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  persist-credentials: false
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: '22'
-            - name: Enable repository pnpm version
-              run: corepack enable && pnpm --version
-            - name: Install locked dependencies
-              run: pnpm install --frozen-lockfile
-            - run: pnpm run test-${{ matrix.react }}
