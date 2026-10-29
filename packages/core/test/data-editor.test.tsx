@@ -4062,6 +4062,39 @@ describe("data-editor", () => {
         expect(Element.prototype.scrollTo).toBeCalledTimes(1);
     });
 
+    test.each([0, 2, basicProps.columns.length].flatMap(freezeColumns =>
+        (["none", "number"] as const).flatMap(rowMarkers =>
+            ["Home", "ArrowLeft"].map(key => ({ freezeColumns, rowMarkers, key }))
+        )
+    ))("$key targets the first non-frozen column: frozen=$freezeColumns markers=$rowMarkers",
+        ({ freezeColumns, rowMarkers, key }) => {
+            const spy = vi.fn();
+            const lastColumn = basicProps.columns.length - 1;
+            vi.useFakeTimers();
+            render(<EventedDataEditor {...basicProps} freezeColumns={freezeColumns} rowMarkers={rowMarkers}
+                onGridSelectionChange={spy} gridSelection={{
+                    columns: CompactSelection.empty(), rows: CompactSelection.empty(),
+                    current: { cell: [lastColumn, 5], range: { x: lastColumn, y: 5, width: 1, height: 1 }, rangeStack: [] },
+                }} />, { wrapper: Context });
+            prep(false);
+            spy.mockClear();
+            fireEvent.keyDown(screen.getByTestId("data-grid-canvas"), {
+                key,
+                ctrlKey: key === "ArrowLeft",
+            });
+            // If every column is frozen, clamp to the last data column.
+            const target = Math.min(freezeColumns, lastColumn);
+            if (target === lastColumn) {
+                expect(spy).not.toHaveBeenCalled();
+            } else {
+                expect(spy).toHaveBeenCalledWith(expect.objectContaining({
+                    current: expect.objectContaining({ cell: [target, 5],
+                        range: { x: target, y: 5, width: 1, height: 1 } }),
+                }));
+            }
+        }
+    );
+
     test("Ctrl Arrow keys", async () => {
         const spy = vi.fn();
         vi.useFakeTimers();
