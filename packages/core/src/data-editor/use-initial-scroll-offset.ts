@@ -8,7 +8,7 @@ import { useStateWithReactiveInput } from "../common/utils.js";
 function useCallbackRef<T>(
     initialValue: T | null,
     callback: (newValue: T | null, lastValue: T | null) => void
-): React.MutableRefObject<T | null> {
+): React.RefObject<T | null> {
     const [ref] = React.useState(() => ({
         value: initialValue,
         callback,
@@ -35,7 +35,7 @@ export function useInitialScrollOffset(
     scrollOffsetX: number | undefined,
     scrollOffsetY: number | undefined,
     rowHeight: NonNullable<DataEditorCoreProps["rowHeight"]>,
-    visibleRegionRef: React.MutableRefObject<VisibleRegion>,
+    visibleRegionRef: React.RefObject<VisibleRegion>,
     onDidScroll: () => void
 ) {
     const [visibleRegionY, visibleRegionTy] = React.useMemo(() => {
