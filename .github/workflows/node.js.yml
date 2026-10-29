@@ -12,12 +12,13 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7.0.1
               with:
                   persist-credentials: false
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v7.1.0
               with:
                   node-version: '22'
+                  package-manager-cache: false
             - name: Enable repository pnpm version
               run: corepack enable && pnpm --version
             - name: Install locked dependencies
@@ -27,7 +28,7 @@ jobs:
             - run: pnpm run lint
             - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
               run: pnpm run test --run --coverage
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v7.0.2
               if: always()
               with:
                   name: core-coverage
