@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import * as React from "react";
 import { drawTextCell, prepTextCell } from "../internal/data-grid/render/data-grid-lib.js";
 import { GridCellKind, type NumberCell } from "../internal/data-grid/data-grid-types.js";
@@ -54,10 +53,13 @@ export const numberCellRenderer: InternalCellRenderer<NumberCell> = {
         );
     },
     onPaste: (toPaste, cell, details) => {
-        const newNumber =
-            typeof details.rawValue === "number"
-                ? details.rawValue
-                : Number.parseFloat(typeof details.rawValue === "string" ? details.rawValue : toPaste);
+        let newNumber: number;
+        if (typeof details.rawValue === "number") {
+            newNumber = details.rawValue;
+        } else {
+            const text = typeof details.rawValue === "string" ? details.rawValue : toPaste;
+            newNumber = Number.parseFloat(text);
+        }
         if (Number.isNaN(newNumber) || cell.data === newNumber) return undefined;
         return { ...cell, data: newNumber, displayData: details.formattedString ?? cell.displayData };
     },

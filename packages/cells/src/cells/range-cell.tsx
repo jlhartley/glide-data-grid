@@ -117,7 +117,6 @@ const renderer: CustomRenderer<RangeCell> = {
         return true;
     },
     provideEditor: () => {
-        // eslint-disable-next-line react/display-name
         return p => {
             const { data, readonly } = p.value;
 

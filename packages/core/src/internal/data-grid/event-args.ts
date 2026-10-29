@@ -101,6 +101,7 @@ export interface HeaderClickedEventArgs extends GridMouseHeaderEventArgs, Preven
 /** @category Types */
 export interface GroupHeaderClickedEventArgs extends GridMouseGroupHeaderEventArgs, PreventableEvent {}
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- Preserve the public interface as a declaration-merging extension point.
 export interface BaseCellActivatedEvent {}
 
 /** Keyboard-initiated activation */

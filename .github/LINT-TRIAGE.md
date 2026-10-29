@@ -1,4 +1,4 @@
-# ESLint investigation and first batch — 29 October 2026
+# ESLint investigation and focused fixes — 29 October 2026
 
 Baseline: PR #2 head `89a430f42d4bea7eb4e55a5d64c88ea6f366e9a7`.
 [CI run 40873911036](https://github.com/jlhartley/glide-data-grid/actions/runs/40873911036) tested merge commit `7684a5948991e061e0d13c6606551db312a1413b`.
@@ -10,13 +10,13 @@ Local JSON analyses reproduce core's CI counts and independently cover source/ce
 | source | 5 | 1 | 5 | 1 |
 | cells | 6 | 5 | 6 | 5 |
 
-## Decision and scope
+## First batch: decision and scope
 
 The largest groups are different-types-comparison (49), refs (40 across packages), and no-nested-conditional (30). Their size does not make a blanket fix safe: they mix defensive runtime checks, render/commit lifecycle issues, and disputed style policy.
 
 The highest-impact batch with an established behavior-preserving replacement is React ref type deprecation: replace all 14 `MutableRefObject` references in core with `RefObject` across 11 files. In the locked `@types/react` 19.2.2 declarations, both interfaces have the exact same mutable `current: T` member; the former is marked deprecated in favor of the latter. Preserve every existing type argument, including `null` and `undefined`. No ref reads/writes, hooks, dependencies, public prop shapes or execution order are changed. This removes two thirds of the 21 deprecation errors without disabling the deprecation rule. The remaining seven concern `navigator.platform`, `KeyboardEvent.keyCode`, and the grid's own deprecated prop compatibility paths.
 
-No lint configuration, suppressions, dependency versions, workflow, React support contract, or behavioral assertions are changed. This PR is stacked on `fix/react-and-lint` so its diff excludes the React 19 migration. Retarget to main after #2 merges. The known blend-channel rounding and Ctrl+Left test failures remain separate work.
+The first batch changes no lint configuration, suppressions, dependency versions, workflow, React support contract, or behavioral assertions. This PR is stacked on `fix/react-and-lint` so its diff excludes the React 19 migration. Retarget to main after #2 merges. The known blend-channel rounding and Ctrl+Left test failures remain separate work.
 
 ## Findings and likely causes
 
@@ -214,7 +214,7 @@ Low-risk cleanup candidate; check type/value import and side-effect behavior.
 
 ### `sonarjs/void-use` — 3 errors, 0 warnings
 
-Policy overlap: void intentionally marks ignored promise results under no-floating-promises. Review rejection handling, rather than removing void blindly.
+The rule already permits promise-like operands. Two reports wrap synchronous void-returning clipboard helpers (fixed in batch two); the third wraps an optional appendRow promise. Preserve promise-discarding sites and review rejection handling separately.
 
 - [packages/core/src/data-editor/data-editor-fns.ts](../packages/core/src/data-editor/data-editor-fns.ts): 209, 211
 - [packages/core/src/docs/examples/append-row-handle.stories.tsx](../packages/core/src/docs/examples/append-row-handle.stories.tsx): 36
@@ -252,7 +252,7 @@ Warning/task policy; comments alone are not executable defects.
 
 ### `sonarjs/use-type-alias` — 2 errors, 0 warnings
 
-Style preference, not demonstrated runtime defect; avoid churn without a policy decision.
+Readability rule for repeated unions/intersections, rather than a general preference for type aliases over interfaces. Reuse existing domain aliases or introduce a small local alias; preserve the surrounding interface.
 
 - [packages/core/src/docs/examples/input-blending.stories.tsx](../packages/core/src/docs/examples/input-blending.stories.tsx): 28
 - [packages/core/src/internal/data-grid-overlay-editor/data-grid-overlay-editor.tsx](../packages/core/src/internal/data-grid-overlay-editor/data-grid-overlay-editor.tsx): 36
@@ -365,6 +365,34 @@ Existing warning policy; example logging, not a CI error.
 
 - [packages/core/src/docs/examples/selection-serialization.stories.tsx](../packages/core/src/docs/examples/selection-serialization.stories.tsx): 41, 137
 
+## Second batch: strict style with preserved contracts
+
+The second commit keeps every ESLint configuration unchanged. It removes 30 core errors, 2 cells errors, and all 35 obsolete-disable warnings relative to the first commit:
+
+| Package | Current errors | Current warnings |
+| --- | ---: | ---: |
+| core | 186 | 2 |
+| source | 5 | 0 |
+| cells | 4 | 0 |
+
+- Refactor seven nested-conditional findings in small renderer, clipboard, search-status and story expressions. Larger editor/grid branches (23 findings) remain for a separate focused batch.
+- Split all eight nested assignments inside their original callbacks/branches; preserve counter increments, cache entries, random sequence and generated IDs.
+- Replace two private empty MenuProps interfaces with equivalent aliases. Reuse SelectionBlending and name the repeated movement-direction union instead of changing interfaces to aliases.
+- Spell intentional non-nullish contracts as NonNullable<unknown>, retaining primitive custom-cell data, default generic behavior and rejection of null/undefined/unknown.
+- Keep the exported BooleanEmpty and BooleanIndeterminate type names and the existing BaseCellActivatedEvent interface. Three declaration-level exceptions explain these compatibility contracts; none disables a rule across a file or configuration.
+- Remove two redundant void operators on synchronous clipboard helpers. Actual promise-discarding sites and rejection behavior remain untouched.
+- Remove unused imports while retaining value-module evaluation as bare imports; erase the unused type-only import. Remove only the 35 directives reported unused at the first-commit baseline.
+
+Validation: all package builds and the core cycle check pass. ESLint JSON comparison finds no added diagnostic identities (file, rule, severity, first message line); only the intended style errors and stale directives disappear. Core has 396 passing tests (11 new numeric-paste regression cases) and the same two pre-existing failures. Source 7/7 and cells 62/62 pass. Existing clipboard tests cover all four boolean representations. The 11 new paste cases and the 30 existing clipboard cases also pass against the first-commit baseline, establishing unchanged behavior at those boundaries.
+
+A dedicated compiler check validates public default/custom data shapes, primitive acceptance, nullish/unknown rejection and the retained public aliases. It passes on both revisions:
+
+```bash
+corepack pnpm --dir packages/core exec tsc -p tsconfig.type-tests.json
+```
+
+The unrestricted development tsc check (including all stories and tests) is not clean: the baseline has 119 diagnostics, and the changed revision has 117. Comparing diagnostics without positions shows only two removed unused-import errors and none added; existing React.VFC/story typing errors remain outside this batch. Production builds and the dedicated type-contract check pass. The two behavioral failures and React migration are unchanged.
+
 ## Priority follow-ups
 
 1. Address concrete asynchronous error handling and verify cache/indexed type accuracy. `different-types-comparison` uses TypeScript assignability; with `noUncheckedIndexedAccess` absent, an indexed lookup can be typed as present while runtime cache misses still occur. The `drilldownCache[key] !== undefined` check is one concrete example. Enabling that compiler option globally would be a separate, broader change.
@@ -392,4 +420,4 @@ git diff --check
 
 The three ESLint commands intentionally exit 1 while remaining findings exist; run each independently. The core test command retains the two known failures, without altering or excluding their assertions. Use `corepack enable` if nested package scripts otherwise resolve a different globally installed pnpm.
 
-Verification results for this batch are recorded in the PR description. In addition to the commands above, compare baseline/changed JSON diagnostics: the only removed messages should be the 14 `sonarjs/deprecation` reports naming `MutableRefObject`; every other message (file, position, severity, rule, text) should match after normalizing the renamed type in embedded source excerpts. Build both revisions and hash every `packages/*/dist/**/*.js` and `.css` file: the emitted runtime files must be byte-identical. Declaration names change, with equivalent structure in React 19.
+Verification results for the first batch are recorded in the PR description. In addition to the commands above, compare baseline/changed JSON diagnostics: the only removed messages should be the 14 `sonarjs/deprecation` reports naming `MutableRefObject`; every other message (file, position, severity, rule, text) should match after normalizing the renamed type in embedded source excerpts. For that type-only first batch, build both revisions and hash every `packages/*/dist/**/*.js` and `.css` file: the emitted runtime files must be byte-identical. Declaration names change, with equivalent structure in React 19.

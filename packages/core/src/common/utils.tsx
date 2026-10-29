@@ -227,7 +227,7 @@ export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<
 
     const [state, setState] = React.useState(inputState);
     // crimes against humanity here
-    const [, forceRender] = React.useState<{} | undefined>();
+    const [, forceRender] = React.useState<NonNullable<unknown> | undefined>();
     const setStateOuter = React.useCallback<typeof setState>(nv => {
         // this takes care of the case where the inputState was set, then setState gets called again but back to what
         // the state was before the inputState changed. Since the useState effect wont trigger a render in this case

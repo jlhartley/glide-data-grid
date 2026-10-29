@@ -13,7 +13,7 @@ import {
     TextCellEntry,
 } from "@glideapps/glide-data-grid";
 
-interface CustomMenuProps extends MenuProps<any> {}
+type CustomMenuProps = MenuProps<any>;
 
 const CustomMenu: React.FC<CustomMenuProps> = p => {
     const { Menu } = components;

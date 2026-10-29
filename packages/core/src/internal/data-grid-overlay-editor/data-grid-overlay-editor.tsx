@@ -22,6 +22,8 @@ import { DataGridOverlayEditorStyle } from "./data-grid-overlay-editor-style.js"
 import type { OverlayImageEditorProps } from "./private/image-overlay-editor.js";
 import { useStayOnScreen } from "./use-stay-on-screen.js";
 
+type MovementDirection = -1 | 0 | 1;
+
 type ImageEditorType = React.ComponentType<OverlayImageEditorProps>;
 
 interface DataGridOverlayEditorProps {
@@ -33,7 +35,10 @@ interface DataGridOverlayEditorProps {
     readonly initialValue?: string;
     readonly bloom?: readonly [number, number];
     readonly theme: Theme;
-    readonly onFinishEditing: (newCell: GridCell | undefined, movement: readonly [-1 | 0 | 1, -1 | 0 | 1]) => void;
+    readonly onFinishEditing: (
+        newCell: GridCell | undefined,
+        movement: readonly [MovementDirection, MovementDirection]
+    ) => void;
     readonly forceEditMode: boolean;
     readonly highlight: boolean;
     readonly portalElementRef?: React.RefObject<HTMLElement>;
@@ -110,7 +115,7 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
     );
 
     const finished = React.useRef(false);
-    const customMotion = React.useRef<[-1 | 0 | 1, -1 | 0 | 1] | undefined>(undefined);
+    const customMotion = React.useRef<[MovementDirection, MovementDirection] | undefined>(undefined);
 
     const onClickOutside = React.useCallback(() => {
         onFinishEditing(tempValue, [0, 0]);
@@ -118,7 +123,7 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
     }, [tempValue, onFinishEditing]);
 
     const onEditorFinished = React.useCallback(
-        (newValue: GridCell | undefined, movement?: readonly [-1 | 0 | 1, -1 | 0 | 1]) => {
+        (newValue: GridCell | undefined, movement?: readonly [MovementDirection, MovementDirection]) => {
             onFinishEditing(newValue, movement ?? customMotion.current ?? [0, 0]);
             finished.current = true;
         },
