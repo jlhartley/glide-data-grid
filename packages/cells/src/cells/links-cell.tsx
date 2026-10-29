@@ -127,7 +127,6 @@ const renderer: CustomRenderer<LinksCell> = {
 
         return true;
     },
-    // eslint-disable-next-line react/display-name
     provideEditor: () => p => {
         const { value, onChange } = p;
         const { links, maxLinks = Number.MAX_SAFE_INTEGER } = value.data;

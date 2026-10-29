@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-identical-functions */
 import * as React from "react";
 
 import {
@@ -14,7 +13,7 @@ import {
 import { faker } from "@faker-js/faker";
 import { styled } from "@linaria/react";
 import isArray from "lodash/isArray.js";
-import { assertNever } from "../../common/support.js";
+import "../../common/support.js";
 import { browserIsFirefox } from "../../common/browser-detect.js";
 import { useResizeDetector } from "react-resize-detector";
 import type { DataEditorProps } from "../data-editor.js";
@@ -425,7 +424,8 @@ export class ContentCache {
     set(col: number, row: number, value: GridCell) {
         let rowCache = this.cachedContent.get(col);
         if (rowCache === undefined) {
-            this.cachedContent.set(col, (rowCache = []));
+            rowCache = [];
+            this.cachedContent.set(col, rowCache);
         }
         rowCache[row] = value;
     }
@@ -660,7 +660,14 @@ function getColumnsForCellTypes(): GridColumnWithMockingInfo[] {
             hasMenu: false,
             getContent: () => {
                 const roll = Math.random();
-                const checked = roll < 0.1 ? undefined : roll < 0.2 ? null : roll < 0.6;
+                let checked: boolean | null | undefined;
+                if (roll < 0.1) {
+                    checked = undefined;
+                } else if (roll < 0.2) {
+                    checked = null;
+                } else {
+                    checked = roll < 0.6;
+                }
                 // TODO: Make editable. UX looks bad by default.
                 return {
                     kind: GridCellKind.Boolean,

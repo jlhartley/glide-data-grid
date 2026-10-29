@@ -127,7 +127,6 @@ const renderer: CustomRenderer<TagsCell> = {
         return true;
     },
     provideEditor: () => {
-        // eslint-disable-next-line react/display-name
         return p => {
             const { onChange, value, theme } = p;
             const { readonly = false } = value;

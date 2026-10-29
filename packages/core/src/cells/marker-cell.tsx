@@ -58,7 +58,12 @@ function drawMarkerRowCell(
 ) {
     const { ctx, rect, hoverAmount, theme } = args;
     const { x, y, width, height } = rect;
-    const checkedboxAlpha = checked ? 1 : markerKind === "checkbox-visible" ? 0.6 + 0.4 * hoverAmount : hoverAmount;
+    let checkedboxAlpha = hoverAmount;
+    if (checked) {
+        checkedboxAlpha = 1;
+    } else if (markerKind === "checkbox-visible") {
+        checkedboxAlpha = 0.6 + 0.4 * hoverAmount;
+    }
     if (markerKind !== "number" && checkedboxAlpha > 0) {
         ctx.globalAlpha = checkedboxAlpha;
         const offsetAmount = 7 * (checked ? hoverAmount : 1);

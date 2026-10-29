@@ -19,7 +19,6 @@ import { faker } from "@faker-js/faker";
 faker.seed(1337);
 
 function isTruthy(x: any): boolean {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     return x ? true : false;
 }
 

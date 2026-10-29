@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import React from "react";
 import { DataEditorAll as DataEditor } from "../../data-editor-all.js";
 import {

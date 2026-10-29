@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-identical-functions */
 import * as React from "react";
 
 import { useState, useCallback, useMemo } from "storybook/preview-api";

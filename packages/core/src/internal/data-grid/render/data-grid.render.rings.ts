@@ -1,5 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable unicorn/no-for-loop */
 import { type GridSelection, type InnerGridCell, type Item, type FillHandle, DEFAULT_FILL_HANDLE } from "../data-grid-types.js";
 import { getStickyWidth, type MappedGridColumn, computeBounds, getFreezeTrailingHeight } from "./data-grid-lib.js";
 import { type FullTheme } from "../../../common/styles.js";
