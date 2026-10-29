@@ -3586,7 +3586,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
             function pasteToCell(
                 inner: InnerGridCell,
                 target: Item,
-                rawValue: string | boolean | string[] | number | boolean | BooleanEmpty | BooleanIndeterminate,
+                rawValue: string | boolean | string[] | number | BooleanEmpty | BooleanIndeterminate,
                 formatted?: string | string[]
             ): EditListItem | undefined {
                 const stringifiedRawValue =

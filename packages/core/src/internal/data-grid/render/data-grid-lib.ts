@@ -680,8 +680,6 @@ export function roundedPoly(ctx: CanvasRenderingContext2D, points: Point[], radi
         };
     };
     let radius: number;
-    // const v1: Vector = {} as any;
-    // const v2: Vector = {} as any;
     const len = points.length;
     let p1 = points[len - 1];
     // for each point

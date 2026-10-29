@@ -102,7 +102,6 @@ export function drawCheckbox(
             ctx.fill();
 
             if (style === "circle") {
-                checkBoxHalfWidth *= 0.8;
                 checkBoxWidth *= 0.8;
             }
 

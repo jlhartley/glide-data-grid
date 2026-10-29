@@ -43,7 +43,7 @@ export const RightToLeft: React.VFC = () => {
 
     const getCellContentMangled = React.useCallback<typeof getCellContent>(
         item => {
-            const [col, _row] = item;
+            const [col] = item;
             if (col !== 0) return getCellContent(item);
             return {
                 kind: GridCellKind.Text,

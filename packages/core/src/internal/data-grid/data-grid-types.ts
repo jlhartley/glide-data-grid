@@ -208,8 +208,6 @@ export type InnerColumnExtension = {
 /** @category Columns */
 export type InnerGridColumn = SizedGridColumn & InnerColumnExtension;
 
-// export type SizedGridColumn = Omit<GridColumn, "width"> & { readonly width: number };
-
 /** @category Cells */
 export type ReadWriteGridCell = TextCell | NumberCell | MarkdownCell | UriCell | CustomCell | BooleanCell;
 

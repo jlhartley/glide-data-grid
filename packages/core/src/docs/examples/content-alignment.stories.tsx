@@ -36,7 +36,7 @@ export const ContentAlignment: React.VFC = () => {
 
     const mangledGetCellContent = React.useCallback<typeof getCellContent>(
         cell => {
-            const [col, _row] = cell;
+            const [col] = cell;
             if (col === 3) {
                 return {
                     ...getCellContent(cell),
