@@ -15,7 +15,8 @@
         "test": "pnpm --dir packages/core run test",
         "test-source": "pnpm --dir packages/source run test",
         "test-cells": "pnpm --dir packages/cells run test",
-        "lint": "pnpm -r run lint"
+        "lint": "pnpm run test:lint && pnpm -r run lint",
+        "test:lint": "node --test config/test/*.test.mjs"
     },
     "type": "commonjs",
     "author": "Glide",
