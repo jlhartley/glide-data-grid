@@ -38,7 +38,7 @@ export const RowHover: React.VFC = () => {
     const [hoverRow, setHoverRow] = React.useState<number | undefined>(undefined);
 
     const onItemHovered = React.useCallback((args: GridMouseEventArgs) => {
-        const [_, row] = args.location;
+        const [, row] = args.location;
         setHoverRow(args.kind !== "cell" ? undefined : row);
     }, []);
 

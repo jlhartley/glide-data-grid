@@ -182,22 +182,9 @@ export function drawCells(
 
                     cellIndex[0] = c.sourceIndex;
                     cellIndex[1] = row;
-                    // if (damage !== undefined && !damage.some(d => d[0] === c.sourceIndex && d[1] === row)) {
-                    //     return;
-                    // }
-                    // if (
-                    //     drawRegions.length > 0 &&
-                    //     !drawRegions.some(dr => intersectRect(drawX, drawY, c.width, rh, dr.x, dr.y, dr.width, dr.height))
-                    // ) {
-                    //     return;
-                    // }
-
-                    // These are dumb versions of the above. I cannot for the life of believe that this matters but this is
-                    // the tightest part of the draw loop and the allocations above actually has a very measurable impact
-                    // on performance. For the love of all that is unholy please keep checking this again in the future.
-                    // As soon as this doesn't have any impact of note go back to the saner looking code. The smoke test
-                    // here is to scroll to the bottom of a test case first, then scroll back up while profiling and see
-                    // how many major GC collections you get. These allocate a lot of objects.
+                    // Keep these checks allocation-free: callback/array versions measurably
+                    // increased GC in this hot loop. Recheck by profiling a scroll to the
+                    // bottom of a large grid and back before changing this implementation.
                     if (damage !== undefined && !damage.has(cellIndex)) {
                         return;
                     }

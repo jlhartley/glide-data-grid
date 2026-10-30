@@ -47,12 +47,12 @@ function domFallbackParseToRgba(color: string): readonly [number, number, number
         result.push(1);
     }
     result = result.map(x => {
-        const isNaN = Number.isNaN(x);
-        if (process.env.NODE_ENV !== "production" && isNaN) {
+        const isInvalidChannel = Number.isNaN(x);
+        if (process.env.NODE_ENV !== "production" && isInvalidChannel) {
             // eslint-disable-next-line no-console
             console.warn("Could not parse color, even with DOM", color);
         }
-        return isNaN ? 0 : x;
+        return isInvalidChannel ? 0 : x;
     }) as typeof result;
 
     cache[normalizedColor] = result;

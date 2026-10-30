@@ -226,7 +226,6 @@ export function drawFillHandle(
         translateY,
         totalHeaderHeight,
         (col, drawX, colDrawY, clipX, startRow) => {
-            clipX;
             if (col.sticky && targetCol > col.sourceIndex) return;
 
             const isBeforeTarget = col.sourceIndex < targetColSpan[0];

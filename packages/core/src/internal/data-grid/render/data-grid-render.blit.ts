@@ -202,8 +202,6 @@ export function blitResizedCol(
 ) {
     const drawRegions: Rectangle[] = [];
 
-    // ctx.imageSmoothingEnabled = false;
-
     if (
         cellXOffset !== last.cellXOffset ||
         cellYOffset !== last.cellYOffset ||
