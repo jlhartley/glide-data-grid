@@ -135,6 +135,24 @@ describe("data-grid", () => {
         cleanup();
     });
 
+    test.each([
+        [-1, 50, -1, 0], [0, 50, 0, 0], [1000, 50, 0, 0], [1001, 50, 1, 0],
+        [50, 35, 0, -1], [50, 36, 0, 0], [50, 1000, 0, 0], [50, 1001, 0, 1],
+    ])("pointer scroll edge at (%s, %s)", (x, y, horizontal, vertical) => {
+        const ref = React.createRef<DataGridRef>();
+        render(<DataGrid {...basicProps} ref={ref} canvasRef={React.createRef<HTMLCanvasElement>()} />);
+        expect(ref.current?.getMouseArgsForPosition(x, y)).toEqual(expect.objectContaining({
+            scrollEdge: [horizontal, vertical],
+        }));
+    });
+
+    test("left and right out-of-bounds pointers retain valid endpoint columns", () => {
+        const ref = React.createRef<DataGridRef>();
+        render(<DataGrid {...basicProps} ref={ref} canvasRef={React.createRef<HTMLCanvasElement>()} />);
+        expect(ref.current?.getMouseArgsForPosition(-1, 50)?.location).toEqual([0, 0]);
+        expect(ref.current?.getMouseArgsForPosition(1001, 50)?.location).toEqual([basicProps.columns.length - 1, 0]);
+    });
+
     test("Emits mouse down", () => {
         const spy = vi.fn();
         render(<DataGrid {...basicProps} onMouseDown={spy} />);

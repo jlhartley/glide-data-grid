@@ -566,15 +566,34 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
             const ctrlKey = ev?.ctrlKey === true;
             const metaKey = ev?.metaKey === true;
 
-            const scrollEdge: GridMouseEventArgs["scrollEdge"] = [
-                x < 0 ? -1 : width < x ? 1 : 0,
-                y < totalHeaderHeight ? -1 : height < y ? 1 : 0,
-            ];
+            let scrollEdgeX: -1 | 0 | 1 = 0;
+            if (x < 0) {
+                scrollEdgeX = -1;
+            } else if (width < x) {
+                scrollEdgeX = 1;
+            }
+            let scrollEdgeY: -1 | 0 | 1 = 0;
+            if (y < totalHeaderHeight) {
+                scrollEdgeY = -1;
+            } else if (height < y) {
+                scrollEdgeY = 1;
+            }
+            const scrollEdge: GridMouseEventArgs["scrollEdge"] = [scrollEdgeX, scrollEdgeY];
 
             let result: GridMouseEventArgs;
             if (col === -1 || y < 0 || x < 0 || row === undefined || x > width || y > height) {
-                const horizontal = x > width ? 1 : x < 0 ? -1 : 0;
-                const vertical = y > height ? 1 : y < 0 ? -1 : 0;
+                let horizontal = 0;
+                if (x > width) {
+                    horizontal = 1;
+                } else if (x < 0) {
+                    horizontal = -1;
+                }
+                let vertical = 0;
+                if (y > height) {
+                    vertical = 1;
+                } else if (y < 0) {
+                    vertical = -1;
+                }
 
                 let innerHorizontal: OutOfBoundsRegionAxis = horizontal * 2;
                 let innerVertical: OutOfBoundsRegionAxis = vertical * 2;
@@ -596,9 +615,13 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
                 const isMaybeScrollbar =
                     (x > width && x < width + getScrollBarWidth()) || (y > height && y < height + getScrollBarWidth());
 
+                let locationCol = col;
+                if (col === -1) {
+                    locationCol = x < 0 ? 0 : mappedColumns.length - 1;
+                }
                 result = {
                     kind: outOfBoundsKind,
-                    location: [col !== -1 ? col : x < 0 ? 0 : mappedColumns.length - 1, row ?? rows - 1],
+                    location: [locationCol, row ?? rows - 1],
                     region: [innerHorizontal, innerVertical],
                     shiftKey,
                     ctrlKey,
