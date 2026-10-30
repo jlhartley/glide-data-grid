@@ -781,7 +781,14 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
 
     const renderStateProvider = React.useMemo(() => new RenderStateProvider(), []);
 
-    const maxDPR = enableFirefoxRescaling && scrolling ? 1 : enableSafariRescaling && scrolling ? 2 : 5;
+    let maxDPR: number;
+    if (enableFirefoxRescaling && scrolling) {
+        maxDPR = 1;
+    } else if (enableSafariRescaling && scrolling) {
+        maxDPR = 2;
+    } else {
+        maxDPR = 5;
+    }
     const minimumCellWidth = experimental?.disableMinimumCellWidth === true ? 1 : 10;
     const lastArgsRef = React.useRef<DrawGridArg>(undefined);
 
@@ -994,17 +1001,20 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
         cursorOverride = cell.cursor;
     }
     const canDrag = hoveredOnEdge ?? false;
-    const cursor = isDragging
-        ? "grabbing"
-        : canDrag || isResizing
-          ? "col-resize"
-          : overFill || isFilling
-            ? "crosshair"
-            : cursorOverride !== undefined
-              ? cursorOverride
-              : headerHovered || clickableInnerCellHovered || editableBoolHovered || groupHeaderHovered
-                ? "pointer"
-                : "default";
+    let cursor: React.CSSProperties["cursor"];
+    if (isDragging) {
+        cursor = "grabbing";
+    } else if (canDrag || isResizing) {
+        cursor = "col-resize";
+    } else if (overFill || isFilling) {
+        cursor = "crosshair";
+    } else if (cursorOverride !== undefined) {
+        cursor = cursorOverride;
+    } else if (headerHovered || clickableInnerCellHovered || editableBoolHovered || groupHeaderHovered) {
+        cursor = "pointer";
+    } else {
+        cursor = "default";
+    }
 
     const style = React.useMemo(
         () => ({
@@ -1898,8 +1908,14 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
         200
     );
 
-    const opacityX =
-        freezeColumns === 0 || !fixedShadowX ? 0 : cellXOffset > freezeColumns ? 1 : clamp(-translateX / 100, 0, 1);
+    let opacityX: number;
+    if (freezeColumns === 0 || !fixedShadowX) {
+        opacityX = 0;
+    } else if (cellXOffset > freezeColumns) {
+        opacityX = 1;
+    } else {
+        opacityX = clamp(-translateX / 100, 0, 1);
+    }
 
     const absoluteOffsetY = -cellYOffset * 32 + translateY;
     const opacityY = !fixedShadowY ? 0 : clamp(-absoluteOffsetY / 100, 0, 1);
