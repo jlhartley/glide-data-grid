@@ -233,7 +233,14 @@ export function drawGrid(arg: DrawGridArg, lastArg: DrawGridArg | undefined) {
         targetCtx = last?.lastBuffer === "b" ? bufferACtx : bufferBCtx;
     }
     const targetBuffer = targetCtx.canvas;
-    const blitSource = doubleBuffer ? (targetBuffer === bufferA ? bufferB : bufferA) : canvas;
+    let blitSource: HTMLCanvasElement;
+    if (!doubleBuffer) {
+        blitSource = canvas;
+    } else if (targetBuffer === bufferA) {
+        blitSource = bufferB;
+    } else {
+        blitSource = bufferA;
+    }
 
     const getRowHeight = typeof rowHeight === "number" ? () => rowHeight : rowHeight;
 
@@ -778,6 +785,15 @@ export function drawGrid(arg: DrawGridArg, lastArg: DrawGridArg | undefined) {
     const scrollX = last !== undefined && (cellXOffset !== last.cellXOffset || translateX !== last.translateX);
     const scrollY = last !== undefined && (cellYOffset !== last.cellYOffset || translateY !== last.translateY);
 
+    let lastBuffer: "a" | "b" | undefined;
+    if (!doubleBuffer) {
+        lastBuffer = undefined;
+    } else if (targetBuffer === bufferA) {
+        lastBuffer = "a";
+    } else {
+        lastBuffer = "b";
+    }
+
     lastBlitData.current = {
         cellXOffset,
         cellYOffset,
@@ -785,7 +801,7 @@ export function drawGrid(arg: DrawGridArg, lastArg: DrawGridArg | undefined) {
         translateY,
         mustDrawFocusOnHeader,
         mustDrawHighlightRingsOnHeader,
-        lastBuffer: doubleBuffer ? (targetBuffer === bufferA ? "a" : "b") : undefined,
+        lastBuffer,
         aBufferScroll: targetBuffer === bufferA ? [scrollX, scrollY] : last?.aBufferScroll,
         bBufferScroll: targetBuffer === bufferB ? [scrollX, scrollY] : last?.bBufferScroll,
     };
