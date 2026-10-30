@@ -1832,6 +1832,21 @@ describe("data-editor", () => {
         expect(spy).not.toBeCalled();
     });
 
+    test.each([
+        [100, undefined, 32], [101, undefined, 36],
+        [1000, undefined, 36], [1001, undefined, 44],
+        [10_000, undefined, 44], [10_001, undefined, 48],
+        [10_001, 0, 0], [100, 60, 60],
+    ] as const)("row marker bounds for %s rows and width %s", (rows, rowMarkerWidth, expectedX) => {
+        vi.useFakeTimers();
+        const ref = React.createRef<DataEditorRef>();
+        render(<DataEditor {...basicProps} ref={ref} rows={rows} rowMarkers="number" rowMarkerWidth={rowMarkerWidth} />,
+            { wrapper: Context });
+        prep(false);
+        act(() => { vi.runAllTimers(); });
+        expect(ref.current?.getBounds(0, 0)?.x).toBe(expectedX);
+    });
+
     test("Ref getBounds", async () => {
         const spy = vi.fn();
         vi.useFakeTimers();
@@ -3866,6 +3881,16 @@ describe("data-editor", () => {
             left: 0,
             top: 15_101,
         });
+    });
+
+    test("Imperative scrollTo explicit cell units", () => {
+        vi.useFakeTimers();
+        const ref = React.createRef<DataEditorRef>();
+        render(<EventedDataEditor ref={ref} {...basicProps} rows={10_000} />, { wrapper: Context });
+        prep(false);
+        act(() => { ref.current?.scrollTo({ amount: 5, unit: "cell" }, { amount: 500, unit: "cell" }); });
+        act(() => { vi.runAllTimers(); });
+        expect(Element.prototype.scrollTo).toBeCalledWith({ behavior: "auto", left: 0, top: 15_101 });
     });
 
     test("Imperative scrollTo pixel", async () => {

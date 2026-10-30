@@ -135,6 +135,46 @@ describe("data-grid", () => {
         cleanup();
     });
 
+    test.each([
+        [-1, 50, -1, 0], [0, 50, 0, 0], [1000, 50, 0, 0], [1001, 50, 1, 0],
+        [50, 35, 0, -1], [50, 36, 0, 0], [50, 1000, 0, 0], [50, 1001, 0, 1],
+    ])("pointer scroll edge at (%s, %s)", (x, y, horizontal, vertical) => {
+        const ref = React.createRef<DataGridRef>();
+        render(<DataGrid {...basicProps} ref={ref} canvasRef={React.createRef<HTMLCanvasElement>()} />);
+        expect(ref.current?.getMouseArgsForPosition(x, y)).toEqual(expect.objectContaining({
+            scrollEdge: [horizontal, vertical],
+        }));
+    });
+
+    test("left and right out-of-bounds pointers retain valid endpoint columns", () => {
+        const ref = React.createRef<DataGridRef>();
+        render(<DataGrid {...basicProps} ref={ref} canvasRef={React.createRef<HTMLCanvasElement>()} />);
+        expect(ref.current?.getMouseArgsForPosition(-1, 50)?.location).toEqual([0, 0]);
+        expect(ref.current?.getMouseArgsForPosition(1001, 50)?.location).toEqual([basicProps.columns.length - 1, 0]);
+    });
+
+    test.each([
+        [true, true, true, "grabbing"],
+        [false, true, true, "col-resize"],
+        [false, false, true, "crosshair"],
+        [false, false, false, "default"],
+    ] as const)("cursor precedence: dragging=%s resizing=%s filling=%s", (isDragging, isResizing, isFilling, cursor) => {
+        render(<DataGrid {...basicProps} isDragging={isDragging} isResizing={isResizing} isFilling={isFilling} />);
+        expect(screen.getByTestId(dataGridCanvasId).style.cursor).toBe(cursor);
+    });
+
+    test.each([
+        [0, true, 3, -50, undefined], [1, false, 3, -50, undefined],
+        [1, true, 1, -50, "0.5"], [1, true, 2, 0, "1"],
+        [1, true, 1, -200, "1"], [1, true, 1, 50, undefined],
+    ] as const)("frozen shadow: columns=%s enabled=%s offset=%s translation=%s",
+        (freezeColumns, fixedShadowX, cellXOffset, translateX, opacity) => {
+            const { container } = render(<DataGrid {...basicProps} freezeColumns={freezeColumns}
+                fixedShadowX={fixedShadowX} cellXOffset={cellXOffset} translateX={translateX} />);
+            expect(container.querySelector<HTMLDivElement>("#shadow-x")?.style.opacity).toBe(opacity);
+        }
+    );
+
     test("Emits mouse down", () => {
         const spy = vi.fn();
         render(<DataGrid {...basicProps} onMouseDown={spy} />);

@@ -948,7 +948,18 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
 
     const keybindings = useKeybindingsWithDefaults(keybindingsIn);
 
-    const rowMarkerWidth = rowMarkerWidthRaw ?? (rowsIn > 10_000 ? 48 : rowsIn > 1000 ? 44 : rowsIn > 100 ? 36 : 32);
+    let rowMarkerWidth: number;
+    if (rowMarkerWidthRaw !== undefined && rowMarkerWidthRaw !== null) {
+        rowMarkerWidth = rowMarkerWidthRaw;
+    } else if (rowsIn > 10_000) {
+        rowMarkerWidth = 48;
+    } else if (rowsIn > 1000) {
+        rowMarkerWidth = 44;
+    } else if (rowsIn > 100) {
+        rowMarkerWidth = 36;
+    } else {
+        rowMarkerWidth = 32;
+    }
     const hasRowMarkers = rowMarkers !== "none";
     const rowMarkerOffset = hasRowMarkers ? 1 : 0;
     const showTrailingBlankRow = trailingRowOptions !== undefined;
@@ -1134,8 +1145,16 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
     const totalHeaderHeight = enableGroups ? headerHeight + groupHeaderHeight : headerHeight;
 
     const numSelectedRows = gridSelection.rows.length;
-    const rowMarkerChecked =
-        rowMarkers === "none" ? undefined : numSelectedRows === 0 ? false : numSelectedRows === rows ? true : undefined;
+    let rowMarkerChecked: boolean | undefined;
+    if (rowMarkers === "none") {
+        rowMarkerChecked = undefined;
+    } else if (numSelectedRows === 0) {
+        rowMarkerChecked = false;
+    } else if (numSelectedRows === rows) {
+        rowMarkerChecked = true;
+    } else {
+        rowMarkerChecked = undefined;
+    }
 
     const mangledCols = React.useMemo(() => {
         if (rowMarkers === "none") return columns;
@@ -1526,8 +1545,18 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 const grid = gridRef.current;
                 const canvas = canvasRef.current;
 
-                const trueCol = typeof col !== "number" ? (col.unit === "cell" ? col.amount : undefined) : col;
-                const trueRow = typeof row !== "number" ? (row.unit === "cell" ? row.amount : undefined) : row;
+                let trueCol: number | undefined;
+                if (typeof col === "number") {
+                    trueCol = col;
+                } else if (col.unit === "cell") {
+                    trueCol = col.amount;
+                }
+                let trueRow: number | undefined;
+                if (typeof row === "number") {
+                    trueRow = row;
+                } else if (row.unit === "cell") {
+                    trueRow = row.amount;
+                }
                 const desiredX = typeof col !== "number" && col.unit === "px" ? col.amount : undefined;
                 const desiredY = typeof row !== "number" && row.unit === "px" ? row.amount : undefined;
                 if (grid !== null && canvas !== null) {
@@ -1709,7 +1738,14 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                     return;
                 }
 
-                const row = typeof r === "number" ? r : bottom ? rows : 0;
+                let row: number;
+                if (typeof r === "number") {
+                    row = r;
+                } else if (bottom) {
+                    row = rows;
+                } else {
+                    row = 0;
+                }
                 scrollToRef.current(col - rowMarkerOffset, row, "both", 0, 0, behavior ? { behavior } : undefined);
                 setCurrent(
                     {
@@ -1762,7 +1798,14 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                     return;
                 }
 
-                const col = typeof r === "number" ? r : right ? mangledCols.length : 0;
+                let col: number;
+                if (typeof r === "number") {
+                    col = r;
+                } else if (right) {
+                    col = mangledCols.length;
+                } else {
+                    col = 0;
+                }
                 scrollTo(col - rowMarkerOffset, row);
                 setCurrent(
                     {
