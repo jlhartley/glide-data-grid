@@ -85,7 +85,14 @@ export function drawGridHeaders(
 
         const hasSelectedCell = selection?.current !== undefined && selection.current.cell[0] === c.sourceIndex;
 
-        const bgFillStyle = selected ? theme.accentColor : hasSelectedCell ? theme.bgHeaderHasFocus : theme.bgHeader;
+        let bgFillStyle: string;
+        if (selected) {
+            bgFillStyle = theme.accentColor;
+        } else if (hasSelectedCell) {
+            bgFillStyle = theme.bgHeaderHasFocus;
+        } else {
+            bgFillStyle = theme.bgHeader;
+        }
 
         const y = enableGroups ? groupHeaderHeight : 0;
         const xOffset = c.sourceIndex === 0 ? 0 : 1;

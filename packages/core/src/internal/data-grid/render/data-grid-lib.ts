@@ -692,7 +692,13 @@ export function roundedPoly(ctx: CanvasRenderingContext2D, points: Point[], radi
         const v2 = asVec(p2, p3);
         const sinA = v1.nx * v2.ny - v1.ny * v2.nx;
         const sinA90 = v1.nx * v2.nx - v1.ny * -v2.ny;
-        let angle = Math.asin(sinA < -1 ? -1 : sinA > 1 ? 1 : sinA);
+        let clampedSinA = sinA;
+        if (sinA < -1) {
+            clampedSinA = -1;
+        } else if (sinA > 1) {
+            clampedSinA = 1;
+        }
+        let angle = Math.asin(clampedSinA);
         //-----------------------------------------
         let radDirection = 1;
         let drawDirection = false;
