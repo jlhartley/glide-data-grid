@@ -1,7 +1,7 @@
 import * as React from "react";
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { useDeepMemo, useEventListener, useStateWithReactiveInput } from "../src/common/utils.js";
+import { useEventListener, useStateWithReactiveInput } from "../src/common/utils.js";
 import { useAnimationQueue } from "../src/internal/data-grid/use-animation-queue.js";
 import { CellSet } from "../src/internal/data-grid/cell-set.js";
 
@@ -66,21 +66,6 @@ describe("committed hook values", () => {
         expect(abandoned).not.toHaveBeenCalled();
         expect(next).toHaveBeenCalledWith(new CellSet([[1, 2]]));
         expect(next).toHaveBeenCalledOnce();
-    });
-
-    it("retains deep memo identity across an abandoned render", () => {
-        const initial = { a: 1 };
-        const { result, rerender } = renderHook(
-            ({ value, suspend }) => {
-                const memo = useDeepMemo(value);
-                if (suspend) throw pending;
-                return memo;
-            },
-            { initialProps: { value: initial, suspend: false }, wrapper }
-        );
-        rerender({ value: { a: 2 }, suspend: true });
-        rerender({ value: { a: 1 }, suspend: false });
-        expect(result.current).toBe(initial);
     });
 
     it("overrides immediately, supports chained updaters and restores the last explicit value on reset", () => {

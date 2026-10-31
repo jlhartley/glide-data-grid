@@ -32,6 +32,10 @@ function useCallbackRef<T>(
     return ref.facade;
 }
 
+function applyOffset(region: VisibleRegion, input: { y: number; ty: number }): VisibleRegion {
+    return { x: region.x, y: input.y, width: region.width, height: region.height, ty: input.ty };
+}
+
 export function useInitialScrollOffset(
     scrollOffsetX: number | undefined,
     scrollOffsetY: number | undefined,
@@ -40,31 +44,33 @@ export function useInitialScrollOffset(
 ) {
     const y = scrollOffsetY !== undefined && typeof rowHeight === "number" ? Math.floor(scrollOffsetY / rowHeight) : 0;
     const ty = scrollOffsetY !== undefined && typeof rowHeight === "number" ? -(scrollOffsetY % rowHeight) : 0;
+    // This memo represents a new offset command, including A -> B -> A changes.
+    const input = React.useMemo(() => ({ y, ty }), [y, ty]);
     const [snapshot, setSnapshot] = React.useState(() => {
         const region: VisibleRegion = { x: 0, y, width: 1, height: 1, ty };
-        return { y, ty, region, observed: region };
+        return { input, region, observed: region };
     });
-    if (!Object.is(snapshot.y, y) || !Object.is(snapshot.ty, ty)) {
-        // An offset change takes effect in this render, retaining the measured viewport.
-        setSnapshot({
-            ...snapshot,
-            y,
-            ty,
-            region: { x: snapshot.region.x, y, width: snapshot.region.width, height: snapshot.region.height, ty },
-        });
-    }
-    const visibleRegion = snapshot.region;
+    const visibleRegion = React.useMemo(
+        () => (snapshot.input === input ? snapshot.region : applyOffset(snapshot.region, input)),
+        [snapshot, input]
+    );
+    const committedInput = React.useRef(input);
+    React.useLayoutEffect(() => {
+        committedInput.current = input;
+    }, [input]);
     const setVisibleRegion = React.useCallback<React.Dispatch<React.SetStateAction<VisibleRegion>>>(next => {
+        // Capture the committed command in the event handler, outside the updater.
+        const command = committedInput.current;
         setSnapshot(previous => {
-            const region = typeof next === "function" ? next(previous.region) : next;
-            if (region === previous.region) return previous;
-            return { ...previous, region, observed: region };
+            const current = previous.input === command ? previous.region : applyOffset(previous.region, command);
+            const region = typeof next === "function" ? next(current) : next;
+            if (region === current) return previous;
+            return { input: command, region, observed: region };
         });
     }, []);
     const empty = React.useCallback(() => {
-        // The browser clamped the requested offset: use the last observed viewport
-        // until its scroll notification supplies the actual position.
-        setSnapshot(previous => ({ ...previous, region: previous.observed }));
+        const command = committedInput.current;
+        setSnapshot(previous => ({ ...previous, input: command, region: previous.observed }));
     }, []);
 
     const onDidScrollRef = React.useRef(onDidScroll);

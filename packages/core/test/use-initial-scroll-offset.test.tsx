@@ -80,3 +80,70 @@ describe("initial scroll offsets", () => {
         expect(result.current.visibleRegion.y).toBe(5);
     });
 });
+
+it("uses one render per command, keeps stable region identity, and handles A -> B -> A", () => {
+    let renders = 0;
+    const { result, rerender } = renderHook(
+        ({ x, y, rowHeight }) => {
+            renders++;
+            return useInitialScrollOffset(x, y, rowHeight, () => {});
+        },
+        { initialProps: { x: 0, y: 0, rowHeight: 20 } }
+    );
+    act(() => result.current.setVisibleRegion(viewport));
+    for (const [x, y, rowHeight] of [
+        [0, 0, 20],
+        [0, 65, 20],
+        [10, 65, 20],
+        [10, 95, 30],
+        [0, 0, 20],
+    ]) {
+        const before = renders;
+        rerender({ x, y, rowHeight });
+        expect(renders - before).toBe(1);
+        expect(result.current.visibleRegion.x).toBe(4);
+    }
+    expect(result.current.visibleRegion.y).toBe(0);
+    const region = result.current.visibleRegion;
+    rerender({ x: 0, y: 0, rowHeight: 20 });
+    expect(result.current.visibleRegion).toBe(region);
+});
+
+it("chains functional scroll updates from the current offset without a corrective render", () => {
+    let renders = 0;
+    const { result, rerender } = renderHook(
+        y => {
+            renders++;
+            return useInitialScrollOffset(undefined, y, 20, () => {});
+        },
+        { initialProps: 0 }
+    );
+    rerender(100);
+    const before = renders;
+    act(() => {
+        result.current.setVisibleRegion(previous => ({ ...previous, y: previous.y + 1 }));
+        result.current.setVisibleRegion(previous => ({ ...previous, y: previous.y + 1 }));
+    });
+    expect(result.current.visibleRegion.y).toBe(7);
+    expect(renders - before).toBe(1);
+});
+
+it("keeps committed offsets when a different command suspends", () => {
+    const pending = new Promise<void>(() => {});
+    const wrapper = ({ children }: React.PropsWithChildren) => (
+        <React.Suspense fallback={null}>{children}</React.Suspense>
+    );
+    const { result, rerender } = renderHook(
+        ({ y, suspend }) => {
+            const value = useInitialScrollOffset(undefined, y, 20, () => {});
+            if (suspend) throw pending;
+            return value;
+        },
+        { initialProps: { y: 0, suspend: false }, wrapper }
+    );
+    act(() => result.current.setVisibleRegion(viewport));
+    rerender({ y: 1000, suspend: true });
+    act(() => result.current.setVisibleRegion(previous => ({ ...previous, y: previous.y + 1 })));
+    rerender({ y: 0, suspend: false });
+    expect(result.current.visibleRegion.y).toBe(9);
+});

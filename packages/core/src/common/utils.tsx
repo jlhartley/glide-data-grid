@@ -1,6 +1,5 @@
 import * as React from "react";
 import debounce from "lodash/debounce.js";
-import { deepEqual } from "./support.js";
 
 export function useEventListener<K extends keyof HTMLElementEventMap>(
     eventName: K,
@@ -211,27 +210,29 @@ export function getScrollBarWidth(): number {
     return scrollbarWidthCache;
 }
 
-// A changed input takes precedence until the next explicit update or reset.
-// Keep both values in state so an interrupted render cannot publish an override.
+// A changed input wins until an explicit update or reset consumes that command.
+// Derive it during render; only publish command identity to event callbacks at commit.
 export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
-    const [snapshot, setSnapshot] = React.useState(() => ({ input: inputState, value: inputState, overridden: false }));
-    if (!Object.is(snapshot.input, inputState)) {
-        setSnapshot({ ...snapshot, input: inputState, overridden: true });
-    }
-
+    const input = React.useMemo(() => ({ value: inputState }), [inputState]);
+    const [snapshot, setSnapshot] = React.useState(() => ({ input, value: inputState, observed: inputState }));
+    const committedInput = React.useRef(input);
+    React.useLayoutEffect(() => {
+        committedInput.current = input;
+    }, [input]);
     const setValue = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(next => {
+        const command = committedInput.current;
         setSnapshot(previous => {
-            const current = previous.overridden ? previous.input : previous.value;
+            const current = previous.input === command ? previous.value : command.value;
             const value = typeof next === "function" ? (next as (value: T) => T)(current) : next;
             if (Object.is(value, current)) return previous;
-            return { ...previous, value, overridden: false };
+            return { input: command, value, observed: value };
         });
     }, []);
     const reset = React.useCallback(() => {
-        setSnapshot(previous => ({ ...previous, overridden: false }));
+        const command = committedInput.current;
+        setSnapshot(previous => ({ ...previous, input: command, value: previous.observed }));
     }, []);
-
-    return [snapshot.overridden ? snapshot.input : snapshot.value, setValue, reset];
+    return [snapshot.input === input ? snapshot.value : input.value, setValue, reset];
 }
 
 export function makeAccessibilityStringForArray(arr: readonly string[]): string {
@@ -249,13 +250,4 @@ export function makeAccessibilityStringForArray(arr: readonly string[]): string 
         index++;
     }
     return arr.slice(0, index).join(", ");
-}
-
-export function useDeepMemo<T>(value: T): T {
-    const [memo, setMemo] = React.useState(() => value);
-    if (!deepEqual(value, memo)) {
-        setMemo(() => value);
-        return value;
-    }
-    return memo;
 }
