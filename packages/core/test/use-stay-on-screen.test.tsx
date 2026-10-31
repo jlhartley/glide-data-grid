@@ -99,15 +99,10 @@ it("disconnects every observer during Strict Mode replay and unmount", () => {
         const { ref } = useStayOnScreen();
         return <div ref={ref} />;
     }
-    const { unmount } = render(
-        <React.StrictMode>
-            <Harness />
-        </React.StrictMode>
-    );
-    if (observers.length > 1) {
-        notify(0, false);
-        expect(frames.size).toBe(0);
-    }
+    const { unmount } = render(<Harness />, { reactStrictMode: true });
+    expect(observers.length).toBeGreaterThanOrEqual(2);
+    notify(0, false);
+    expect(frames.size).toBe(0);
     unmount();
     expect(observers.length).toBeGreaterThan(0);
     for (const observer of observers) expect(observer.disconnect).toHaveBeenCalledOnce();

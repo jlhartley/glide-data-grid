@@ -10,16 +10,33 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 export default class ClickOutsideContainer extends React.PureComponent<Props> {
     private wrapperRef = React.createRef<HTMLDivElement>();
 
+    private eventTarget: HTMLElement | Window | Document | undefined;
+
     public componentDidMount() {
-        const eventTarget = this.props.customEventTarget ?? document;
-        eventTarget.addEventListener("pointerdown", this.clickOutside, true);
-        eventTarget.addEventListener("contextmenu", this.clickOutside, true);
+        this.updateEventTarget();
+    }
+
+    public componentDidUpdate() {
+        this.updateEventTarget();
     }
 
     public componentWillUnmount() {
-        const eventTarget = this.props.customEventTarget ?? document;
-        eventTarget.removeEventListener("pointerdown", this.clickOutside, true);
-        eventTarget.removeEventListener("contextmenu", this.clickOutside, true);
+        this.removeEventListeners();
+    }
+
+    private removeEventListeners() {
+        this.eventTarget?.removeEventListener("pointerdown", this.clickOutside, true);
+        this.eventTarget?.removeEventListener("contextmenu", this.clickOutside, true);
+        this.eventTarget = undefined;
+    }
+
+    private updateEventTarget() {
+        const next = this.props.customEventTarget ?? document;
+        if (next === this.eventTarget) return;
+        this.removeEventListeners();
+        this.eventTarget = next;
+        next.addEventListener("pointerdown", this.clickOutside, true);
+        next.addEventListener("contextmenu", this.clickOutside, true);
     }
 
     private clickOutside = (event: Event) => {

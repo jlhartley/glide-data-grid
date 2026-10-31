@@ -2,33 +2,57 @@ import * as React from "react";
 import debounce from "lodash/debounce.js";
 import { useCommittedRef } from "./use-committed-ref.js";
 
+type EventTargetElement = HTMLElement | Window | Document | ShadowRoot | null;
+
 export function useEventListener<K extends keyof HTMLElementEventMap>(
     eventName: K,
     handler: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
-    element: HTMLElement | Window | Document | null,
+    element: EventTargetElement | (() => EventTargetElement),
     passive: boolean,
     capture = false
 ) {
     const savedHandler = useCommittedRef(handler);
+    const subscription = React.useRef<
+        | {
+              target: EventTargetElement;
+              name: K;
+              passive: boolean;
+              capture: boolean;
+              cleanup: () => void;
+          }
+        | undefined
+    >(undefined);
+    // Resolve DOM refs after attachment, including a replacement on the same ref object.
+    React.useEffect(() => {
+        const target = typeof element === "function" ? element() : element;
+        const previous = subscription.current;
+        if (
+            previous?.target === target &&
+            previous.name === eventName &&
+            previous.passive === passive &&
+            previous.capture === capture
+        )
+            return;
+        previous?.cleanup();
+        subscription.current = undefined;
+        if (target === null) return;
+        const el = target as HTMLElement;
+        const listener = (event: HTMLElementEventMap[K]) => savedHandler.current.call(el, event);
+        el.addEventListener(eventName, listener, { passive, capture });
+        subscription.current = {
+            target,
+            name: eventName,
+            passive,
+            capture,
+            cleanup: () => el.removeEventListener(eventName, listener, { capture }),
+        };
+    });
     React.useEffect(
-        () => {
-            // Make sure element supports addEventListener
-            if (element === null || element.addEventListener === undefined) return;
-            const el = element as HTMLElement;
-
-            // Create event listener that calls handler function stored in ref
-            const eventListener = (event: HTMLElementEventMap[K]) => {
-                savedHandler.current?.call(el, event);
-            };
-
-            el.addEventListener(eventName, eventListener, { passive, capture });
-
-            // Remove event listener on cleanup
-            return () => {
-                el.removeEventListener(eventName, eventListener, { capture });
-            };
+        () => () => {
+            subscription.current?.cleanup();
+            subscription.current = undefined;
         },
-        [eventName, element, passive, capture] // Re-run if eventName or element changes
+        []
     );
 }
 
