@@ -82,11 +82,13 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
 
     const [tempValue, setTempValueRaw] = React.useState<GridCell | undefined>(forceEditMode ? content : undefined);
     const lastValueRef = React.useRef(tempValue ?? content);
-    lastValueRef.current = tempValue ?? content;
+    React.useLayoutEffect(() => {
+        lastValueRef.current = tempValue ?? content;
+    }, [tempValue, content]);
 
     const [isValid, setIsValid] = React.useState(() => {
         if (validateCell === undefined) return true;
-        return !(isEditableGridCell(content) && validateCell?.(cell, content, lastValueRef.current) === false);
+        return !(isEditableGridCell(content) && validateCell?.(cell, content, content) === false);
     });
 
     const onFinishEditing = React.useCallback<typeof onFinishEditingIn>(
@@ -214,15 +216,25 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
 
     styleOverride = { ...styleOverride, ...stayOnScreenStyle };
 
-    // Consider imperatively creating and adding the element to the dom?
-    const portalElement = portalElementRef?.current ?? document.getElementById("portal");
-    if (portalElement === null) {
-        // eslint-disable-next-line no-console
-        console.error(
-            'Cannot open Data Grid overlay editor, because portal not found. Please, either provide a portalElementRef or add `<div id="portal" />` as the last child of your `<body>`.'
-        );
-        return null;
-    }
+    const [portalElement, setPortalElement] = React.useState<HTMLElement | null | undefined>();
+    React.useLayoutEffect(() => {
+        setPortalElement(portalElementRef?.current ?? document.getElementById("portal"));
+    }, [portalElementRef]);
+    React.useEffect(() => {
+        if (portalElement === null) {
+            // A later sibling's ref may attach after this component's layout effect.
+            const attached = portalElementRef?.current ?? document.getElementById("portal");
+            if (attached !== null) {
+                setPortalElement(attached);
+                return;
+            }
+            // eslint-disable-next-line no-console
+            console.error(
+                'Cannot open Data Grid overlay editor, because portal not found. Please, either provide a portalElementRef or add `<div id="portal" />` as the last child of your `<body>`.'
+            );
+        }
+    }, [portalElement, portalElementRef]);
+    if (portalElement === null || portalElement === undefined) return null;
 
     let classWrap = style ? "gdg-style" : "gdg-unstyle";
     if (!isValid) {
