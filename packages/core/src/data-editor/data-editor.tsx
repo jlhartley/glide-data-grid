@@ -1,3 +1,4 @@
+import { useAbortController } from "../common/use-abort-controller.js";
 import * as React from "react";
 import { assert, assertNever, maybe } from "../common/support.js";
 import clamp from "lodash/clamp.js";
@@ -981,16 +982,13 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
     }, [gridSelectionOuter, rowMarkerOffset]);
     const gridSelection = gridSelectionOuterMangled ?? gridSelectionInner;
 
-    const abortControllerRef = React.useRef<AbortController>(null) as React.RefObject<AbortController>;
-    if (abortControllerRef.current === null) abortControllerRef.current = new AbortController();
-
-    React.useEffect(() => () => abortControllerRef?.current.abort(), []);
+    const getAbortController = useAbortController();
 
     const [getCellsForSelection, getCellsForSeletionDirect] = useCellsForSelection(
         getCellsForSelectionIn,
         getCellContent,
         rowMarkerOffset,
-        abortControllerRef.current,
+        getAbortController,
         rows
     );
 
@@ -1012,7 +1010,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                     getCellsForSelection,
                     rowMarkerOffset,
                     spanRangeBehavior,
-                    abortControllerRef.current
+                    getAbortController()
                 );
             }
             if (onGridSelectionChange !== undefined) {
@@ -1022,7 +1020,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 setGridSelectionInner(newVal);
             }
         },
-        [onGridSelectionChange, getCellsForSelection, rowMarkerOffset, spanRangeBehavior]
+        [onGridSelectionChange, getCellsForSelection, rowMarkerOffset, spanRangeBehavior, getAbortController]
     );
 
     const onColumnResize = whenDefined(
@@ -1134,7 +1132,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         maxColumnAutoWidth,
         mergedTheme,
         getCellRenderer,
-        abortControllerRef.current
+        getAbortController
     );
     if (rowMarkers !== "none") nonGrowWidth += rowMarkerWidth;
 
@@ -2245,7 +2243,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                         width: 1,
                         height: Math.min(end, rows - start),
                     },
-                    abortControllerRef.current.signal
+                    getAbortController().signal
                 );
                 if (typeof cells !== "object") {
                     cells = await cells();
@@ -2273,6 +2271,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         [
             columns,
             getCellsForSelection,
+            getAbortController,
             maxColumnWidth,
             mergedTheme,
             minColumnWidth,
@@ -2308,7 +2307,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 if (canceled) return;
             }
 
-            let cells = getCellsForSelection(patternRange, abortControllerRef.current.signal);
+            let cells = getCellsForSelection(patternRange, getAbortController().signal);
             if (typeof cells !== "object") cells = await cells();
 
             const pattern = cells;
@@ -2335,7 +2334,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                 }))
             );
         },
-        [getCellsForSelection, mangledOnCellsEdited, onFillPattern, rowMarkerOffset]
+        [getCellsForSelection, mangledOnCellsEdited, onFillPattern, rowMarkerOffset, getAbortController]
     );
 
     const fillRight = React.useCallback(() => {
@@ -2976,7 +2975,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                                 width: right - left - rowMarkerOffset,
                                 height: bottom - top,
                             },
-                            abortControllerRef.current.signal
+                            getAbortController().signal
                         );
 
                         if (typeof cells === "object") {
@@ -3050,6 +3049,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         },
         [
             getCellsForSelection,
+            getAbortController,
             getSelectionRowLimits,
             gridSelection,
             mangledCols.length,
@@ -3843,7 +3843,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
 
             if (focused && getCellsForSelection !== undefined) {
                 if (gridSelection.current !== undefined) {
-                    let thunk = getCellsForSelection(gridSelection.current.range, abortControllerRef.current.signal);
+                    let thunk = getCellsForSelection(gridSelection.current.range, getAbortController().signal);
                     if (typeof thunk !== "object") {
                         thunk = await thunk();
                     }
@@ -3864,7 +3864,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                                 width: columnsIn.length,
                                 height: 1,
                             },
-                            abortControllerRef.current.signal
+                            getAbortController().signal
                         );
                         if (typeof thunk === "object") {
                             return thunk[0];
@@ -3888,7 +3888,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
                                 width: 1,
                                 height: rows,
                             },
-                            abortControllerRef.current.signal
+                            getAbortController().signal
                         );
                         if (typeof thunk !== "object") {
                             thunk = await thunk();
@@ -3909,6 +3909,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         [
             columnsIn,
             getCellsForSelection,
+            getAbortController,
             gridSelection,
             keybindings.copy,
             rowMarkerOffset,

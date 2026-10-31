@@ -151,28 +151,23 @@ export const Checkmark: React.FunctionComponent<Partial<SpriteProps>> = (props: 
 export function useDebouncedMemo<T>(factory: () => T, deps: React.DependencyList | undefined, time: number): T {
     const [state, setState] = React.useState(factory);
 
-    const mountedRef = React.useRef(true);
-    React.useEffect(
-        () => () => {
-            mountedRef.current = false;
-        },
-        []
+    // The caller supplies this hook's dependency list. Keep a token even when
+    // the same factory function is reused with a different dependency value.
+    const everyRender = {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const scheduled = React.useMemo(() => ({ factory }), deps ?? [everyRender]);
+    const debouncedSetState = React.useMemo(
+        () =>
+            debounce((create: () => T) => {
+                const value = create();
+                setState(() => value);
+            }, time),
+        [time]
     );
-
-    const debouncedSetState = React.useRef<typeof setState>(
-        debounce(x => {
-            if (mountedRef.current) {
-                setState(x);
-            }
-        }, time)
-    );
-
     React.useLayoutEffect(() => {
-        if (mountedRef.current) {
-            debouncedSetState.current(() => factory());
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, deps);
+        debouncedSetState(scheduled.factory);
+        return () => debouncedSetState.cancel();
+    }, [debouncedSetState, scheduled]);
 
     return state;
 }

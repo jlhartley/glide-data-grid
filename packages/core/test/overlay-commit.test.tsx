@@ -46,7 +46,7 @@ it("resolves a sibling portal after attachment, including Strict Mode replay", (
             </React.StrictMode>
         );
     }
-    const { getByTestId } = render(<Parent />);
+    const { getByTestId } = render(<Parent />, { reactStrictMode: true });
     expect(within(getByTestId("target")).getByLabelText("edit")).toBeTruthy();
 });
 
