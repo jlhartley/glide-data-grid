@@ -16,7 +16,9 @@ export function useEventListener<K extends keyof HTMLElementEventMap>(
     // This allows our effect below to always get latest handler ...
     // ... without us needing to pass it in effect deps array ...
     // ... and potentially cause effect to re-run every render.
-    savedHandler.current = handler;
+    React.useLayoutEffect(() => {
+        savedHandler.current = handler;
+    }, [handler]);
     React.useEffect(
         () => {
             // Make sure element supports addEventListener
@@ -209,51 +211,27 @@ export function getScrollBarWidth(): number {
     return scrollbarWidthCache;
 }
 
-// Dear future reader,
-// This dumb hook is to make sure if the inputState changes, that effectively behaves like an instant "setState" call.
-// This is useful in a wide variety of situations. I'm too dumb to know if this is a good idea or a really dumb one.
-// I can't tell. It's like poes law but for code.
-//
-// I'm sorry.
-const empty = Symbol();
+// A changed input takes precedence until the next explicit update or reset.
+// Keep both values in state so an interrupted render cannot publish an override.
 export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
-    // When [0] is not empty we will return it, [1] is always the last value we saw
-    const inputStateRef = React.useRef<[T | typeof empty, T]>([empty, inputState]);
-    if (inputStateRef.current[1] !== inputState) {
-        // it changed, we must use thee!
-        inputStateRef.current[0] = inputState;
+    const [snapshot, setSnapshot] = React.useState(() => ({ input: inputState, value: inputState, overridden: false }));
+    if (snapshot.input !== inputState) {
+        setSnapshot({ ...snapshot, input: inputState, overridden: true });
     }
-    inputStateRef.current[1] = inputState;
 
-    const [state, setState] = React.useState(inputState);
-    // crimes against humanity here
-    const [, forceRender] = React.useReducer(count => count + 1, 0);
-    const setStateOuter = React.useCallback<typeof setState>(nv => {
-        // this takes care of the case where the inputState was set, then setState gets called again but back to what
-        // the state was before the inputState changed. Since the useState effect wont trigger a render in this case
-        // we need to be very naughty and force it to see the change. Technically this may not be needed some chunk of
-        // the time (in fact most of it) but checking for it is likely to be more expensive than just over-doing it
-        const s = inputStateRef.current[0];
-        if (s !== empty) {
-            nv = typeof nv === "function" ? (nv as (pv: T) => T)(s) : nv;
-            if (nv === s) return; // they are setting it to what the inputState is anyway so we can just do nothing
-        }
-        if (s !== empty) forceRender();
-        setState(pv => {
-            if (typeof nv === "function") {
-                return (nv as (pv: T) => T)(s === empty ? pv : s);
-            }
-            return nv;
+    const setValue = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(next => {
+        setSnapshot(previous => {
+            const current = previous.overridden ? previous.input : previous.value;
+            const value = typeof next === "function" ? (next as (value: T) => T)(current) : next;
+            if (Object.is(value, current)) return previous;
+            return { ...previous, value, overridden: false };
         });
-        inputStateRef.current[0] = empty;
+    }, []);
+    const reset = React.useCallback(() => {
+        setSnapshot(previous => ({ ...previous, overridden: false }));
     }, []);
 
-    const onEmpty = React.useCallback(() => {
-        inputStateRef.current[0] = empty;
-        forceRender();
-    }, []);
-
-    return [inputStateRef.current[0] === empty ? state : inputStateRef.current[0], setStateOuter, onEmpty];
+    return [snapshot.overridden ? snapshot.input : snapshot.value, setValue, reset];
 }
 
 export function makeAccessibilityStringForArray(arr: readonly string[]): string {
@@ -274,11 +252,10 @@ export function makeAccessibilityStringForArray(arr: readonly string[]): string 
 }
 
 export function useDeepMemo<T>(value: T): T {
-    const ref = React.useRef<T>(value);
-
-    if (!deepEqual(value, ref.current)) {
-        ref.current = value;
+    const [memo, setMemo] = React.useState(() => value);
+    if (!deepEqual(value, memo)) {
+        setMemo(() => value);
+        return value;
     }
-
-    return ref.current;
+    return memo;
 }

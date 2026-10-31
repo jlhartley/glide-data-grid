@@ -9,7 +9,9 @@ export function useAnimationQueue(draw: (items: CellSet) => void): EnqueueCallba
     const queue = React.useRef<number[]>([]);
     const seq = React.useRef(0);
     const drawRef = React.useRef(draw);
-    drawRef.current = draw;
+    React.useLayoutEffect(() => {
+        drawRef.current = draw;
+    }, [draw]);
 
     const loop = React.useCallback(() => {
         const requeue = () => window.requestAnimationFrame(fn);
