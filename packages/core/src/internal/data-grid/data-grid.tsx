@@ -406,8 +406,12 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
     const cellXOffset = Math.max(freezeColumns, Math.min(columns.length - 1, cellXOffsetReal));
 
     const ref = React.useRef<HTMLCanvasElement | null>(null);
-    const windowEventTargetRef = React.useRef<HTMLElement | Window | Document>(experimental?.eventTarget ?? window);
-    const windowEventTarget = windowEventTargetRef.current;
+    const windowEventTarget = React.useCallback(() => {
+        if (experimental?.eventTarget !== undefined) return experimental.eventTarget;
+        const root = ref.current?.getRootNode();
+        return root === undefined || root === document ? window : (root as Document | ShadowRoot);
+    }, [experimental?.eventTarget]);
+    const getEventTarget = React.useCallback(() => eventTargetRef?.current ?? null, [eventTargetRef]);
 
     const imageLoader = imageWindowLoader;
     const damageRegion = React.useRef<CellSet | undefined>(undefined);
@@ -1294,7 +1298,7 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
         },
         [eventTargetRef, getMouseArgsForPosition, onContextMenu]
     );
-    useEventListener("contextmenu", onContextMenuImpl, eventTargetRef?.current ?? null, false);
+    useEventListener("contextmenu", onContextMenuImpl, getEventTarget, false);
 
     const onAnimationFrame = React.useCallback<StepCallback>(values => {
         damageRegion.current = new CellSet(values.map(x => x.item));
@@ -1472,19 +1476,8 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
             if (canvasRef !== undefined) {
                 canvasRef.current = instance;
             }
-
-            if (experimental?.eventTarget) {
-                windowEventTargetRef.current = experimental.eventTarget;
-            } else if (instance === null) {
-                windowEventTargetRef.current = window;
-            } else {
-                const docRoot = instance.getRootNode();
-
-                if (docRoot === document) windowEventTargetRef.current = window;
-                windowEventTargetRef.current = docRoot as any;
-            }
         },
-        [canvasRef, experimental?.eventTarget]
+        [canvasRef]
     );
 
     const onDragStartImpl = React.useCallback(
@@ -1643,7 +1636,7 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
             getCellRenderer,
         ]
     );
-    useEventListener("dragstart", onDragStartImpl, eventTargetRef?.current ?? null, false, false);
+    useEventListener("dragstart", onDragStartImpl, getEventTarget, false, false);
 
     const activeDropTarget = React.useRef<Item | undefined>(undefined);
 
@@ -1672,13 +1665,13 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
         },
         [firstColAccessible, getMouseArgsForPosition, onDragOverCell, onDrop]
     );
-    useEventListener("dragover", onDragOverImpl, eventTargetRef?.current ?? null, false, false);
+    useEventListener("dragover", onDragOverImpl, getEventTarget, false, false);
 
     const onDragEndImpl = React.useCallback(() => {
         activeDropTarget.current = undefined;
         onDragEnd?.();
     }, [onDragEnd]);
-    useEventListener("dragend", onDragEndImpl, eventTargetRef?.current ?? null, false, false);
+    useEventListener("dragend", onDragEndImpl, getEventTarget, false, false);
 
     const onDropImpl = React.useCallback(
         (event: DragEvent) => {
@@ -1699,12 +1692,12 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
         },
         [firstColAccessible, getMouseArgsForPosition, onDrop]
     );
-    useEventListener("drop", onDropImpl, eventTargetRef?.current ?? null, false, false);
+    useEventListener("drop", onDropImpl, getEventTarget, false, false);
 
     const onDragLeaveImpl = React.useCallback(() => {
         onDragLeave?.();
     }, [onDragLeave]);
-    useEventListener("dragleave", onDragLeaveImpl, eventTargetRef?.current ?? null, false, false);
+    useEventListener("dragleave", onDragLeaveImpl, getEventTarget, false, false);
 
     const selectionRef = React.useRef(selection);
     selectionRef.current = selection;

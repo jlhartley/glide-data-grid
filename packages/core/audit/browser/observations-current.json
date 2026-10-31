@@ -1,0 +1,542 @@
+{
+  "browser": "153.0.8010.0",
+  "results": [
+    {
+      "key": "current-production-normal-edit-save",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "edit-save",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": "Updated mark",
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 982
+    },
+    {
+      "key": "current-production-normal-native-scroll",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "native-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visible": {
+          "x": 0,
+          "y": 20,
+          "width": 5,
+          "height": 13,
+          "tx": 0,
+          "ty": 0,
+          "extras": {
+            "freezeRegions": []
+          }
+        },
+        "click": [
+          0,
+          20
+        ],
+        "top": 640
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1310
+    },
+    {
+      "key": "current-production-normal-controlled-scroll",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "controlled-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 100,
+        "clicked": [
+          0,
+          100
+        ],
+        "scrollTop": 3200
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 950
+    },
+    {
+      "key": "current-production-normal-clamped-scroll",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "clamped-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 989,
+        "top": 31636,
+        "max": 31636
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1191
+    },
+    {
+      "key": "current-production-normal-scroll-plus-resize",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "scroll-plus-resize",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 200,
+        "clicked": [
+          0,
+          200
+        ],
+        "scrollTop": 6400,
+        "canvasWidth": 680
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1218
+    },
+    {
+      "key": "current-production-normal-grid-resize",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "grid-resize",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "x": 24,
+        "y": 176.0625,
+        "width": 620,
+        "height": 300
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1043
+    },
+    {
+      "key": "current-production-normal-portal-replacement",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "portal-replacement",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "beforeRemoval": {
+          "a": false,
+          "b": true
+        },
+        "editorVisible": true,
+        "saved": "Moved value"
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1188
+    },
+    {
+      "key": "current-production-normal-event-boundary-initial",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "event-boundary-initial",
+      "kind": "positive control: isolated native boundary from mount",
+      "pass": true,
+      "actual": 1,
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 791
+    },
+    {
+      "key": "current-production-normal-pending-reorder-control",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "pending-reorder-control",
+      "kind": "positive control: header drag without a pending transition",
+      "pass": true,
+      "actual": [
+        {
+          "dataset": "A",
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1191
+    },
+    {
+      "key": "current-production-normal-resize-observer-control",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "resize-observer-control",
+      "kind": "positive control: actual ResizeObserver on its initial node",
+      "pass": true,
+      "actual": "310",
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 393
+    },
+    {
+      "key": "current-production-normal-event-boundary-switch",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "event-boundary-switch",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "firstClickCallbacks": 1,
+        "afterSecondClick": 2
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1295
+    },
+    {
+      "key": "current-production-normal-resize-observer-retarget",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "resize-observer-retarget",
+      "kind": "browser component integration",
+      "pass": true,
+      "actual": {
+        "reported": 600,
+        "actual": 600
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 921
+    },
+    {
+      "key": "current-production-normal-outside-click-retarget",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "outside-click-retarget",
+      "kind": "browser component integration",
+      "pass": true,
+      "actual": {
+        "closedByNew": true,
+        "closedAfterOld": true
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 314
+    },
+    {
+      "key": "current-production-normal-pending-reorder",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "pending-reorder",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "committed": "A",
+        "moves": [
+          {
+            "dataset": "A",
+            "from": 0,
+            "to": 1
+          }
+        ],
+        "method": "header drag"
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1297
+    },
+    {
+      "key": "current-production-normal-layout-event",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "layout-event",
+      "kind": "controlled commit-order diagnostic",
+      "pass": true,
+      "actual": "1",
+      "expected": "1",
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 371
+    },
+    {
+      "key": "current-production-normal-layout-input",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "layout-input",
+      "kind": "controlled commit-order diagnostic; unused production helper",
+      "pass": true,
+      "actual": "11",
+      "expected": "11",
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 427
+    },
+    {
+      "key": "current-production-normal-layout-scroll",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "layout-scroll",
+      "kind": "controlled commit-order diagnostic",
+      "pass": true,
+      "actual": "88",
+      "expected": "88",
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 599
+    },
+    {
+      "key": "current-production-normal-accessibility-after-scroll",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "accessibility-after-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 20,
+        "a11yRows": [
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1275
+    },
+    {
+      "key": "current-production-normal-async-grid-data",
+      "variant": "current",
+      "mode": "production",
+      "strict": false,
+      "scenario": "async-grid-data",
+      "kind": "grid journey; native fetch and AbortSignal",
+      "pass": true,
+      "actual": {
+        "loaded": "true",
+        "requests": [
+          {
+            "abortedAtStart": false,
+            "status": "success"
+          }
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1230
+    },
+    {
+      "key": "current-development-strict-accessibility-after-scroll",
+      "variant": "current",
+      "mode": "development",
+      "strict": true,
+      "scenario": "accessibility-after-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 20,
+        "a11yRows": [
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1223
+    },
+    {
+      "key": "current-development-strict-async-grid-data",
+      "variant": "current",
+      "mode": "development",
+      "strict": true,
+      "scenario": "async-grid-data",
+      "kind": "grid journey; native fetch and AbortSignal",
+      "pass": true,
+      "actual": {
+        "loaded": "true",
+        "requests": [
+          {
+            "abortedAtStart": false,
+            "status": "AbortError"
+          },
+          {
+            "abortedAtStart": false,
+            "status": "success"
+          }
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [
+        {
+          "url": "http://127.0.0.1:37399/cells?height=1&width=1",
+          "failure": {
+            "errorText": "net::ERR_ABORTED"
+          }
+        }
+      ],
+      "durationMs": 1129
+    },
+    {
+      "key": "current-production-strict-accessibility-after-scroll",
+      "variant": "current",
+      "mode": "production",
+      "strict": true,
+      "scenario": "accessibility-after-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 20,
+        "a11yRows": [
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1107
+    },
+    {
+      "key": "current-production-strict-async-grid-data",
+      "variant": "current",
+      "mode": "production",
+      "strict": true,
+      "scenario": "async-grid-data",
+      "kind": "grid journey; native fetch and AbortSignal",
+      "pass": true,
+      "actual": {
+        "loaded": "true",
+        "requests": [
+          {
+            "abortedAtStart": false,
+            "status": "success"
+          }
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1113
+    },
+    {
+      "key": "current-development-normal-accessibility-after-scroll",
+      "variant": "current",
+      "mode": "development",
+      "strict": false,
+      "scenario": "accessibility-after-scroll",
+      "kind": "grid journey",
+      "pass": true,
+      "actual": {
+        "visibleY": 20,
+        "a11yRows": [
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1149
+    },
+    {
+      "key": "current-development-normal-async-grid-data",
+      "variant": "current",
+      "mode": "development",
+      "strict": false,
+      "scenario": "async-grid-data",
+      "kind": "grid journey; native fetch and AbortSignal",
+      "pass": true,
+      "actual": {
+        "loaded": "true",
+        "requests": [
+          {
+            "abortedAtStart": false,
+            "status": "success"
+          }
+        ]
+      },
+      "status": "PASS",
+      "errors": [],
+      "networkFailures": [],
+      "durationMs": 1146
+    }
+  ]
+}

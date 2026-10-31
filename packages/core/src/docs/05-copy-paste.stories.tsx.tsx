@@ -30,7 +30,7 @@ interface DummyItem {
 }
 
 export const CopyPaste: React.VFC = () => {
-    const dataRef = React.useRef([
+    const initialData = [
         {
             name: "Deidre Morris",
             company: "GONKLE",
@@ -133,7 +133,8 @@ export const CopyPaste: React.VFC = () => {
             email: "bryantdunlap@bytrex.com",
             phone: "+1 (872) 583-2883",
         },
-    ]);
+    ];
+    const dataRef = React.useRef(initialData);
 
     const getContent = React.useCallback((cell: Item): GridCell => {
         const [col, row] = cell;
@@ -207,7 +208,7 @@ return <DataEditor {...rest} getCellsForSelection={true} />
                     getCellContent={getContent}
                     getCellsForSelection={true}
                     columns={columns}
-                    rows={dataRef.current.length}
+                    rows={initialData.length}
                 />
             </Wrapper>
             <textarea
@@ -234,7 +235,7 @@ return <DataEditor {...rest} onCellEdited={onCellEdited} onPaste={true} />
                     getCellsForSelection={true}
                     onPaste={true}
                     columns={columns}
-                    rows={dataRef.current.length}
+                    rows={initialData.length}
                 />
             </Wrapper>
             <Marked>{`Try copying this.`}</Marked>
@@ -270,7 +271,7 @@ return <DataEditor
                         window.alert(JSON.stringify({ target, value }));
                         return false;
                     }}
-                    rows={dataRef.current.length}
+                    rows={initialData.length}
                 />
             </Wrapper>
         </DocWrapper>

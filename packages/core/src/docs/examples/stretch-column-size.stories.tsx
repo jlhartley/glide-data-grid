@@ -33,11 +33,11 @@ export default {
 export const StretchColumnSize: React.VFC = () => {
     const { cols, getCellContent, onColumnResize } = useMockDataGenerator(5, true, true);
 
-    const hasResized = React.useRef(new Set<number>());
+    const [hasResized, setHasResized] = React.useState(() => new Set<number>());
 
     const columns = React.useMemo(() => {
-        return cols.map((x, i) => ({ ...x, grow: hasResized.current.has(i) ? undefined : (5 + i) / 5 }));
-    }, [cols]);
+        return cols.map((x, i) => ({ ...x, grow: hasResized.has(i) ? undefined : (5 + i) / 5 }));
+    }, [cols, hasResized]);
 
     return (
         <DataEditor
@@ -46,7 +46,7 @@ export const StretchColumnSize: React.VFC = () => {
             columns={columns}
             rows={1000}
             onColumnResize={(col, _newSize, colIndex, newSizeWithGrow) => {
-                hasResized.current.add(colIndex);
+                setHasResized(previous => new Set(previous).add(colIndex));
                 onColumnResize(col, newSizeWithGrow);
             }}
             rowMarkers="both"

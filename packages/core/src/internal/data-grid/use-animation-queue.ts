@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useCommittedRef } from "../../common/use-committed-ref.js";
 import { type Item } from "./data-grid-types.js";
 import { CellSet } from "./cell-set.js";
 import { packColRowToNumber, unpackNumberToColRow } from "../../common/render-state-provider.js";
@@ -8,8 +9,7 @@ export type EnqueueCallback = (item: Item) => void;
 export function useAnimationQueue(draw: (items: CellSet) => void): EnqueueCallback {
     const queue = React.useRef<number[]>([]);
     const seq = React.useRef(0);
-    const drawRef = React.useRef(draw);
-    drawRef.current = draw;
+    const drawRef = useCommittedRef(draw);
 
     const loop = React.useCallback(() => {
         const requeue = () => window.requestAnimationFrame(fn);
@@ -27,7 +27,7 @@ export function useAnimationQueue(draw: (items: CellSet) => void): EnqueueCallba
         };
 
         window.requestAnimationFrame(seq.current > 600 ? requeue : fn);
-    }, []);
+    }, [drawRef]);
 
     return React.useCallback(
         (item: Item) => {

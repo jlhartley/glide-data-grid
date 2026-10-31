@@ -8,7 +8,7 @@ export function useCellsForSelection(
     getCellsForSelectionIn: CellsForSelectionCallback | true | undefined,
     getCellContent: DataEditorProps["getCellContent"],
     rowMarkerOffset: number,
-    abortController: AbortController,
+    getAbortController: () => AbortController,
     rows: number
 ) {
     const getCellsForSelectionDirectWhenValid = React.useCallback<CellsForSelectionCallback>(
@@ -33,9 +33,9 @@ export function useCellsForSelection(
 
                 return result;
             }
-            return getCellsForSelectionIn?.(rect, abortController.signal) ?? [];
+            return getCellsForSelectionIn?.(rect, getAbortController().signal) ?? [];
         },
-        [abortController.signal, getCellContent, getCellsForSelectionIn, rows]
+        [getAbortController, getCellContent, getCellsForSelectionIn, rows]
     );
     const getCellsForSelectionDirect =
         getCellsForSelectionIn !== undefined ? getCellsForSelectionDirectWhenValid : undefined;
@@ -49,7 +49,7 @@ export function useCellsForSelection(
             if (newRect.x < 0) {
                 newRect.x = 0;
                 newRect.width--;
-                const r = getCellsForSelectionDirect(newRect, abortController.signal);
+                const r = getCellsForSelectionDirect(newRect, getAbortController().signal);
 
                 if (typeof r === "function") {
                     return async () =>
@@ -61,9 +61,9 @@ export function useCellsForSelection(
                 }
                 return r.map(row => [{ kind: GridCellKind.Loading, allowOverlay: false }, ...row]);
             }
-            return getCellsForSelectionDirect(newRect, abortController.signal);
+            return getCellsForSelectionDirect(newRect, getAbortController().signal);
         },
-        [abortController.signal, getCellsForSelectionDirect, rowMarkerOffset]
+        [getAbortController, getCellsForSelectionDirect, rowMarkerOffset]
     );
 
     const getCellsForSelection = getCellsForSelectionIn !== undefined ? getCellsForSelectionMangled : undefined;
