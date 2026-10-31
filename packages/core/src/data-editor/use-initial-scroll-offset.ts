@@ -1,7 +1,6 @@
 import * as React from "react";
 import type { VisibleRegion } from "./visible-region.js";
 import type { DataEditorCoreProps } from "../index.js";
-import { useStateWithReactiveInput } from "../common/utils.js";
 
 // shamelessly stolen and modified from: https://github.com/theKashey/use-callback-ref
 // MIT License https://github.com/theKashey/use-callback-ref/tree/master?tab=MIT-1-ov-file#readme
@@ -26,7 +25,9 @@ function useCallbackRef<T>(
             },
         },
     }));
-    ref.callback = callback;
+    React.useLayoutEffect(() => {
+        ref.callback = callback;
+    }, [callback, ref]);
 
     return ref.facade;
 }
@@ -35,32 +36,41 @@ export function useInitialScrollOffset(
     scrollOffsetX: number | undefined,
     scrollOffsetY: number | undefined,
     rowHeight: NonNullable<DataEditorCoreProps["rowHeight"]>,
-    visibleRegionRef: React.RefObject<VisibleRegion>,
     onDidScroll: () => void
 ) {
-    const [visibleRegionY, visibleRegionTy] = React.useMemo(() => {
-        return [
-            scrollOffsetY !== undefined && typeof rowHeight === "number" ? Math.floor(scrollOffsetY / rowHeight) : 0,
-            scrollOffsetY !== undefined && typeof rowHeight === "number" ? -(scrollOffsetY % rowHeight) : 0,
-        ];
-    }, [scrollOffsetY, rowHeight]);
-
-    const visibleRegionInput = React.useMemo<VisibleRegion>(
-        () => ({
-            x: visibleRegionRef.current.x,
-            y: visibleRegionY,
-            width: visibleRegionRef.current.width ?? 1,
-            height: visibleRegionRef.current.height ?? 1,
-            // tx: 'TODO',
-            ty: visibleRegionTy,
-        }),
-        [visibleRegionRef, visibleRegionTy, visibleRegionY]
-    );
-
-    const [visibleRegion, setVisibleRegion, empty] = useStateWithReactiveInput<VisibleRegion>(visibleRegionInput);
+    const y = scrollOffsetY !== undefined && typeof rowHeight === "number" ? Math.floor(scrollOffsetY / rowHeight) : 0;
+    const ty = scrollOffsetY !== undefined && typeof rowHeight === "number" ? -(scrollOffsetY % rowHeight) : 0;
+    const [snapshot, setSnapshot] = React.useState(() => {
+        const region: VisibleRegion = { x: 0, y, width: 1, height: 1, ty };
+        return { y, ty, region, observed: region };
+    });
+    if (snapshot.y !== y || snapshot.ty !== ty) {
+        // An offset change takes effect in this render, retaining the measured viewport.
+        setSnapshot({
+            ...snapshot,
+            y,
+            ty,
+            region: { x: snapshot.region.x, y, width: snapshot.region.width, height: snapshot.region.height, ty },
+        });
+    }
+    const visibleRegion = snapshot.region;
+    const setVisibleRegion = React.useCallback<React.Dispatch<React.SetStateAction<VisibleRegion>>>(next => {
+        setSnapshot(previous => {
+            const region = typeof next === "function" ? next(previous.region) : next;
+            if (region === previous.region) return previous;
+            return { ...previous, region, observed: region };
+        });
+    }, []);
+    const empty = React.useCallback(() => {
+        // The browser clamped the requested offset: use the last observed viewport
+        // until its scroll notification supplies the actual position.
+        setSnapshot(previous => ({ ...previous, region: previous.observed }));
+    }, []);
 
     const onDidScrollRef = React.useRef(onDidScroll);
-    onDidScrollRef.current = onDidScroll;
+    React.useLayoutEffect(() => {
+        onDidScrollRef.current = onDidScroll;
+    }, [onDidScroll]);
 
     const scrollRef = useCallbackRef<HTMLDivElement | null>(null, newVal => {
         if (newVal !== null && scrollOffsetY !== undefined) {

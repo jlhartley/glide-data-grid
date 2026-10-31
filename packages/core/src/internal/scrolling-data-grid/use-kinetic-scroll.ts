@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 const useKineticScroll = (
     isEnabled: boolean,
     callback: (scrollLeft: number, scrollTop: number) => void,
-    targetScroller: React.RefObject<HTMLDivElement | null>
+    scrollEl: HTMLDivElement | null
 ) => {
     const rafId = useRef<number | null>(null);
     const isTouching = useRef<boolean | null>(null);
@@ -11,9 +11,10 @@ const useKineticScroll = (
     const sameCount = useRef(0);
 
     const callbackRef = useRef(callback);
-    callbackRef.current = callback;
+    useLayoutEffect(() => {
+        callbackRef.current = callback;
+    }, [callback]);
 
-    const scrollEl = targetScroller.current;
 
     useEffect(() => {
         const handleScroll = () => {

@@ -1199,11 +1199,12 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         scrollOffsetX,
         scrollOffsetY,
         rowHeight,
-        visibleRegionRef,
         () => (hasJustScrolled.current = true)
     );
 
-    visibleRegionRef.current = visibleRegion;
+    React.useLayoutEffect(() => {
+        visibleRegionRef.current = visibleRegion;
+    }, [visibleRegion]);
 
     const cellXOffset = visibleRegion.x + rowMarkerOffset;
     const cellYOffset = visibleRegion.y;
