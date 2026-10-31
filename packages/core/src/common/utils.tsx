@@ -1,5 +1,6 @@
 import * as React from "react";
 import debounce from "lodash/debounce.js";
+import { useCommittedRef } from "./use-committed-ref.js";
 
 export function useEventListener<K extends keyof HTMLElementEventMap>(
     eventName: K,
@@ -8,16 +9,7 @@ export function useEventListener<K extends keyof HTMLElementEventMap>(
     passive: boolean,
     capture = false
 ) {
-    // Create a ref that stores handler
-    const savedHandler = React.useRef<(this: HTMLElement, ev: HTMLElementEventMap[K]) => any>(null);
-
-    // Update ref.current value if handler changes.
-    // This allows our effect below to always get latest handler ...
-    // ... without us needing to pass it in effect deps array ...
-    // ... and potentially cause effect to re-run every render.
-    React.useLayoutEffect(() => {
-        savedHandler.current = handler;
-    }, [handler]);
+    const savedHandler = useCommittedRef(handler);
     React.useEffect(
         () => {
             // Make sure element supports addEventListener
@@ -215,23 +207,23 @@ export function getScrollBarWidth(): number {
 export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
     const input = React.useMemo(() => ({ value: inputState }), [inputState]);
     const [snapshot, setSnapshot] = React.useState(() => ({ input, value: inputState, observed: inputState }));
-    const committedInput = React.useRef(input);
-    React.useLayoutEffect(() => {
-        committedInput.current = input;
-    }, [input]);
-    const setValue = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(next => {
-        const command = committedInput.current;
-        setSnapshot(previous => {
-            const current = previous.input === command ? previous.value : command.value;
-            const value = typeof next === "function" ? (next as (value: T) => T)(current) : next;
-            if (Object.is(value, current)) return previous;
-            return { input: command, value, observed: value };
-        });
-    }, []);
+    const committedInput = useCommittedRef(input);
+    const setValue = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
+        next => {
+            const command = committedInput.current;
+            setSnapshot(previous => {
+                const current = previous.input === command ? previous.value : command.value;
+                const value = typeof next === "function" ? (next as (value: T) => T)(current) : next;
+                if (Object.is(value, current)) return previous;
+                return { input: command, value, observed: value };
+            });
+        },
+        [committedInput]
+    );
     const reset = React.useCallback(() => {
         const command = committedInput.current;
         setSnapshot(previous => ({ ...previous, input: command, value: previous.observed }));
-    }, []);
+    }, [committedInput]);
     return [snapshot.input === input ? snapshot.value : input.value, setValue, reset];
 }
 

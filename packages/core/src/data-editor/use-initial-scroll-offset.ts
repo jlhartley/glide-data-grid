@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useCommittedRef } from "../common/use-committed-ref.js";
 import type { VisibleRegion } from "./visible-region.js";
 import type { DataEditorCoreProps } from "../index.js";
 
@@ -25,7 +26,7 @@ function useCallbackRef<T>(
             },
         },
     }));
-    React.useLayoutEffect(() => {
+    React.useInsertionEffect(() => {
         ref.callback = callback;
     }, [callback, ref]);
 
@@ -54,10 +55,7 @@ export function useInitialScrollOffset(
         () => (snapshot.input === input ? snapshot.region : applyOffset(snapshot.region, input)),
         [snapshot, input]
     );
-    const committedInput = React.useRef(input);
-    React.useLayoutEffect(() => {
-        committedInput.current = input;
-    }, [input]);
+    const committedInput = useCommittedRef(input);
     const setVisibleRegion = React.useCallback<React.Dispatch<React.SetStateAction<VisibleRegion>>>(next => {
         // Capture the committed command in the event handler, outside the updater.
         const command = committedInput.current;
@@ -67,16 +65,13 @@ export function useInitialScrollOffset(
             if (region === current) return previous;
             return { input: command, region, observed: region };
         });
-    }, []);
+    }, [committedInput]);
     const empty = React.useCallback(() => {
         const command = committedInput.current;
         setSnapshot(previous => ({ ...previous, input: command, region: previous.observed }));
-    }, []);
+    }, [committedInput]);
 
-    const onDidScrollRef = React.useRef(onDidScroll);
-    React.useLayoutEffect(() => {
-        onDidScrollRef.current = onDidScroll;
-    }, [onDidScroll]);
+    const onDidScrollRef = useCommittedRef(onDidScroll);
 
     const scrollRef = useCallbackRef<HTMLDivElement | null>(null, newVal => {
         if (newVal !== null && scrollOffsetY !== undefined) {
@@ -96,7 +91,7 @@ export function useInitialScrollOffset(
             }
             onDidScrollRef.current();
         }
-    }, [scrollOffsetY, vScrollReady, empty, scrollRef]);
+    }, [scrollOffsetY, vScrollReady, empty, scrollRef, onDidScrollRef]);
 
     const hScrollReady = (visibleRegion.width ?? 1) > 1;
     React.useLayoutEffect(() => {
@@ -108,7 +103,7 @@ export function useInitialScrollOffset(
             }
             onDidScrollRef.current();
         }
-    }, [scrollOffsetX, hScrollReady, empty, scrollRef]);
+    }, [scrollOffsetX, hScrollReady, empty, scrollRef, onDidScrollRef]);
 
     return {
         visibleRegion,

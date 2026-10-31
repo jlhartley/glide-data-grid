@@ -1,4 +1,6 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+
+import { useCommittedRef } from "../../common/use-committed-ref.js";
 
 const useKineticScroll = (
     isEnabled: boolean,
@@ -10,10 +12,7 @@ const useKineticScroll = (
     const lastScrollPosition = useRef<readonly [number, number] | null>(null);
     const sameCount = useRef(0);
 
-    const callbackRef = useRef(callback);
-    useLayoutEffect(() => {
-        callbackRef.current = callback;
-    }, [callback]);
+    const callbackRef = useCommittedRef(callback);
 
     const subscription = useRef<{ element: HTMLDivElement; cleanup: () => void } | undefined>(undefined);
     useEffect(() => {

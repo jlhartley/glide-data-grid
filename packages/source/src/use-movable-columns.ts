@@ -47,7 +47,10 @@ export function useMoveableColumns(p: Props): Required<Props> {
     }, [keys, columnsIn]);
 
     const onColumnMovedRef = React.useRef(onColumnMovedIn);
-    onColumnMovedRef.current = onColumnMovedIn;
+    // Publish at commit, before descendants can invoke the stable drag callback.
+    React.useInsertionEffect(() => {
+        onColumnMovedRef.current = onColumnMovedIn;
+    }, [onColumnMovedIn]);
     const onColumnMoved = React.useCallback((startIndex: number, endIndex: number) => {
         setKeys(old => {
             const newCols = [...old];

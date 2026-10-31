@@ -1,5 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { useCommittedRef } from "../../common/use-committed-ref.js";
 
 import ClickOutsideContainer from "../click-outside-container/click-outside-container.js";
 import { makeCSSStyle, type Theme, ThemeContext } from "../../common/styles.js";
@@ -81,10 +82,7 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
     } = p;
 
     const [tempValue, setTempValueRaw] = React.useState<GridCell | undefined>(forceEditMode ? content : undefined);
-    const lastValueRef = React.useRef(tempValue ?? content);
-    React.useLayoutEffect(() => {
-        lastValueRef.current = tempValue ?? content;
-    }, [tempValue, content]);
+    const lastValueRef = useCommittedRef(tempValue ?? content);
 
     const [isValid, setIsValid] = React.useState(() => {
         if (validateCell === undefined) return true;
@@ -113,7 +111,7 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
             }
             setTempValueRaw(newVal);
         },
-        [cell, validateCell]
+        [cell, validateCell, lastValueRef]
     );
 
     const finished = React.useRef(false);

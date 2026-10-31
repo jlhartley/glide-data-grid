@@ -1202,7 +1202,7 @@ const DataEditorImpl: React.ForwardRefRenderFunction<DataEditorRef, DataEditorPr
         () => (hasJustScrolled.current = true)
     );
 
-    React.useLayoutEffect(() => {
+    React.useInsertionEffect(() => {
         visibleRegionRef.current = visibleRegion;
     }, [visibleRegion]);
 
