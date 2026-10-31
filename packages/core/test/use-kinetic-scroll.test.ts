@@ -23,12 +23,9 @@ describe("useKineticScroll", () => {
     });
 
     it("registers and unregisters event listeners based on isEnabled", () => {
-        const { rerender } = renderHook(
-            ({ isEnabled }) => useKineticScroll(isEnabled, callback, targetScroller.current),
-            {
-                initialProps: { isEnabled: false },
-            }
-        );
+        const { rerender } = renderHook(({ isEnabled }) => useKineticScroll(isEnabled, callback, targetScroller), {
+            initialProps: { isEnabled: false },
+        });
 
         expect(targetScroller.current.addEventListener).not.toHaveBeenCalled();
         expect(targetScroller.current.removeEventListener).not.toHaveBeenCalled();
@@ -44,7 +41,7 @@ describe("useKineticScroll", () => {
     });
 
     it("handles scroll events and triggers callback", () => {
-        renderHook(() => useKineticScroll(true, callback, targetScroller.current));
+        renderHook(() => useKineticScroll(true, callback, targetScroller));
 
         act(() => {
             targetScroller.current.dispatchEvent(new Event("touchstart"));
@@ -66,9 +63,16 @@ it("keeps momentum subscribed across callback changes and cancels it on target r
     const remove = vi.spyOn(first, "removeEventListener");
     const oldCallback = vi.fn();
     const nextCallback = vi.fn();
-    const { rerender, unmount } = renderHook(({ target, onScroll }) => useKineticScroll(true, onScroll, target), {
-        initialProps: { target: first, onScroll: oldCallback },
-    });
+    const targetRef = { current: first };
+    const { rerender, unmount } = renderHook(
+        ({ target, onScroll }) => {
+            targetRef.current = target;
+            useKineticScroll(true, onScroll, targetRef);
+        },
+        {
+            initialProps: { target: first, onScroll: oldCallback },
+        }
+    );
     fireEvent.touchStart(first);
     fireEvent.touchEnd(first, { touches: [] });
     rerender({ target: first, onScroll: nextCallback });

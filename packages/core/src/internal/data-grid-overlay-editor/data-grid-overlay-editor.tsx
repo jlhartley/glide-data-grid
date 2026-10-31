@@ -216,10 +216,17 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
 
     styleOverride = { ...styleOverride, ...stayOnScreenStyle };
 
-    const [portalElement, setPortalElement] = React.useState<HTMLElement | null | undefined>();
+    // The default portal is a DOM lookup, not a React ref: initialize it without
+    // a corrective render. Custom ref targets are resolved after attachment.
+    const [portalElement, setPortalElement] = React.useState<HTMLElement | null>(() =>
+        portalElementRef === undefined ? document.getElementById("portal") : null
+    );
     React.useLayoutEffect(() => {
-        setPortalElement(portalElementRef?.current ?? document.getElementById("portal"));
-    }, [portalElementRef]);
+        const nextPortal = p.portalElementRef?.current ?? document.getElementById("portal");
+        if (nextPortal !== portalElement) setPortalElement(nextPortal);
+        // Ref targets can be replaced without changing the ref object. Recheck
+        // on changes to props or local render state, as the original renderer did.
+    }, [p, portalElement, tempValue, isValid, stayOnScreenStyle]);
     React.useEffect(() => {
         if (portalElement === null) {
             // A later sibling's ref may attach after this component's layout effect.
@@ -255,7 +262,8 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
                 className={className}
                 onClickOutside={onClickOutside}
                 isOutsideClick={isOutsideClick}
-                customEventTarget={customEventTarget}>
+                customEventTarget={customEventTarget}
+            >
                 <DataGridOverlayEditorStyle
                     ref={ref}
                     id={id}
@@ -265,7 +273,8 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
                     targetX={target.x - bloomX}
                     targetY={target.y - bloomY}
                     targetWidth={target.width + bloomX * 2}
-                    targetHeight={target.height + bloomY * 2}>
+                    targetHeight={target.height + bloomY * 2}
+                >
                     <div className="gdg-clip-region" onKeyDown={onKeyDown}>
                         {editor}
                     </div>

@@ -55,8 +55,9 @@ it("validates against the last committed editor value and follows a replacement 
     const second = document.createElement("div");
     document.body.append(first, second);
     const validateCell = vi.fn(() => true);
+    const target = { current: first };
     const { rerender, unmount } = render(
-        <DataGridOverlayEditor {...props} validateCell={validateCell} portalElementRef={{ current: first }} />
+        <DataGridOverlayEditor {...props} validateCell={validateCell} portalElementRef={target} />
     );
     expect(validateCell).toHaveBeenCalledWith([0, 0], content, content);
     fireEvent.change(within(first).getByLabelText("edit"), { target: { value: "next" } });
@@ -66,7 +67,8 @@ it("validates against the last committed editor value and follows a replacement 
         expect.objectContaining({ data: "last" }),
         expect.objectContaining({ data: "next" })
     );
-    rerender(<DataGridOverlayEditor {...props} validateCell={validateCell} portalElementRef={{ current: second }} />);
+    target.current = second;
+    rerender(<DataGridOverlayEditor {...props} validateCell={validateCell} portalElementRef={target} />);
     expect(within(first).queryByLabelText("edit")).toBeNull();
     expect(within(second).getByLabelText("edit")).toHaveProperty("value", "last");
     unmount();

@@ -157,7 +157,6 @@ export const InfiniteScroller: React.FC<Props> = p => {
     const virtualScrollY = React.useRef(0);
     const lastScrollY = React.useRef(0);
     const scroller = React.useRef<HTMLDivElement | null>(null);
-    const [scrollElement, setScrollElement] = React.useState<HTMLDivElement | null>(null);
 
     const dpr = typeof window === "undefined" ? 1 : window.devicePixelRatio;
     const lastDpr = React.useRef(dpr);
@@ -273,7 +272,7 @@ export const InfiniteScroller: React.FC<Props> = p => {
         [paddingBottom, paddingRight, scrollHeight, update, preventDiagonalScrolling, hasTouches]
     );
 
-    useKineticScroll(kineticScrollPerfHack && browserIsSafari.value, onScroll, scrollElement);
+    useKineticScroll(kineticScrollPerfHack && browserIsSafari.value, onScroll, scroller);
 
     const onScrollRef = React.useRef(onScroll);
     React.useLayoutEffect(() => {
@@ -304,7 +303,6 @@ export const InfiniteScroller: React.FC<Props> = p => {
     const setRefs = React.useCallback(
         (instance: HTMLDivElement | null) => {
             scroller.current = instance;
-            setScrollElement(instance);
             if (scrollRef !== undefined) {
                 scrollRef.current = instance;
             }
