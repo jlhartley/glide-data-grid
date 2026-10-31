@@ -44,7 +44,7 @@ export function useInitialScrollOffset(
         const region: VisibleRegion = { x: 0, y, width: 1, height: 1, ty };
         return { y, ty, region, observed: region };
     });
-    if (snapshot.y !== y || snapshot.ty !== ty) {
+    if (!Object.is(snapshot.y, y) || !Object.is(snapshot.ty, ty)) {
         // An offset change takes effect in this render, retaining the measured viewport.
         setSnapshot({
             ...snapshot,

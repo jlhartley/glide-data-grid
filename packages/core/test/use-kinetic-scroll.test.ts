@@ -23,9 +23,12 @@ describe("useKineticScroll", () => {
     });
 
     it("registers and unregisters event listeners based on isEnabled", () => {
-        const { rerender } = renderHook(({ isEnabled }) => useKineticScroll(isEnabled, callback, targetScroller.current), {
-            initialProps: { isEnabled: false },
-        });
+        const { rerender } = renderHook(
+            ({ isEnabled }) => useKineticScroll(isEnabled, callback, targetScroller.current),
+            {
+                initialProps: { isEnabled: false },
+            }
+        );
 
         expect(targetScroller.current.addEventListener).not.toHaveBeenCalled();
         expect(targetScroller.current.removeEventListener).not.toHaveBeenCalled();
@@ -54,4 +57,30 @@ describe("useKineticScroll", () => {
 
         expect(callback).toHaveBeenCalled();
     });
+});
+
+it("keeps momentum subscribed across callback changes and cancels it on target replacement", () => {
+    vi.useFakeTimers();
+    const first = document.createElement("div");
+    const second = document.createElement("div");
+    const remove = vi.spyOn(first, "removeEventListener");
+    const oldCallback = vi.fn();
+    const nextCallback = vi.fn();
+    const { rerender, unmount } = renderHook(({ target, onScroll }) => useKineticScroll(true, onScroll, target), {
+        initialProps: { target: first, onScroll: oldCallback },
+    });
+    fireEvent.touchStart(first);
+    fireEvent.touchEnd(first, { touches: [] });
+    rerender({ target: first, onScroll: nextCallback });
+    expect(remove).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1000 / 120);
+    expect(oldCallback).not.toHaveBeenCalled();
+    expect(nextCallback).toHaveBeenCalledOnce();
+    rerender({ target: second, onScroll: nextCallback });
+    expect(remove).toHaveBeenCalledTimes(2);
+    vi.advanceTimersByTime(100);
+    expect(nextCallback).toHaveBeenCalledOnce();
+    unmount();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
 });

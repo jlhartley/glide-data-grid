@@ -215,7 +215,7 @@ export function getScrollBarWidth(): number {
 // Keep both values in state so an interrupted render cannot publish an override.
 export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
     const [snapshot, setSnapshot] = React.useState(() => ({ input: inputState, value: inputState, overridden: false }));
-    if (snapshot.input !== inputState) {
+    if (!Object.is(snapshot.input, inputState)) {
         setSnapshot({ ...snapshot, input: inputState, overridden: true });
     }
 

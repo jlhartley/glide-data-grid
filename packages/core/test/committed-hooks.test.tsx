@@ -22,10 +22,13 @@ describe("committed hook values", () => {
         const first = vi.fn();
         const next = vi.fn();
         const abandoned = vi.fn();
-        const { rerender, unmount } = renderHook(({ handler, suspend }) => {
-            useEventListener("click", handler, element, false);
-            if (suspend) throw pending;
-        }, { initialProps: { handler: first, suspend: false }, wrapper });
+        const { rerender, unmount } = renderHook(
+            ({ handler, suspend }) => {
+                useEventListener("click", handler, element, false);
+                if (suspend) throw pending;
+            },
+            { initialProps: { handler: first, suspend: false }, wrapper }
+        );
         rerender({ handler: next, suspend: false });
         element.click();
         expect(next).toHaveBeenCalledOnce();
@@ -44,11 +47,14 @@ describe("committed hook values", () => {
         const first = vi.fn();
         const next = vi.fn();
         const abandoned = vi.fn();
-        const { result, rerender } = renderHook(({ draw, suspend }) => {
-            const enqueue = useAnimationQueue(draw);
-            if (suspend) throw pending;
-            return enqueue;
-        }, { initialProps: { draw: first, suspend: false }, wrapper });
+        const { result, rerender } = renderHook(
+            ({ draw, suspend }) => {
+                const enqueue = useAnimationQueue(draw);
+                if (suspend) throw pending;
+                return enqueue;
+            },
+            { initialProps: { draw: first, suspend: false }, wrapper }
+        );
         const enqueue = result.current;
         enqueue([1, 2]);
         enqueue([1, 2]);
@@ -64,11 +70,14 @@ describe("committed hook values", () => {
 
     it("retains deep memo identity across an abandoned render", () => {
         const initial = { a: 1 };
-        const { result, rerender } = renderHook(({ value, suspend }) => {
-            const memo = useDeepMemo(value);
-            if (suspend) throw pending;
-            return memo;
-        }, { initialProps: { value: initial, suspend: false }, wrapper });
+        const { result, rerender } = renderHook(
+            ({ value, suspend }) => {
+                const memo = useDeepMemo(value);
+                if (suspend) throw pending;
+                return memo;
+            },
+            { initialProps: { value: initial, suspend: false }, wrapper }
+        );
         rerender({ value: { a: 2 }, suspend: true });
         rerender({ value: { a: 1 }, suspend: false });
         expect(result.current).toBe(initial);
@@ -96,12 +105,23 @@ describe("committed hook values", () => {
         expect(result.current[0]).toBe(22);
     });
 
+    it("accepts NaN as a stable reactive input", () => {
+        const { result, rerender } = renderHook(value => useStateWithReactiveInput(value), {
+            initialProps: Number.NaN,
+        });
+        rerender(Number.NaN);
+        expect(result.current[0]).toBeNaN();
+    });
+
     it("does not leak a suspended reactive input into later updates", () => {
-        const { result, rerender } = renderHook(({ value, suspend }) => {
-            const state = useStateWithReactiveInput(value);
-            if (suspend) throw pending;
-            return state;
-        }, { initialProps: { value: 1, suspend: false }, wrapper });
+        const { result, rerender } = renderHook(
+            ({ value, suspend }) => {
+                const state = useStateWithReactiveInput(value);
+                if (suspend) throw pending;
+                return state;
+            },
+            { initialProps: { value: 1, suspend: false }, wrapper }
+        );
         act(() => result.current[1](3));
         rerender({ value: 10, suspend: true });
         rerender({ value: 1, suspend: false });
