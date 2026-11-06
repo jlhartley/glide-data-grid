@@ -1,1 +1,2 @@
-declare const value: any; export const result = value ? 1 : 0;
+declare const value: any;
+export const result = value ? 1 : 0;

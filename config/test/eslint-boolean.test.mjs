@@ -27,7 +27,11 @@ if (process.env.GLIDE_LINT_FIXTURE_WORKER === "1") {
         test(name, async () => {
             const [result] = await eslint.lintFiles(`test/lint-fixtures/boolean-${index}.tsx`);
             assert.equal(result.fatalErrorCount, 0, JSON.stringify(result.messages));
-            assert.equal(result.messages.filter(message => message.ruleId === rule).length, expected, JSON.stringify(result.messages));
+            assert.equal(
+                result.messages.filter(message => message.ruleId === rule).length,
+                expected,
+                JSON.stringify(result.messages)
+            );
         });
     }
 } else {
@@ -38,16 +42,20 @@ if (process.env.GLIDE_LINT_FIXTURE_WORKER === "1") {
             const env = { ...process.env, CI: "true", TSESTREE_SINGLE_RUN: singleRun, GLIDE_LINT_FIXTURE_WORKER: "1" };
             // A nested Node test runner must not inherit its parent worker marker.
             delete env.NODE_TEST_CONTEXT;
-            const child = spawnSync(process.execPath, ["--test", "--test-reporter=tap", fileURLToPath(import.meta.url)], {
-                env,
-                timeout: 60_000,
-                encoding: "utf8",
-            });
+            const child = spawnSync(
+                process.execPath,
+                ["--test", "--test-reporter=tap", fileURLToPath(import.meta.url)],
+                {
+                    env,
+                    timeout: 60_000,
+                    encoding: "utf8",
+                }
+            );
             assert.ifError(child.error);
             assert.equal(child.status, 0, child.stdout + child.stderr);
             assert.match(child.stdout, /# tests 5\b/, child.stdout);
             assert.match(child.stdout, /# pass 5\b/, child.stdout);
-            context.diagnostic(child.stdout);
+            for (const line of child.stdout.trim().split(/\r?\n/)) context.diagnostic(line);
         });
     }
 }
