@@ -81,5 +81,13 @@ as evidence of preserved behaviour without that check.
   renders while preserving portal DOM structure and replacement behaviour.
 
 These comparisons eliminate the measured **extra rendering**. They do not prove
-zero CPU or allocation overhead: layout-effect publication and dependency checks
+zero CPU or allocation overhead: commit-phase publication and dependency checks
 remain, and end-to-end browser performance is a separate measurement.
+
+
+The follow-up lifecycle fixes retain these counts across all 27 scenarios.
+Committed callback/input values are published before descendant layout effects;
+DOM subscriptions resolve attached targets without introducing target state.
+[Native Chromium regression results](../../packages/core/audit/browser/REPORT.md)
+cover retargeting, pending transitions and root Strict Mode independently of this
+controlled render-count harness.
