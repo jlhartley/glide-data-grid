@@ -1,0 +1,6 @@
+packages/core/src/docs/examples/custom-renderers.stories.tsx(51,40): error TS2554: Expected 2 arguments, but got 1.
+packages/core/src/docs/examples/get-mouse-args.stories.tsx(30,83): error TS2345: Argument of type 'MouseEvent<HTMLDivElement, MouseEvent>' is not assignable to parameter of type 'MouseEvent | TouchEvent | undefined'.
+  Type 'MouseEvent<HTMLDivElement, MouseEvent>' is missing the following properties from type 'MouseEvent': layerX, layerY, offsetX, offsetY, and 16 more.
+packages/core/src/docs/examples/scroll-shadows.stories.tsx(62,51): error TS7006: Parameter 'row' implicitly has an 'any' type.
+packages/core/test/data-grid-lib.test.ts(15,5): error TS2741: Property 'headerOrientation' is missing in type '{ title: string; sourceIndex: number; sticky: boolean; width: number; group: undefined; grow: undefined; headerRowMarkerAlwaysVisible: undefined; headerRowMarkerTheme: undefined; headerRowMarkerDisabled: undefined; ... 11 more ...; rowMarkerChecked: undefined; }' but required in type 'MappedGridColumn'.
+packages/core/test/lint-fixtures/boolean-0.tsx(2,30): error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.

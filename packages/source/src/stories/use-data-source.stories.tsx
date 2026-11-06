@@ -26,7 +26,7 @@ const SimpleWrapper = styled.div`
     }
 `;
 
-const SimpleThemeWrapper: React.FC = p => {
+const SimpleThemeWrapper: React.FC<React.PropsWithChildren> = p => {
     return (
         <SimpleWrapper>
             <div className="content">{p.children}</div>
@@ -91,7 +91,7 @@ interface BeautifulProps {
     description?: React.ReactNode;
 }
 
-const BeautifulWrapper: React.FC<BeautifulProps> = p => {
+const BeautifulWrapper: React.FC<React.PropsWithChildren<BeautifulProps>> = p => {
     const { title, children, description } = p;
 
     const { ref, width, height } = useResizeDetector();
@@ -227,7 +227,7 @@ const cols: GridColumn[] = [
     },
 ];
 
-export const UseDataSource: React.VFC = () => {
+export const UseDataSource: React.FC = () => {
     const cache = React.useRef<Record<string, string>>({});
 
     const rows = 100_000;
@@ -305,7 +305,7 @@ export const UseDataSource: React.VFC = () => {
     },
 };
 
-export const UndoRedo: React.VFC = () => {
+export const UndoRedo: React.FC = () => {
     const { cols: columns, getCellContent, setCellValue } = useMockDataGenerator(6);
 
     const gridRef = React.useRef<DataEditorRef>(null);

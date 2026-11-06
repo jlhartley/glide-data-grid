@@ -31,7 +31,7 @@ function rand(): number {
     return num;
 }
 
-export const RapidUpdates: React.VFC = () => {
+export const RapidUpdates: React.FC = () => {
     const { cols, getCellContent, setCellValueRaw } = useMockDataGenerator(100);
 
     const ref = React.useRef<DataEditorRef>(null);
