@@ -15,11 +15,11 @@ const rule = "@typescript-eslint/strict-boolean-expressions";
 // agreement in both watch and CI single-run modes. Never alias snippets to an
 // unrelated production file: single-run programs read that file from disk.
 const cases = [
-    ["JSX is a short-circuit result, not a boolean condition", 0],
-    ["conditional object spread preserves missing locations and column zero", 0],
-    ["a short-circuit result may be a column index including zero", 0],
-    ["an always-truthy object in a real condition is still rejected", 1],
-    ["an any-valued condition is still rejected", 1],
+    ["JSX is a short-circuit result, not a boolean condition", []],
+    ["conditional object spread preserves missing locations and column zero", []],
+    ["a short-circuit result may be a column index including zero", []],
+    ["an always-truthy object in a real condition is still rejected", ["conditionErrorObject"]],
+    ["an any-valued condition is still rejected", ["conditionErrorAny"]],
 ];
 
 if (process.env.GLIDE_LINT_FIXTURE_WORKER === "1") {
@@ -27,8 +27,8 @@ if (process.env.GLIDE_LINT_FIXTURE_WORKER === "1") {
         test(name, async () => {
             const [result] = await eslint.lintFiles(`test/lint-fixtures/boolean-${index}.tsx`);
             assert.equal(result.fatalErrorCount, 0, JSON.stringify(result.messages));
-            assert.equal(
-                result.messages.filter(message => message.ruleId === rule).length,
+            assert.deepEqual(
+                result.messages.filter(message => message.ruleId === rule).map(message => message.messageId),
                 expected,
                 JSON.stringify(result.messages)
             );
