@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
@@ -10,21 +11,37 @@ const { ESLint } = require("eslint");
 const eslint = new ESLint({ cwd: fileURLToPath(new URL("../../packages/core", import.meta.url)) });
 const rule = "@typescript-eslint/strict-boolean-expressions";
 
-for (const [name, code, expected] of [
-    ["JSX is a short-circuit result, not a boolean condition",
-        'declare const show: boolean; export const view = show && <div />;', 0],
-    ["conditional object spread preserves missing locations and column zero",
-        'declare const location: readonly [number, number] | undefined; export const value = { ...(location && { location }) };', 0],
-    ["a short-circuit result may be a column index including zero",
-        'declare const enabled: boolean; declare const result: boolean | number; export const value = enabled && result;', 0],
-    ["an always-truthy object in a real condition is still rejected",
-        'declare const value: object; export function f() { if (value) return 1; return 0; }', 1],
-    ["an any-valued condition is still rejected",
-        'declare const value: any; export const result = value ? 1 : 0;', 1],
-]) {
-    test(name, async () => {
-        const [result] = await eslint.lintText(code, { filePath: "src/common/utils.tsx" });
-        assert.equal(result.fatalErrorCount, 0);
-        assert.equal(result.messages.filter(message => message.ruleId === rule).length, expected);
-    });
+// Real files keep the parser AST, type-checker program and SourceCode text in
+// agreement in both watch and CI single-run modes. Never alias snippets to an
+// unrelated production file: single-run programs read that file from disk.
+const cases = [
+    ["JSX is a short-circuit result, not a boolean condition", 0],
+    ["conditional object spread preserves missing locations and column zero", 0],
+    ["a short-circuit result may be a column index including zero", 0],
+    ["an always-truthy object in a real condition is still rejected", 1],
+    ["an any-valued condition is still rejected", 1],
+];
+
+if (process.env.GLIDE_LINT_FIXTURE_WORKER === "1") {
+    for (const [index, [name, expected]] of cases.entries()) {
+        test(name, async () => {
+            const [result] = await eslint.lintFiles(`test/lint-fixtures/boolean-${index}.tsx`);
+            assert.equal(result.fatalErrorCount, 0, JSON.stringify(result.messages));
+            assert.equal(result.messages.filter(message => message.ruleId === rule).length, expected, JSON.stringify(result.messages));
+        });
+    }
+
+} else {
+    // Parser mode is selected at module initialization: use separate processes so
+    // both the local watch-program path and CI single-run path remain covered.
+    for (const singleRun of ["false", "true"]) {
+        test(`core boolean rules with TSESTREE_SINGLE_RUN=${singleRun}`, () => {
+            const child = spawnSync(process.execPath, ["--test", fileURLToPath(import.meta.url)], {
+                env: { ...process.env, CI: "true", TSESTREE_SINGLE_RUN: singleRun, GLIDE_LINT_FIXTURE_WORKER: "1" },
+                encoding: "utf8",
+            });
+            assert.ifError(child.error);
+            assert.equal(child.status, 0, child.stdout + child.stderr);
+        });
+    }
 }
