@@ -30,18 +30,24 @@ if (process.env.GLIDE_LINT_FIXTURE_WORKER === "1") {
             assert.equal(result.messages.filter(message => message.ruleId === rule).length, expected, JSON.stringify(result.messages));
         });
     }
-
 } else {
     // Parser mode is selected at module initialization: use separate processes so
     // both the local watch-program path and CI single-run path remain covered.
     for (const singleRun of ["false", "true"]) {
-        test(`core boolean rules with TSESTREE_SINGLE_RUN=${singleRun}`, () => {
-            const child = spawnSync(process.execPath, ["--test", fileURLToPath(import.meta.url)], {
-                env: { ...process.env, CI: "true", TSESTREE_SINGLE_RUN: singleRun, GLIDE_LINT_FIXTURE_WORKER: "1" },
+        test(`core boolean rules with TSESTREE_SINGLE_RUN=${singleRun}`, context => {
+            const env = { ...process.env, CI: "true", TSESTREE_SINGLE_RUN: singleRun, GLIDE_LINT_FIXTURE_WORKER: "1" };
+            // A nested Node test runner must not inherit its parent worker marker.
+            delete env.NODE_TEST_CONTEXT;
+            const child = spawnSync(process.execPath, ["--test", "--test-reporter=tap", fileURLToPath(import.meta.url)], {
+                env,
+                timeout: 60_000,
                 encoding: "utf8",
             });
             assert.ifError(child.error);
             assert.equal(child.status, 0, child.stdout + child.stderr);
+            assert.match(child.stdout, /# tests 5\b/, child.stdout);
+            assert.match(child.stdout, /# pass 5\b/, child.stdout);
+            context.diagnostic(child.stdout);
         });
     }
 }
