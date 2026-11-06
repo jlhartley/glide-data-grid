@@ -1,3 +1,4 @@
+import { useCommittedRef } from "../../common/use-committed-ref.js";
 import React from "react";
 import {
     CompactSelection,
@@ -33,20 +34,19 @@ type RowCallback<T> = (range: Item) => Promise<readonly T[]>;
 type RowToCell<T> = (row: T, col: number) => GridCell;
 type RowEditedCallback<T> = (cell: Item, newVal: EditableGridCell, rowData: T) => T | undefined;
 function useAsyncData<TRowType>(
-    pageSize: number,
+    requestedPageSize: number,
     maxConcurrency: number,
     getRowData: RowCallback<TRowType>,
     toCell: RowToCell<TRowType>,
     onEdited: RowEditedCallback<TRowType>,
     gridRef: React.RefObject<DataEditorRef | null>
 ): Pick<DataEditorProps, "getCellContent" | "onVisibleRegionChanged" | "onCellEdited" | "getCellsForSelection"> {
-    pageSize = Math.max(pageSize, 1);
+    const pageSize = Math.max(requestedPageSize, 1);
     const loadingRef = React.useRef(CompactSelection.empty());
     const dataRef = React.useRef<TRowType[]>([]);
 
     const [visiblePages, setVisiblePages] = React.useState<Rectangle>({ x: 0, y: 0, width: 0, height: 0 });
-    const visiblePagesRef = React.useRef(visiblePages);
-    visiblePagesRef.current = visiblePages;
+    const visiblePagesRef = useCommittedRef(visiblePages);
 
     const onVisibleRegionChanged: NonNullable<DataEditorProps["onVisibleRegionChanged"]> = React.useCallback(r => {
         setVisiblePages(cv => {
@@ -90,7 +90,7 @@ function useAsyncData<TRowType>(
             }
             gridRef.current?.updateCells(damageList);
         },
-        [getRowData, gridRef, pageSize]
+        [getRowData, gridRef, pageSize, visiblePagesRef]
     );
 
     const getCellsForSelection = React.useCallback(

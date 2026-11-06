@@ -268,10 +268,9 @@ export function computeCanBlit(current: DrawGridArg, last: DrawGridArg | undefin
             // two columns changed, abort
             if (resized !== undefined) return false;
 
-            if (curCol.width === lastCol.width) return false;
-
             const { width, ...curRest } = curCol;
             const { width: lastWidth, ...lastRest } = lastCol;
+            if (width === lastWidth) return false;
 
             // more than width changed, abort
             if (!deepEqual(curRest, lastRest)) return false;

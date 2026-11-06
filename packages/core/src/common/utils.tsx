@@ -179,9 +179,10 @@ const ltrRange =
     "\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF\u200E\u2C00-\uFB1C" +
     "\uFE00-\uFE6F\uFEFD-\uFFFF";
 
-/* eslint-disable no-misleading-character-class */
+// These ranges intentionally match individual code points, including combining marks.
+/* eslint-disable no-misleading-character-class, sonarjs/no-misleading-character-class */
 const rtl = new RegExp("^[^" + ltrRange + "]*[" + rtlRange + "]");
-/* eslint-enable no-misleading-character-class */
+/* eslint-enable no-misleading-character-class, sonarjs/no-misleading-character-class */
 
 export function direction(value: string): "rtl" | "not-rtl" {
     return rtl.test(value) ? "rtl" : "not-rtl";
