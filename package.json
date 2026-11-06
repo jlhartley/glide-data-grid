@@ -16,6 +16,7 @@
         "test-source": "pnpm --dir packages/source run test",
         "test-cells": "pnpm --dir packages/cells run test",
         "lint": "pnpm run test:lint && pnpm -r run lint",
+        "test:types:react19": "tsc -p packages/core/tsconfig.react19.json",
         "test:lint": "node --test config/test/*.test.mjs"
     },
     "type": "commonjs",

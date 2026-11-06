@@ -1,0 +1,110 @@
+packages/core/src/docs/00-faq.stories.tsx(17,25): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/00-faq.stories.tsx(19,10): error TS2559: Type '{ children: Element; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/01-getting-started.stories.tsx(131,36): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/01-getting-started.stories.tsx(171,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/02-editing-data.stories.tsx(137,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/02-editing-data.stories.tsx(304,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/03-grid-column.stories.tsx(19,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/03-grid-column.stories.tsx(43,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/04-streaming-data.stories.tsx(28,35): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/04-streaming-data.stories.tsx(352,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/05-copy-paste.stories.tsx.tsx(32,31): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/05-copy-paste.stories.tsx.tsx(186,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/06-search.stories.tsx(131,28): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/06-search.stories.tsx(170,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/07-column-grouping.stories.tsx(131,36): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/07-column-grouping.stories.tsx(171,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/08-theming.stories.tsx(132,29): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/08-theming.stories.tsx(225,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/09-menus.stories.tsx(138,27): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/09-menus.stories.tsx(207,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/src/docs/doc-wrapper.tsx(35,31): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/doc-wrapper.tsx(35,59): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/doc-wrapper.tsx(47,28): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/doc-wrapper.tsx(47,56): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/doc-wrapper.tsx(506,13): error TS2339: Property 'children' does not exist on type '{}'.
+packages/core/src/docs/examples/add-data-to-top.stories.tsx(34,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/add-data.stories.tsx(38,29): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/all-cell-kinds.stories.tsx(32,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/append-row-handle.stories.tsx(28,37): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/automatic-row-markers.stories.tsx(26,41): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/built-in-search.stories.tsx(44,35): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/cell-activated-event.stories.tsx(28,40): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/cell-activated-event.stories.tsx(28,99): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/column-group-collapse.stories.tsx(86,41): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/column-groups.stories.tsx(34,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/content-alignment.stories.tsx(34,38): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/controlled-search.stories.tsx(38,38): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/controlled-selection.stories.tsx(26,41): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/copy-support.stories.tsx(49,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/custom-editors.stories.tsx(73,35): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/custom-event-target.stories.tsx(30,39): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/custom-header-icons.stories.tsx(36,39): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/custom-header.stories.tsx(23,35): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/custom-renderers.stories.tsx(39,44): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/custom-renderers.stories.tsx(51,40): error TS2554: Expected 2 arguments, but got 1.
+packages/core/src/docs/examples/drag-source.stories.tsx(35,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/drag-source.stories.tsx(35,84): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/drop-events.stories.tsx(31,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/freeze-columns.stories.tsx(33,35): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/freeze-rows.stories.tsx(32,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/get-mouse-args.stories.tsx(24,45): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/get-mouse-args.stories.tsx(30,83): error TS2345: Argument of type 'MouseEvent<HTMLDivElement, MouseEvent>' is not assignable to parameter of type 'MouseEvent | TouchEvent | undefined'.
+  Type 'MouseEvent<HTMLDivElement, MouseEvent>' is missing the following properties from type 'MouseEvent': layerX, layerY, offsetX, offsetY, and 16 more.
+packages/core/src/docs/examples/header-menus.stories.tsx(75,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/highlight-cells.stories.tsx(36,36): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/imperative-scroll.stories.tsx(34,38): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/imperative-scroll.stories.tsx(34,67): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/keybindings.stories.tsx(18,39): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/layout-integration.stories.tsx(22,39): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/multi-select-columns.stories.tsx(41,40): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/new-column-button.stories.tsx(33,37): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/obscured-grid.stories.tsx(45,38): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/observe-visible-region.stories.tsx(27,42): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/one-hundred-thousand-columns.stories.tsx(27,44): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/one-million-rows.stories.tsx(24,36): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/overscroll.stories.tsx(40,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/overscroll.stories.tsx(40,55): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/padding.stories.tsx(40,29): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/padding.stories.tsx(40,49): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/paste-support.stories.tsx(58,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/prevent-diagonal-scroll.stories.tsx(35,43): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/rapid-updates.stories.tsx(34,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/rearrange-columns.stories.tsx(34,38): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/reorder-rows.stories.tsx(33,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/resizable-columns.stories.tsx(41,38): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/right-element.stories.tsx(33,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/right-to-left.stories.tsx(29,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/row-and-header-sizes.stories.tsx(41,39): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/row-and-header-sizes.stories.tsx(41,69): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/row-grouping.stories.tsx(36,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/row-hover.stories.tsx(35,30): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/row-markers.stories.tsx(40,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/row-markers.stories.tsx(40,55): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/examples/scaled-view.stories.tsx(23,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/scroll-offset.stories.tsx(33,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/scroll-shadows.stories.tsx(31,35): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/scroll-shadows.stories.tsx(62,51): error TS7006: Parameter 'row' implicitly has an 'any' type.
+packages/core/src/docs/examples/search-as-filter.stories.tsx(29,36): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/selection-serialization.stories.tsx(25,44): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/selection-serialization.stories.tsx(114,40): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/shadow-dom.stories.tsx(35,31): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/silly-numbers.stories.tsx(27,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/span-cell.stories.tsx(41,30): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/stretch-column-size.stories.tsx(33,39): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/ten-million-cells.stories.tsx(22,37): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/theme-per-column.stories.tsx(28,36): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/theme-per-row.stories.tsx(35,33): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/theme-support.stories.tsx(101,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/tooltips.stories.tsx(47,30): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/trailing-row-options.stories.tsx(64,40): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/uneven-rows.stories.tsx(32,32): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/validate-data.stories.tsx(37,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/wrapping-text.stories.tsx(36,34): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/examples/wrapping-text.stories.tsx(40,6): error TS7006: Parameter 'p' implicitly has an 'any' type.
+packages/core/src/docs/template.tsx(19,30): error TS2694: Namespace 'React' has no exported member 'VFC'.
+packages/core/src/docs/template.tsx(43,10): error TS2559: Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+packages/core/test/data-editor-input.test.tsx(183,16): error TS2339: Property 'children' does not exist on type '{}'.
+packages/core/test/data-grid-lib.test.ts(15,5): error TS2741: Property 'headerOrientation' is missing in type '{ title: string; sourceIndex: number; sticky: boolean; width: number; group: undefined; grow: undefined; headerRowMarkerAlwaysVisible: undefined; headerRowMarkerTheme: undefined; headerRowMarkerDisabled: undefined; ... 11 more ...; rowMarkerChecked: undefined; }' but required in type 'MappedGridColumn'.
+packages/core/test/lint-fixtures/boolean-0.tsx(2,30): error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+packages/core/test/test-utils.tsx(244,16): error TS2339: Property 'children' does not exist on type '{}'.

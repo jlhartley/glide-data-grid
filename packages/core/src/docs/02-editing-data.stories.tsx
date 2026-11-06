@@ -134,7 +134,7 @@ const fixedData: DummyItem[] = [
     },
 ];
 
-export const EditingData: React.VFC = () => {
+export const EditingData: React.FC = () => {
     const initialData = [
         {
             name: "Deidre Morris",

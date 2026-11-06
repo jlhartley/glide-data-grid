@@ -32,7 +32,7 @@ const SimpleWrapper = styled.div`
     }
 `;
 
-const SimpleThemeWrapper: React.FC = p => {
+const SimpleThemeWrapper: React.FC<React.PropsWithChildren> = p => {
     return (
         <SimpleWrapper>
             <div className="content">{p.children}</div>
@@ -97,7 +97,7 @@ interface BeautifulProps {
     description?: React.ReactNode;
 }
 
-const BeautifulWrapper: React.FC<BeautifulProps> = p => {
+const BeautifulWrapper: React.FC<React.PropsWithChildren<BeautifulProps>> = p => {
     const { title, children, description } = p;
 
     const { ref, width, height } = useResizeDetector();
@@ -168,7 +168,7 @@ const possibleTags = [
     },
 ];
 
-export const CustomCells: React.VFC = () => {
+export const CustomCells: React.FC = () => {
     return (
         <BeautifulWrapper title="Custom cells" description={<Description>Some of our extension cells.</Description>}>
             <DataEditor
@@ -557,7 +557,7 @@ export const CustomCells: React.VFC = () => {
     },
 };
 
-export const CustomCellEditing: React.VFC = () => {
+export const CustomCellEditing: React.FC = () => {
     const data = React.useRef<any[][]>([[]]);
 
     return (

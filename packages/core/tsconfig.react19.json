@@ -1,0 +1,9 @@
+{
+    "extends": "../../tsconfig.json",
+    "include": ["./test/react19-components.typecheck.tsx"],
+    "compilerOptions": {
+        "composite": false,
+        "incremental": false,
+        "noEmit": true
+    }
+}
