@@ -1,4 +1,5 @@
-import { renderHook, cleanup } from "@testing-library/react";
+import { useAbortController } from "../src/common/use-abort-controller.js";
+import { act, renderHook, cleanup } from "@testing-library/react";
 import { type GridCell, GridCellKind, type GridColumn, type Rectangle } from "../src/index.js";
 import { getDataEditorTheme, mergeAndRealizeTheme } from "../src/common/styles.js";
 import type { DataGridSearchProps } from "../src/internal/data-grid-search/data-grid-search.js";
@@ -185,13 +186,15 @@ describe("use-column-sizer", () => {
                 400,
                 20,
                 500,
-                mergeAndRealizeTheme(theme, {cellHorizontalPadding: 12}),
+                mergeAndRealizeTheme(theme, { cellHorizontalPadding: 12 }),
                 getCellRenderer,
                 abortController
             )
         );
 
-        const columnA = result.current.sizedColumns.find(col => col.title === "Some very very long title that exceeds displayData width");
+        const columnA = result.current.sizedColumns.find(
+            col => col.title === "Some very very long title that exceeds displayData width"
+        );
         const columnB = result.current.sizedColumns.find(col => col.title === "Short title");
 
         expect(columnA).toBeDefined();
@@ -410,5 +413,45 @@ describe("use-column-sizer", () => {
         expect(columnA?.width).toBe(100);
         expect(columnB?.width).toBe(150);
         expect(columnC?.width).toBe(150);
+    });
+    it("cancels pending async sizing on Strict Mode cleanup and unmount without reusing aborted signals", async () => {
+        const signals: AbortSignal[] = [];
+        const getCells = (_rect: Rectangle, signal: AbortSignal) => {
+            signals.push(signal);
+            return () =>
+                new Promise<CellArray>((_resolve, reject) => {
+                    signal.addEventListener("abort", () => reject(new DOMException("Cancelled", "AbortError")), {
+                        once: true,
+                    });
+                });
+        };
+        const { unmount } = renderHook(
+            () => {
+                const getController = useAbortController();
+                return useColumnSizer(
+                    SINGLE_COLUMN,
+                    1,
+                    getCells,
+                    400,
+                    20,
+                    500,
+                    mergeAndRealizeTheme(theme),
+                    getCellRenderer,
+                    getController
+                );
+            },
+            { reactStrictMode: true }
+        );
+        await act(async () => {
+            await Promise.resolve();
+        });
+        expect(signals.length).toBe(2);
+        expect(signals[0].aborted).toBe(true);
+        expect(signals[1].aborted).toBe(false);
+        unmount();
+        await act(async () => {
+            await Promise.resolve();
+        });
+        expect(signals.every(signal => signal.aborted)).toBe(true);
     });
 });

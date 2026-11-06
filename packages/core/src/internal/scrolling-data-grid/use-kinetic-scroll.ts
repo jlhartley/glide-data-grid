@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+import { useCommittedRef } from "../../common/use-committed-ref.js";
+
 const useKineticScroll = (
     isEnabled: boolean,
     callback: (scrollLeft: number, scrollTop: number) => void,
@@ -10,12 +12,16 @@ const useKineticScroll = (
     const lastScrollPosition = useRef<readonly [number, number] | null>(null);
     const sameCount = useRef(0);
 
-    const callbackRef = useRef(callback);
-    callbackRef.current = callback;
+    const callbackRef = useCommittedRef(callback);
 
-    const scrollEl = targetScroller.current;
-
+    const subscription = useRef<{ element: HTMLDivElement; cleanup: () => void } | undefined>(undefined);
     useEffect(() => {
+        const scrollEl = targetScroller.current;
+        if (isEnabled && scrollEl !== null && subscription.current?.element === scrollEl) return;
+        subscription.current?.cleanup();
+        subscription.current = undefined;
+        if (!isEnabled || scrollEl === null) return;
+
         const handleScroll = () => {
             if (isTouching.current === false && scrollEl !== null) {
                 const currentScrollPosition = [scrollEl.scrollLeft, scrollEl.scrollTop] as const;
@@ -64,15 +70,26 @@ const useKineticScroll = (
             element.addEventListener("touchstart", startTouch);
             element.addEventListener("touchend", endTouch);
 
-            return () => {
-                element.removeEventListener("touchstart", startTouch);
-                element.removeEventListener("touchend", endTouch);
-                if (rafId.current !== null) {
-                    window.clearTimeout(rafId.current);
-                }
+            subscription.current = {
+                element,
+                cleanup: () => {
+                    element.removeEventListener("touchstart", startTouch);
+                    element.removeEventListener("touchend", endTouch);
+                    if (rafId.current !== null) {
+                        window.clearTimeout(rafId.current);
+                        rafId.current = null;
+                    }
+                },
             };
         }
-    }, [isEnabled, scrollEl]);
+    });
+    useEffect(
+        () => () => {
+            subscription.current?.cleanup();
+            subscription.current = undefined;
+        },
+        []
+    );
 };
 
 export default useKineticScroll;

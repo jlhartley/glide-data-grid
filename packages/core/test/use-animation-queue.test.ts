@@ -51,3 +51,25 @@ describe("use-cell-sizer", () => {
         );
     });
 });
+
+it("defers reentrant drawing to the next frame and retains the long-running throttle", () => {
+    const frames: FrameRequestCallback[] = [];
+    const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => {
+        frames.push(callback);
+        return frames.length;
+    });
+    let enqueue: ReturnType<typeof useAnimationQueue>;
+    const draw = vi.fn(() => enqueue([1, 2]));
+    const { result, unmount } = renderHook(() => useAnimationQueue(draw));
+    enqueue = result.current;
+    enqueue([1, 2]);
+    expect(draw).not.toHaveBeenCalled();
+    for (let i = 0; i < 602; i++) frames.shift()!(i * 16);
+    expect(draw).toHaveBeenCalledTimes(602);
+    frames.shift()!(603 * 16);
+    expect(draw).toHaveBeenCalledTimes(602);
+    frames.shift()!(604 * 16);
+    expect(draw).toHaveBeenCalledTimes(603);
+    unmount();
+    request.mockRestore();
+});

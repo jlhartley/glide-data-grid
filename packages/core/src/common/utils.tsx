@@ -1,41 +1,58 @@
 import * as React from "react";
 import debounce from "lodash/debounce.js";
-import { deepEqual } from "./support.js";
+import { useCommittedRef } from "./use-committed-ref.js";
+
+type EventTargetElement = HTMLElement | Window | Document | ShadowRoot | null;
 
 export function useEventListener<K extends keyof HTMLElementEventMap>(
     eventName: K,
     handler: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
-    element: HTMLElement | Window | Document | null,
+    element: EventTargetElement | (() => EventTargetElement),
     passive: boolean,
     capture = false
 ) {
-    // Create a ref that stores handler
-    const savedHandler = React.useRef<(this: HTMLElement, ev: HTMLElementEventMap[K]) => any>(null);
-
-    // Update ref.current value if handler changes.
-    // This allows our effect below to always get latest handler ...
-    // ... without us needing to pass it in effect deps array ...
-    // ... and potentially cause effect to re-run every render.
-    savedHandler.current = handler;
+    const savedHandler = useCommittedRef(handler);
+    const subscription = React.useRef<
+        | {
+              target: EventTargetElement;
+              name: K;
+              passive: boolean;
+              capture: boolean;
+              cleanup: () => void;
+          }
+        | undefined
+    >(undefined);
+    // Resolve DOM refs after attachment, including a replacement on the same ref object.
+    React.useEffect(() => {
+        const target = typeof element === "function" ? element() : element;
+        const previous = subscription.current;
+        if (
+            previous?.target === target &&
+            previous.name === eventName &&
+            previous.passive === passive &&
+            previous.capture === capture
+        )
+            return;
+        previous?.cleanup();
+        subscription.current = undefined;
+        if (target === null) return;
+        const el = target as HTMLElement;
+        const listener = (event: HTMLElementEventMap[K]) => savedHandler.current.call(el, event);
+        el.addEventListener(eventName, listener, { passive, capture });
+        subscription.current = {
+            target,
+            name: eventName,
+            passive,
+            capture,
+            cleanup: () => el.removeEventListener(eventName, listener, { capture }),
+        };
+    });
     React.useEffect(
-        () => {
-            // Make sure element supports addEventListener
-            if (element === null || element.addEventListener === undefined) return;
-            const el = element as HTMLElement;
-
-            // Create event listener that calls handler function stored in ref
-            const eventListener = (event: HTMLElementEventMap[K]) => {
-                savedHandler.current?.call(el, event);
-            };
-
-            el.addEventListener(eventName, eventListener, { passive, capture });
-
-            // Remove event listener on cleanup
-            return () => {
-                el.removeEventListener(eventName, eventListener, { capture });
-            };
+        () => () => {
+            subscription.current?.cleanup();
+            subscription.current = undefined;
         },
-        [eventName, element, passive, capture] // Re-run if eventName or element changes
+        []
     );
 }
 
@@ -134,28 +151,23 @@ export const Checkmark: React.FunctionComponent<Partial<SpriteProps>> = (props: 
 export function useDebouncedMemo<T>(factory: () => T, deps: React.DependencyList | undefined, time: number): T {
     const [state, setState] = React.useState(factory);
 
-    const mountedRef = React.useRef(true);
-    React.useEffect(
-        () => () => {
-            mountedRef.current = false;
-        },
-        []
+    // The caller supplies this hook's dependency list. Keep a token even when
+    // the same factory function is reused with a different dependency value.
+    const everyRender = {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const scheduled = React.useMemo(() => ({ factory }), deps ?? [everyRender]);
+    const debouncedSetState = React.useMemo(
+        () =>
+            debounce((create: () => T) => {
+                const value = create();
+                setState(() => value);
+            }, time),
+        [time]
     );
-
-    const debouncedSetState = React.useRef<typeof setState>(
-        debounce(x => {
-            if (mountedRef.current) {
-                setState(x);
-            }
-        }, time)
-    );
-
     React.useLayoutEffect(() => {
-        if (mountedRef.current) {
-            debouncedSetState.current(() => factory());
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, deps);
+        debouncedSetState(scheduled.factory);
+        return () => debouncedSetState.cancel();
+    }, [debouncedSetState, scheduled]);
 
     return state;
 }
@@ -209,51 +221,29 @@ export function getScrollBarWidth(): number {
     return scrollbarWidthCache;
 }
 
-// Dear future reader,
-// This dumb hook is to make sure if the inputState changes, that effectively behaves like an instant "setState" call.
-// This is useful in a wide variety of situations. I'm too dumb to know if this is a good idea or a really dumb one.
-// I can't tell. It's like poes law but for code.
-//
-// I'm sorry.
-const empty = Symbol();
+// A changed input wins until an explicit update or reset consumes that command.
+// Derive it during render; only publish command identity to event callbacks at commit.
 export function useStateWithReactiveInput<T>(inputState: T): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
-    // When [0] is not empty we will return it, [1] is always the last value we saw
-    const inputStateRef = React.useRef<[T | typeof empty, T]>([empty, inputState]);
-    if (inputStateRef.current[1] !== inputState) {
-        // it changed, we must use thee!
-        inputStateRef.current[0] = inputState;
-    }
-    inputStateRef.current[1] = inputState;
-
-    const [state, setState] = React.useState(inputState);
-    // crimes against humanity here
-    const [, forceRender] = React.useReducer(count => count + 1, 0);
-    const setStateOuter = React.useCallback<typeof setState>(nv => {
-        // this takes care of the case where the inputState was set, then setState gets called again but back to what
-        // the state was before the inputState changed. Since the useState effect wont trigger a render in this case
-        // we need to be very naughty and force it to see the change. Technically this may not be needed some chunk of
-        // the time (in fact most of it) but checking for it is likely to be more expensive than just over-doing it
-        const s = inputStateRef.current[0];
-        if (s !== empty) {
-            nv = typeof nv === "function" ? (nv as (pv: T) => T)(s) : nv;
-            if (nv === s) return; // they are setting it to what the inputState is anyway so we can just do nothing
-        }
-        if (s !== empty) forceRender();
-        setState(pv => {
-            if (typeof nv === "function") {
-                return (nv as (pv: T) => T)(s === empty ? pv : s);
-            }
-            return nv;
-        });
-        inputStateRef.current[0] = empty;
-    }, []);
-
-    const onEmpty = React.useCallback(() => {
-        inputStateRef.current[0] = empty;
-        forceRender();
-    }, []);
-
-    return [inputStateRef.current[0] === empty ? state : inputStateRef.current[0], setStateOuter, onEmpty];
+    const input = React.useMemo(() => ({ value: inputState }), [inputState]);
+    const [snapshot, setSnapshot] = React.useState(() => ({ input, value: inputState, observed: inputState }));
+    const committedInput = useCommittedRef(input);
+    const setValue = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
+        next => {
+            const command = committedInput.current;
+            setSnapshot(previous => {
+                const current = previous.input === command ? previous.value : command.value;
+                const value = typeof next === "function" ? (next as (value: T) => T)(current) : next;
+                if (Object.is(value, current)) return previous;
+                return { input: command, value, observed: value };
+            });
+        },
+        [committedInput]
+    );
+    const reset = React.useCallback(() => {
+        const command = committedInput.current;
+        setSnapshot(previous => ({ ...previous, input: command, value: previous.observed }));
+    }, [committedInput]);
+    return [snapshot.input === input ? snapshot.value : input.value, setValue, reset];
 }
 
 export function makeAccessibilityStringForArray(arr: readonly string[]): string {
@@ -271,14 +261,4 @@ export function makeAccessibilityStringForArray(arr: readonly string[]): string 
         index++;
     }
     return arr.slice(0, index).join(", ");
-}
-
-export function useDeepMemo<T>(value: T): T {
-    const ref = React.useRef<T>(value);
-
-    if (!deepEqual(value, ref.current)) {
-        ref.current = value;
-    }
-
-    return ref.current;
 }

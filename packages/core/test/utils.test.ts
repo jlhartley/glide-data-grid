@@ -133,3 +133,24 @@ describe("useStateWithReactiveInput", () => {
         expect(onCommit).toHaveBeenCalledTimes(2);
     });
 });
+
+test("reactive inputs change in one render and retain stable update callbacks", () => {
+    let renders = 0;
+    const { result, rerender } = renderHook(
+        value => {
+            renders++;
+            return useStateWithReactiveInput(value);
+        },
+        { initialProps: 0 }
+    );
+    const setter = result.current[1];
+    const reset = result.current[2];
+    for (const value of [10, 20, 0, 0]) {
+        const before = renders;
+        rerender(value);
+        expect(renders - before).toBe(1);
+        expect(result.current[0]).toBe(value);
+        expect(result.current[1]).toBe(setter);
+        expect(result.current[2]).toBe(reset);
+    }
+});

@@ -135,7 +135,7 @@ const fixedData: DummyItem[] = [
 ];
 
 export const EditingData: React.VFC = () => {
-    const dataRef = React.useRef([
+    const initialData = [
         {
             name: "Deidre Morris",
             company: "GONKLE",
@@ -238,7 +238,8 @@ export const EditingData: React.VFC = () => {
             email: "bryantdunlap@bytrex.com",
             phone: "+1 (872) 583-2883",
         },
-    ]);
+    ];
+    const dataRef = React.useRef(initialData);
 
     const getContent = React.useCallback((cell: Item): GridCell => {
         const [col, row] = cell;
@@ -329,7 +330,7 @@ const getContent = React.useCallback((cell: Item): GridCell => {
 \`allowOverlay\` has been set to true. This allows the overlay to come up. For explanatory purposes the \`readonly\` field is being set to false. This is the default value, setting it to true would allow the overlay to come up but not allow editing.`}
             </Marked>
             <Wrapper height={200}>
-                <DataEditor getCellContent={getFixedContent} columns={columns} rows={dataRef.current.length} />
+                <DataEditor getCellContent={getFixedContent} columns={columns} rows={initialData.length} />
             </Wrapper>
             <Marked>
                 {`
@@ -356,7 +357,7 @@ const onCellEdited = React.useCallback((cell: Item, newValue: EditableGridCell) 
                     getCellContent={getContent}
                     onCellEdited={onCellEdited}
                     columns={columns}
-                    rows={dataRef.current.length}
+                    rows={initialData.length}
                 />
             </Wrapper>
         </DocWrapper>

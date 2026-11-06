@@ -64,7 +64,7 @@ export const CustomEventTarget: React.VFC = () => {
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     // State to track if the container is mounted
-    const [containerMounted, setContainerMounted] = React.useState(false);
+    const [container, setContainer] = React.useState<HTMLElement | null>(null);
 
     // State to track window click attempts
     const [windowClickAttempts, setWindowClickAttempts] = React.useState(0);
@@ -72,7 +72,7 @@ export const CustomEventTarget: React.VFC = () => {
     // Update containerMounted state after the component mounts
     React.useEffect(() => {
         if (containerRef.current !== null) {
-            setContainerMounted(true);
+            setContainer(containerRef.current);
         }
     }, []);
 
@@ -138,7 +138,7 @@ export const CustomEventTarget: React.VFC = () => {
                     borderRadius: 4,
                     padding: 15,
                 }}>
-                {containerMounted && (
+                {container !== null && (
                     <DataEditor
                         {...defaultProps}
                         width="100%"
@@ -147,7 +147,7 @@ export const CustomEventTarget: React.VFC = () => {
                         columns={cols}
                         getCellContent={getCellContent}
                         experimental={{
-                            eventTarget: containerRef.current as HTMLElement,
+                            eventTarget: container,
                         }}
                     />
                 )}

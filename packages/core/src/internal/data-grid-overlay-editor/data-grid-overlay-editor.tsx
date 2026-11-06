@@ -1,5 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { useCommittedRef } from "../../common/use-committed-ref.js";
 
 import ClickOutsideContainer from "../click-outside-container/click-outside-container.js";
 import { makeCSSStyle, type Theme, ThemeContext } from "../../common/styles.js";
@@ -81,12 +82,11 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
     } = p;
 
     const [tempValue, setTempValueRaw] = React.useState<GridCell | undefined>(forceEditMode ? content : undefined);
-    const lastValueRef = React.useRef(tempValue ?? content);
-    lastValueRef.current = tempValue ?? content;
+    const lastValueRef = useCommittedRef(tempValue ?? content);
 
     const [isValid, setIsValid] = React.useState(() => {
         if (validateCell === undefined) return true;
-        return !(isEditableGridCell(content) && validateCell?.(cell, content, lastValueRef.current) === false);
+        return !(isEditableGridCell(content) && validateCell?.(cell, content, content) === false);
     });
 
     const onFinishEditing = React.useCallback<typeof onFinishEditingIn>(
@@ -111,7 +111,7 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
             }
             setTempValueRaw(newVal);
         },
-        [cell, validateCell]
+        [cell, validateCell, lastValueRef]
     );
 
     const finished = React.useRef(false);
@@ -214,15 +214,32 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
 
     styleOverride = { ...styleOverride, ...stayOnScreenStyle };
 
-    // Consider imperatively creating and adding the element to the dom?
-    const portalElement = portalElementRef?.current ?? document.getElementById("portal");
-    if (portalElement === null) {
-        // eslint-disable-next-line no-console
-        console.error(
-            'Cannot open Data Grid overlay editor, because portal not found. Please, either provide a portalElementRef or add `<div id="portal" />` as the last child of your `<body>`.'
-        );
-        return null;
-    }
+    // The default portal is a DOM lookup, not a React ref: initialize it without
+    // a corrective render. Custom ref targets are resolved after attachment.
+    const [portalElement, setPortalElement] = React.useState<HTMLElement | null>(() =>
+        portalElementRef === undefined ? document.getElementById("portal") : null
+    );
+    React.useLayoutEffect(() => {
+        const nextPortal = p.portalElementRef?.current ?? document.getElementById("portal");
+        if (nextPortal !== portalElement) setPortalElement(nextPortal);
+        // Ref targets can be replaced without changing the ref object. Recheck
+        // on changes to props or local render state, as the original renderer did.
+    }, [p, portalElement, tempValue, isValid, stayOnScreenStyle]);
+    React.useEffect(() => {
+        if (portalElement === null) {
+            // A later sibling's ref may attach after this component's layout effect.
+            const attached = portalElementRef?.current ?? document.getElementById("portal");
+            if (attached !== null) {
+                setPortalElement(attached);
+                return;
+            }
+            // eslint-disable-next-line no-console
+            console.error(
+                'Cannot open Data Grid overlay editor, because portal not found. Please, either provide a portalElementRef or add `<div id="portal" />` as the last child of your `<body>`.'
+            );
+        }
+    }, [portalElement, portalElementRef]);
+    if (portalElement === null || portalElement === undefined) return null;
 
     let classWrap = style ? "gdg-style" : "gdg-unstyle";
     if (!isValid) {
@@ -243,7 +260,8 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
                 className={className}
                 onClickOutside={onClickOutside}
                 isOutsideClick={isOutsideClick}
-                customEventTarget={customEventTarget}>
+                customEventTarget={customEventTarget}
+            >
                 <DataGridOverlayEditorStyle
                     ref={ref}
                     id={id}
@@ -253,7 +271,8 @@ const DataGridOverlayEditor: React.FunctionComponent<DataGridOverlayEditorProps>
                     targetX={target.x - bloomX}
                     targetY={target.y - bloomY}
                     targetWidth={target.width + bloomX * 2}
-                    targetHeight={target.height + bloomY * 2}>
+                    targetHeight={target.height + bloomY * 2}
+                >
                     <div className="gdg-clip-region" onKeyDown={onKeyDown}>
                         {editor}
                     </div>

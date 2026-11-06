@@ -148,7 +148,7 @@ export const StreamingData: React.VFC = () => {
         },
     ]);
 
-    const dataRef = React.useRef([
+    const initialData = [
         {
             name: "Deidre Morris",
             company: "GONKLE",
@@ -268,7 +268,8 @@ export const StreamingData: React.VFC = () => {
             phone: "+1 (872) 583-2883",
             update: 0,
         },
-    ]);
+    ];
+    const dataRef = React.useRef(initialData);
 
     const getContent = React.useCallback((cell: Item): GridCell => {
         const [col, row] = cell;
@@ -390,7 +391,7 @@ const onButtonClick = () => {
             </Highlight>
             <button onClick={onButtonClick}>Swappy Swappy</button>
             <Wrapper height={400}>
-                <DataEditor ref={ref} getCellContent={getContent} columns={columns} rows={dataRef.current.length} />
+                <DataEditor ref={ref} getCellContent={getContent} columns={columns} rows={initialData.length} />
             </Wrapper>
             <Marked>
                 {`
@@ -425,7 +426,7 @@ const getContent = React.useCallback((cell: Item): GridCell => {
                     ref={ref}
                     getCellContent={getContentHighlighted}
                     columns={columns}
-                    rows={dataRef.current.length}
+                    rows={initialData.length}
                 />
             </Wrapper>
         </DocWrapper>

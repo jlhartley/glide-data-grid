@@ -84,7 +84,7 @@ export function useColumnSizer(
     maxColumnWidth: number,
     theme: FullTheme,
     getCellRenderer: GetCellRendererCallback,
-    abortController: AbortController
+    abortController: AbortController | (() => AbortController)
 ): {
     readonly sizedColumns: readonly InnerGridColumn[];
     readonly nonGrowWidth: number;
@@ -140,29 +140,39 @@ export function useColumnSizer(
             width: columns.length,
             height: 1,
         };
+        let cancelled = false;
+        const controller = typeof abortController === "function" ? abortController() : abortController;
         const fn = async () => {
-            const getResult = getCells(computeArea, abortController.signal);
-            const tailGetResult = tailRows > 0 ? getCells(tailComputeArea, abortController.signal) : undefined;
-            let toSet: CellArray;
-            // eslint-disable-next-line unicorn/prefer-ternary
-            if (typeof getResult === "object") {
-                toSet = getResult;
-            } else {
-                toSet = await resolveCellsThunk(getResult);
-            }
-            if (tailGetResult !== undefined) {
+            try {
+                const getResult = getCells(computeArea, controller.signal);
+                const tailGetResult = tailRows > 0 ? getCells(tailComputeArea, controller.signal) : undefined;
+                let toSet: CellArray;
                 // eslint-disable-next-line unicorn/prefer-ternary
-                if (typeof tailGetResult === "object") {
-                    toSet = [...toSet, ...tailGetResult];
+                if (typeof getResult === "object") {
+                    toSet = getResult;
                 } else {
-                    toSet = [...toSet, ...(await resolveCellsThunk(tailGetResult))];
+                    toSet = await resolveCellsThunk(getResult);
                 }
+                if (tailGetResult !== undefined) {
+                    // eslint-disable-next-line unicorn/prefer-ternary
+                    if (typeof tailGetResult === "object") {
+                        toSet = [...toSet, ...tailGetResult];
+                    } else {
+                        toSet = [...toSet, ...(await resolveCellsThunk(tailGetResult))];
+                    }
+                }
+                if (cancelled || controller.signal.aborted) return;
+                lastColumns.current = columns;
+                setSelectionData(toSet);
+            } catch (error) {
+                if (!controller.signal.aborted) throw error;
             }
-            lastColumns.current = columns;
-            setSelectionData(toSet);
         };
         void fn();
-    }, [abortController.signal, columns]);
+        return () => {
+            cancelled = true;
+        };
+    }, [abortController, columns]);
 
     return React.useMemo(() => {
         const getRaw = () => {
