@@ -88,6 +88,10 @@ export class SpriteManager {
                 .then(() => {
                     spriteCtx.drawImage(imgSource, 0, 0, rSize, rSize);
                 })
+                .catch(() => {
+                    // Invalid SVGs are omitted; settle the batch without an unhandled rejection.
+                    // Keep the empty cached canvas so redraws do not retry a broken icon.
+                })
                 .finally(() => {
                     this.inFlight--;
                     if (this.inFlight === 0) {
