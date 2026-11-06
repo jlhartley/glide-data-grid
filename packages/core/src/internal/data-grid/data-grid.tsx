@@ -327,6 +327,8 @@ export interface DataGridRef {
     ) => GridMouseEventArgs | undefined;
 }
 
+const noop = () => undefined;
+
 const getRowData = (cell: InnerGridCell, getCellRenderer?: GetCellRendererCallback) => {
     if (cell.kind === GridCellKind.Custom) return cell.copyData;
     const r = getCellRenderer?.(cell);
@@ -1031,12 +1033,14 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
         [cursor]
     );
 
-    const lastSetCursor = React.useRef<typeof cursor>("default");
-    const target = eventTargetRef?.current;
-    if (target !== null && target !== undefined && lastSetCursor.current !== style.cursor) {
-        // because we have an event target we need to set its cursor instead.
-        target.style.cursor = lastSetCursor.current = style.cursor;
-    }
+    React.useLayoutEffect(() => {
+        const target = eventTargetRef?.current;
+        if (target !== null && target !== undefined && target.style.cursor !== cursor) {
+            // Updating the DOM after commit is intentional; no React-owned data is changed.
+            // eslint-disable-next-line react-hooks/immutability
+            target.style.cursor = cursor;
+        }
+    });
 
     const groupHeaderActionForEvent = React.useCallback(
         (group: string, bounds: Rectangle, localEventX: number, localEventY: number) => {
@@ -1785,6 +1789,63 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
                 focusElement(null);
             }
 
+            const renderCell = (c: (typeof effectiveCols)[number], row: number) => {
+                const col = c.sourceIndex;
+                const key = packColRowToNumber(col, row);
+                const focused = fCol === col && fRow === row;
+                const selected =
+                    range !== undefined &&
+                    col >= range.x &&
+                    col < range.x + range.width &&
+                    row >= range.y &&
+                    row < range.y + range.height;
+                const id = `glide-cell-${col}-${row}`;
+                const location: Item = [col, row];
+                const cellContent = getCellContent(location, true);
+                return (
+                    <td
+                        key={key}
+                        role="gridcell"
+                        aria-colindex={col + 1 + colOffset}
+                        aria-selected={selected}
+                        aria-readonly={isInnerOnlyCell(cellContent) || !isReadWriteCell(cellContent)}
+                        id={id}
+                        data-testid={id}
+                        onClick={() => {
+                            const canvas = canvasRef?.current;
+                            if (canvas === null || canvas === undefined) return;
+                            return onKeyDown?.({
+                                bounds: getBoundsForItem(canvas, col, row),
+                                cancel: noop,
+                                preventDefault: noop,
+                                stopPropagation: noop,
+                                ctrlKey: false,
+                                key: "Enter",
+                                keyCode: 13,
+                                metaKey: false,
+                                shiftKey: false,
+                                altKey: false,
+                                rawEvent: undefined,
+                                location,
+                            });
+                        }}
+                        onFocusCapture={e => {
+                            if (
+                                e.target === focusRef.current ||
+                                (lastFocusedSubdomNode.current?.[0] === col &&
+                                    lastFocusedSubdomNode.current?.[1] === row)
+                            )
+                                return;
+                            lastFocusedSubdomNode.current = location;
+                            return onCellFocused?.(location);
+                        }}
+                        ref={focused ? focusElement : undefined}
+                        tabIndex={-1}>
+                        {getRowData(cellContent, getCellRenderer)}
+                    </td>
+                );
+            };
+
             return (
                 <table
                     key="access-tree"
@@ -1817,64 +1878,7 @@ const DataGrid: React.ForwardRefRenderFunction<DataGridRef, DataGridProps> = (p,
                                 aria-selected={selection.rows.hasIndex(row)}
                                 key={row}
                                 aria-rowindex={row + 2}>
-                                {effectiveCols.map(c => {
-                                    const col = c.sourceIndex;
-                                    const key = packColRowToNumber(col, row);
-                                    const focused = fCol === col && fRow === row;
-                                    const selected =
-                                        range !== undefined &&
-                                        col >= range.x &&
-                                        col < range.x + range.width &&
-                                        row >= range.y &&
-                                        row < range.y + range.height;
-                                    const id = `glide-cell-${col}-${row}`;
-                                    const location: Item = [col, row];
-                                    const cellContent = getCellContent(location, true);
-                                    return (
-                                        <td
-                                            key={key}
-                                            role="gridcell"
-                                            aria-colindex={col + 1 + colOffset}
-                                            aria-selected={selected}
-                                            aria-readonly={
-                                                isInnerOnlyCell(cellContent) || !isReadWriteCell(cellContent)
-                                            }
-                                            id={id}
-                                            data-testid={id}
-                                            onClick={() => {
-                                                const canvas = canvasRef?.current;
-                                                if (canvas === null || canvas === undefined) return;
-                                                return onKeyDown?.({
-                                                    bounds: getBoundsForItem(canvas, col, row),
-                                                    cancel: () => undefined,
-                                                    preventDefault: () => undefined,
-                                                    stopPropagation: () => undefined,
-                                                    ctrlKey: false,
-                                                    key: "Enter",
-                                                    keyCode: 13,
-                                                    metaKey: false,
-                                                    shiftKey: false,
-                                                    altKey: false,
-                                                    rawEvent: undefined,
-                                                    location,
-                                                });
-                                            }}
-                                            onFocusCapture={e => {
-                                                if (
-                                                    e.target === focusRef.current ||
-                                                    (lastFocusedSubdomNode.current?.[0] === col &&
-                                                        lastFocusedSubdomNode.current?.[1] === row)
-                                                )
-                                                    return;
-                                                lastFocusedSubdomNode.current = location;
-                                                return onCellFocused?.(location);
-                                            }}
-                                            ref={focused ? focusElement : undefined}
-                                            tabIndex={-1}>
-                                            {getRowData(cellContent, getCellRenderer)}
-                                        </td>
-                                    );
-                                })}
+                                {effectiveCols.map(c => renderCell(c, row))}
                             </tr>
                         ))}
                     </tbody>

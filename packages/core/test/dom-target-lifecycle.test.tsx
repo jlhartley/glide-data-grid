@@ -255,3 +255,37 @@ it("ignores queued ResizeObserver reports from a detached node", () => {
     unmount();
     for (const observer of observers) expect(observer.disconnect).toHaveBeenCalledOnce();
 });
+
+it("updates the cursor on a replacement target when the cursor value is unchanged", () => {
+    const first = document.createElement("div");
+    const second = document.createElement("div");
+    const target = { current: first as HTMLDivElement | null };
+    const { rerender } = render(<DataGrid {...basicProps} eventTargetRef={target} isDragging />);
+    expect(first.style.cursor).toBe("grabbing");
+    target.current = second;
+    rerender(<DataGrid {...basicProps} eventTargetRef={target} isDragging width={1001} />);
+    expect(second.style.cursor).toBe("grabbing");
+    rerender(<DataGrid {...basicProps} eventTargetRef={target} />);
+    expect(second.style.cursor).toBe("default");
+});
+
+it("does not publish a cursor from a suspended grid render", () => {
+    const target = { current: document.createElement("div") };
+    const pending = new Promise<never>(() => undefined);
+    function Suspend({ active }: { active: boolean }) {
+        if (active) throw pending;
+        return null;
+    }
+    function Parent({ suspended }: { suspended: boolean }) {
+        return (
+            <React.Suspense fallback={null}>
+                <DataGrid {...basicProps} eventTargetRef={target} isDragging={!suspended} />
+                <Suspend active={suspended} />
+            </React.Suspense>
+        );
+    }
+    const { rerender } = render(<Parent suspended={false} />);
+    expect(target.current.style.cursor).toBe("grabbing");
+    rerender(<Parent suspended />);
+    expect(target.current.style.cursor).toBe("grabbing");
+});
