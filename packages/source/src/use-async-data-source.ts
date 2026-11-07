@@ -31,7 +31,7 @@ export function useAsyncDataSource<TRowType>(
 
     const [visiblePages, setVisiblePages] = React.useState<Rectangle>({ x: 0, y: 0, width: 0, height: 0 });
     const visiblePagesRef = React.useRef(visiblePages);
-    React.useInsertionEffect(() => {
+    React.useLayoutEffect(() => {
         visiblePagesRef.current = visiblePages;
     }, [visiblePages]);
 
