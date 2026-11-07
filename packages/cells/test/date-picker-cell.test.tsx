@@ -40,9 +40,8 @@ describe("formatValueForHTMLInput", () => {
 describe("editor", () => {
     afterEach(cleanup);
 
-    function getMockDateCell(props: Partial<DatePickerCell> = {}): DatePickerCell {
+    function getMockDateCell(data: Partial<DatePickerCell["data"]> = {}): DatePickerCell {
         return {
-            ...props,
             kind: GridCellKind.Custom,
             allowOverlay: true,
             copyData: "4",
@@ -50,127 +49,69 @@ describe("editor", () => {
             data: {
                 kind: "date-picker-cell",
                 date: new Date("2023-02-06T04:47:44.584Z"),
-                displayDate: new Date("2023-02-06T04:47:44.584Z").toISOString(),
+                displayDate: "2023-02-06T04:47:44.584Z",
                 format: "time",
+                ...data,
             },
         };
     }
 
-    it("renders into the dom with correct value", () => {
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockDateCell(),
-            location: [0, 0],
-        }).editor;        
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
-        const result = render(<Editor isHighlighted={false} value={getMockDateCell()} />);
-        // Check if the element is actually there
-        const input = result.getByTestId("date-picker-cell");
-        expect(input).not.toBeUndefined();
-
-        // @ts-ignore
-        expect(result.value === "04:47:44.584");
-    });
-
-    it.each([["date"], ["time"], ["datetime-local"]])("renders with correct format", (format: string) => {
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockDateCell({ data: { format: format } } as DatePickerCell),
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
-        const result = render(<Editor isHighlighted={false} value={getMockDateCell()} />);
-        const input = result.getByTestId("date-picker-cell");
-        expect(input).not.toBeUndefined();
-
-        // @ts-ignore
-        expect(input.format === format);
-    });
-
-    it("renders a disabled text entry when readonly is true", () => {
-        const value = { ...getMockDateCell(), readonly: true };
+    function renderEditor(value: DatePickerCell, onChange = vi.fn()) {
         const provided = renderer.provideEditor?.(value);
         if (provided === undefined || typeof provided === "function") {
             throw new Error("Editor is invalid");
         }
         const Editor = provided.editor;
-
-        const result = render(
+        return render(
             <Editor
                 value={value}
                 isHighlighted={false}
-                onChange={vi.fn()}
+                onChange={onChange}
                 onFinishedEditing={vi.fn()}
                 target={{ x: 0, y: 0, width: 100, height: 30 }}
                 forceEditMode={false}
                 theme={getDefaultTheme()}
             />
         );
+    }
 
+    it("renders into the dom with correct value", () => {
+        const result = renderEditor(getMockDateCell());
+        expect(result.getByTestId("date-picker-cell")).toHaveProperty("value", "04:47:44.584");
+    });
+
+    it.each<DateKind>(["date", "time", "datetime-local"])("renders with %s format", format => {
+        const result = renderEditor(getMockDateCell({ format }));
+        expect(result.getByTestId("date-picker-cell")).toHaveProperty("type", format);
+    });
+
+    it("renders a disabled text entry when readonly is true", () => {
+        const value = { ...getMockDateCell(), readonly: true };
+        const result = renderEditor(value);
         const input = result.getByDisplayValue(value.data.displayDate);
         expect(input).toHaveProperty("disabled", true);
         expect(result.queryByTestId("date-picker-cell")).toBeNull();
     });
 
     it("contains max, min, step when passed in", () => {
-        const min = "2018-01-01";
-        const max = new Date("2018-12-31");
-        const step = ".001";
-        const extraProps = {
-            data: {
-                min,
-                max,
-                step,
-            },
-        };
-
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockDateCell(extraProps),
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
-        const result = render(<Editor isHighlighted={false} value={getMockDateCell()} />);
+        const result = renderEditor(
+            getMockDateCell({ format: "date", min: "2018-01-01", max: new Date("2018-12-31"), step: ".001" })
+        );
         const input = result.getByTestId("date-picker-cell");
-        expect(input).not.toBeUndefined();
-
-        // @ts-ignore
-        expect(input.min === min);
-        // @ts-ignore
-        expect(input.max === "2018-12-31");
-        // @ts-ignore
-        expect(input.step === step);
+        expect(input).toHaveProperty("min", "2018-01-01");
+        expect(input).toHaveProperty("max", "2018-12-31");
+        expect(input).toHaveProperty("step", "0.001");
     });
 
-    it('properly sets date when value is NOT ""', async () => {
+    it('properly sets date when value is NOT ""', () => {
         const valueAsNumber = 100;
 
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockDateCell(),
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
         const mockCellOnChange = vi.fn();
-        const result = render(<Editor isHighlighted={false} value={getMockDateCell()} onChange={mockCellOnChange} />);
-        const input = await result.findByTestId("date-picker-cell");
-        expect(result.findByTestId("date-picker-cell")).not.toBeUndefined();
+        const result = renderEditor(getMockDateCell(), mockCellOnChange);
+        const input = result.getByTestId("date-picker-cell");
         fireEvent.change(input, {
             target: {
-                value: "2023-02-06T18:15:33.103Z",
-                valueAsNumber: valueAsNumber,
+                value: "00:00:00.100",
             },
         });
         expect(mockCellOnChange).toHaveBeenCalledTimes(1);
@@ -188,20 +129,10 @@ describe("editor", () => {
         });
     });
 
-    it('properly sets new date to undefined when value is ""', async () => {
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockDateCell(),
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
+    it('properly sets new date to undefined when value is ""', () => {
         const mockCellOnChange = vi.fn();
-        const result = render(<Editor isHighlighted={false} value={getMockDateCell()} onChange={mockCellOnChange} />);
-        const input = await result.findByTestId("date-picker-cell");
-        expect(result.findByTestId("date-picker-cell")).not.toBeUndefined();
+        const result = renderEditor(getMockDateCell(), mockCellOnChange);
+        const input = result.getByTestId("date-picker-cell");
         fireEvent.change(input, { target: { value: "" } });
         expect(mockCellOnChange).toHaveBeenCalledTimes(1);
         expect(mockCellOnChange).toBeCalledWith({

@@ -190,6 +190,7 @@ const testTheme: Theme = {
 
     cellHorizontalPadding: 8,
     cellVerticalPadding: 3,
+    checkboxMaxSize: 18,
 
     headerFontStyle: "600 13px",
     baseFontStyle: "13px",
