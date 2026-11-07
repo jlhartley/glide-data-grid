@@ -31,7 +31,9 @@ export function useAsyncDataSource<TRowType>(
 
     const [visiblePages, setVisiblePages] = React.useState<Rectangle>({ x: 0, y: 0, width: 0, height: 0 });
     const visiblePagesRef = React.useRef(visiblePages);
-    visiblePagesRef.current = visiblePages;
+    React.useInsertionEffect(() => {
+        visiblePagesRef.current = visiblePages;
+    }, [visiblePages]);
 
     // Loading ref is redundant?
     const pagesLoaded = React.useRef<Set<number>>(new Set());
