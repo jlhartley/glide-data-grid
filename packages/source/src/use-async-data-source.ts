@@ -18,15 +18,14 @@ export type RowCallback<T> = (page: number, pageSize: number) => Promise<readonl
 export type RowToCell<T> = (row: T, colIndex: number, rowIndex: number) => GridCell;
 export type RowEditedCallback<T> = (cell: Item, newVal: EditableGridCell, rowData: T) => T | undefined;
 export function useAsyncDataSource<TRowType>(
-    pageSize: number,
+    requestedPageSize: number,
     maxConcurrency: number,
     getRowData: RowCallback<TRowType>,
     toCell: RowToCell<TRowType>,
     onEdited: RowEditedCallback<TRowType>,
     gridRef: React.RefObject<DataEditorRef | null>
 ): Pick<DataEditorProps, "getCellContent" | "onVisibleRegionChanged" | "onCellEdited" | "getCellsForSelection"> {
-
-    pageSize = Math.max(pageSize, 1);
+    const pageSize = Math.max(requestedPageSize, 1);
     const loadingRef = React.useRef(CompactSelection.empty());
     const dataRef = React.useRef<TRowType[]>([]);
 
