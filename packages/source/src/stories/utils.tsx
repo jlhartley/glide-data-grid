@@ -302,7 +302,9 @@ export function useMockDataGenerator(numCols: number, readonly: boolean = true, 
     }, [colsMap]);
 
     const colsMapRef = React.useRef(colsMap);
-    colsMapRef.current = colsMap;
+    React.useInsertionEffect(() => {
+        colsMapRef.current = colsMap;
+    }, [colsMap]);
     const getCellContent = React.useCallback(
         ([col, row]: Item): GridCell => {
             let val = cache.current.get(col, row);
