@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fireEvent, render, cleanup } from "@testing-library/react";
 
-import { GridCellKind } from "@glideapps/glide-data-grid";
+import { GridCellKind, getDefaultTheme } from "@glideapps/glide-data-grid";
 import renderer, {
     type DateKind,
     type DatePickerCell,
@@ -93,19 +93,29 @@ describe("editor", () => {
         expect(input.format === format);
     });
 
-    it("renders textarea when readonly is true", () => {
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockDateCell({ readonly: true } as DatePickerCell),
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
+    it("renders a disabled text entry when readonly is true", () => {
+        const value = { ...getMockDateCell(), readonly: true };
+        const provided = renderer.provideEditor?.(value);
+        if (provided === undefined || typeof provided === "function") {
             throw new Error("Editor is invalid");
         }
+        const Editor = provided.editor;
 
-        const result = render(<Editor isHighlighted={false} value={getMockDateCell()} />);
-        // text-area should be found
-        expect(result.findByDisplayValue("2023-02-06T04:47:44.584Z")).not.toBeUndefined();
+        const result = render(
+            <Editor
+                value={value}
+                isHighlighted={false}
+                onChange={vi.fn()}
+                onFinishedEditing={vi.fn()}
+                target={{ x: 0, y: 0, width: 100, height: 30 }}
+                forceEditMode={false}
+                theme={getDefaultTheme()}
+            />
+        );
+
+        const input = result.getByDisplayValue(value.data.displayDate);
+        expect(input).toHaveProperty("disabled", true);
+        expect(result.queryByTestId("date-picker-cell")).toBeNull();
     });
 
     it("contains max, min, step when passed in", () => {
