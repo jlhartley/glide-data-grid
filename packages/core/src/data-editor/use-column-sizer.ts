@@ -180,6 +180,8 @@ export function useColumnSizer(
                 return columns;
             }
 
+            // The context belongs to this hook's private canvas, not a prop or shared hook input.
+            // eslint-disable-next-line react-hooks/immutability
             if (ctx === null) {
                 return columns.map(c => {
                     if (isSizedGridColumn(c)) return c;
@@ -191,6 +193,8 @@ export function useColumnSizer(
                 });
             }
 
+            // Measuring text requires configuring the private Canvas 2D context.
+            // eslint-disable-next-line react-hooks/immutability
             ctx.font = themeRef.current.baseFontFull;
 
             return columns.map((c, colIndex) => {
