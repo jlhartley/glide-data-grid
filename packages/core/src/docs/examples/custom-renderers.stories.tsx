@@ -42,15 +42,15 @@ export const OverrideMarkerRenderer: React.FC = () => {
     const renderers = React.useMemo<readonly InternalCellRenderer<InnerGridCell>[]>(() => {
         return [
             ...AllCellRenderers,
-            {
+            ({
                 ...markerCellRenderer,
-                draw: args => {
+                draw: (args, cell) => {
                     const { ctx, rect } = args;
                     ctx.fillStyle = "#ffe0e0";
                     ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-                    markerCellRenderer.draw(args as any);
+                    markerCellRenderer.draw(args, cell);
                 },
-            } as InternalCellRenderer<InnerGridCell>,
+            } satisfies typeof markerCellRenderer) as InternalCellRenderer<InnerGridCell>,
         ];
     }, []);
 

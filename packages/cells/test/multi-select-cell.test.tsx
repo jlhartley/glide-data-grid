@@ -12,7 +12,7 @@ import {
 } from "@testing-library/react";
 import { vi, expect, describe, it, afterEach } from "vitest";
 
-import { GridCellKind } from "@glideapps/glide-data-grid";
+import { GridCellKind, getDefaultTheme } from "@glideapps/glide-data-grid";
 import renderer, { type MultiSelectCell, prepareOptions, resolveValues } from "../src/cells/multi-select-cell.js";
 
 describe("prepareOptions", () => {
@@ -246,7 +246,7 @@ export function hasOption(container: HTMLElement, optionText: string): boolean {
 describe("Multi Select Editor", () => {
     afterEach(cleanup);
 
-    function getMockCell(props: Partial<MultiSelectCell> = {}): MultiSelectCell {
+    function getMockCell(props: Partial<Omit<MultiSelectCell, "data">> & { data?: Partial<MultiSelectCell["data"]> } = {}): MultiSelectCell {
         return {
             kind: GridCellKind.Custom,
             allowOverlay: true,
@@ -265,18 +265,28 @@ describe("Multi Select Editor", () => {
         };
     }
 
-    it("renders into the dom with correct value", async () => {
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...getMockCell(),
-            location: [0, 0],
-        }).editor;        
-        if (Editor === undefined) {
+    function renderEditor(value: MultiSelectCell, onChange: (value: MultiSelectCell) => void) {
+        const provided = renderer.provideEditor?.(value);
+        if (provided === undefined || typeof provided === "function") {
             throw new Error("Editor is invalid");
         }
+        const Editor = provided.editor;
+        return render(
+            <Editor
+                value={value}
+                isHighlighted={false}
+                onChange={onChange}
+                onFinishedEditing={vi.fn()}
+                target={{ x: 0, y: 0, width: 100, height: 30 }}
+                forceEditMode={false}
+                theme={getDefaultTheme()}
+            />
+        );
+    }
 
+    it("renders into the dom with correct value", async () => {
         const mockCellOnChange = vi.fn();
-        const result = render(<Editor isHighlighted={false} value={getMockCell()} onChange={mockCellOnChange} />);
+        const result = renderEditor(getMockCell(), mockCellOnChange);
         // Check if the element is actually there
         const cellEditor = result.getByTestId("multi-select-cell");
         expect(cellEditor).toBeDefined();
@@ -287,17 +297,8 @@ describe("Multi Select Editor", () => {
 
     it("allows to select values", async () => {
         const mockCell = getMockCell();
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...mockCell,
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
         const mockCellOnChange = vi.fn();
-        const result = render(<Editor isHighlighted={false} value={mockCell} onChange={mockCellOnChange} />);
+        const result = renderEditor(mockCell, mockCellOnChange);
         // Check if the element is actually there
         const cellEditor = result.getByTestId("multi-select-cell");
         expect(cellEditor).toBeDefined();
@@ -322,17 +323,8 @@ describe("Multi Select Editor", () => {
 
     it("is disabled if readonly", async () => {
         const mockCell = getMockCell({ readonly: true });
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...mockCell,
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
         const mockCellOnChange = vi.fn();
-        const result = render(<Editor isHighlighted={false} value={mockCell} onChange={mockCellOnChange} />);
+        const result = renderEditor(mockCell, mockCellOnChange);
         // Check if the element is actually there
         const cellEditor = result.getByTestId("multi-select-cell");
         expect(cellEditor).toBeDefined();
@@ -341,18 +333,9 @@ describe("Multi Select Editor", () => {
     });
 
     it("allowDuplicates allows to select values multiple times", async () => {
-        const mockCell = getMockCell({ data: { allowDuplicates: true } } as any);
-        // @ts-ignore
-        const Editor = renderer.provideEditor?.({
-            ...mockCell,
-            location: [0, 0],
-        }).editor;
-        if (Editor === undefined) {
-            throw new Error("Editor is invalid");
-        }
-
+        const mockCell = getMockCell({ data: { allowDuplicates: true } });
         const mockCellOnChange = vi.fn();
-        const result = render(<Editor isHighlighted={false} value={mockCell} onChange={mockCellOnChange} />);
+        const result = renderEditor(mockCell, mockCellOnChange);
         // Check if the element is actually there
         const cellEditor = result.getByTestId("multi-select-cell");
         expect(cellEditor).toBeDefined();
