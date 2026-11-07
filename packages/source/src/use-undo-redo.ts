@@ -1,6 +1,6 @@
 import type { EditableGridCell, GridCell, GridSelection, Item, DataEditorRef } from "@glideapps/glide-data-grid";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 
 interface Edit {
     cell: Item;
@@ -20,6 +20,7 @@ interface ReducerState {
     isApplyingUndo: boolean;
     isApplyingRedo: boolean;
 
+    gridSelection: GridSelection | null;
     operation?: Batch;
 }
 
@@ -30,9 +31,10 @@ const initialState: ReducerState = {
     canRedo: false,
     isApplyingUndo: false,
     isApplyingRedo: false,
+    gridSelection: null,
 };
 
-type Action = UndoRedoAction | EditAction;
+type Action = UndoRedoAction | EditAction | { type: "selectionChanged"; selection: GridSelection };
 
 interface UndoRedoAction {
     type: "undo" | "redo" | "operationApplied";
@@ -71,7 +73,13 @@ function reducer(state: ReducerState, action: Action) {
             }
             return state;
 
+        case "selectionChanged":
+            return state.gridSelection === action.selection ? state : { ...state, gridSelection: action.selection };
+
         case "operationApplied":
+            if (state.operation !== undefined) {
+                newState.gridSelection = state.operation.selection;
+            }
             newState.operation = undefined;
             newState.isApplyingRedo = false;
             newState.isApplyingUndo = false;
@@ -122,14 +130,13 @@ export function useUndoRedo(
         isApplyingRedoRef.current = state.isApplyingRedo;
     }, [state.isApplyingUndo, state.isApplyingRedo]);
 
-    const [gridSelection, setGridSelection] = useState<GridSelection | null>(null);
     const gridSelectionRef = useRef<GridSelection | null>(null);
     const onGridSelectionChangedEdited = useCallback(
         (newVal: GridSelection) => {
             if (onGridSelectionChange) {
                 onGridSelectionChange(newVal);
             }
-            setGridSelection(newVal);
+            dispatch({ type: "selectionChanged", selection: newVal });
             gridSelectionRef.current = newVal;
         },
         [onGridSelectionChange]
@@ -192,7 +199,6 @@ export function useUndoRedo(
                 cells.push({ cell: edit.cell });
             }
 
-            setGridSelection(state.operation.selection);
             gridSelectionRef.current = state.operation.selection;
             gridRef.current.updateCells(cells);
 
@@ -205,7 +211,7 @@ export function useUndoRedo(
                 type: "operationApplied",
             });
         }
-    }, [state.operation, gridRef, onCellEdited, setGridSelection, getCellContent]);
+    }, [state.operation, gridRef, onCellEdited, getCellContent]);
 
     // Attach the keyboard shortcuts. CMD+Z and CMD+SHIFT+Z on mac, CTRL+Z and CTRL+Y on windows.
     useEffect(() => {
@@ -236,7 +242,7 @@ export function useUndoRedo(
             canRedo: state.canRedo,
             onCellEdited: wrappedOnCellEdited,
             onGridSelectionChange: onGridSelectionChangedEdited,
-            gridSelection,
+            gridSelection: state.gridSelection,
         };
-    }, [undo, redo, wrappedOnCellEdited, state.canUndo, state.canRedo, onGridSelectionChangedEdited, gridSelection]);
+    }, [undo, redo, wrappedOnCellEdited, state.canUndo, state.canRedo, onGridSelectionChangedEdited, state.gridSelection]);
 }

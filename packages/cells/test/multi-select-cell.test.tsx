@@ -9,6 +9,7 @@ import {
     render,
     cleanup,
     queryByRole,
+    within,
 } from "@testing-library/react";
 import { vi, expect, describe, it, afterEach } from "vitest";
 
@@ -265,7 +266,11 @@ describe("Multi Select Editor", () => {
         };
     }
 
-    function renderEditor(value: MultiSelectCell, onChange: (value: MultiSelectCell) => void) {
+    function renderEditor(
+        value: MultiSelectCell,
+        onChange: (value: MultiSelectCell) => void,
+        portalElementRef?: React.RefObject<HTMLElement>
+    ) {
         const provided = renderer.provideEditor?.(value);
         if (provided === undefined || typeof provided === "function") {
             throw new Error("Editor is invalid");
@@ -280,6 +285,7 @@ describe("Multi Select Editor", () => {
                 target={{ x: 0, y: 0, width: 100, height: 30 }}
                 forceEditMode={false}
                 theme={getDefaultTheme()}
+                portalElementRef={portalElementRef}
             />
         );
     }
@@ -357,6 +363,25 @@ describe("Multi Select Editor", () => {
             ...mockCell,
             data: { ...mockCell.data, values: ["option1", "option2", "option1"] },
         });
+    });
+
+    it("opens the menu in the custom portal and accepts a keyboard selection", () => {
+        const portal = document.createElement("div");
+        document.body.append(portal);
+        try {
+            const value = getMockCell();
+            const onChange = vi.fn();
+            const result = renderEditor(value, onChange, { current: portal });
+            const input = result.getByRole("combobox");
+            expect(document.activeElement).toBe(input);
+            expect(within(portal).getByRole("option", { name: "Option 1" })).toBeDefined();
+
+            fireEvent.keyDown(input, { key: "Enter" });
+            expect(onChange).toHaveBeenCalledWith({ ...value, data: { ...value.data, values: ["option1"] } });
+        } finally {
+            cleanup();
+            portal.remove();
+        }
     });
 
     // TODO: Add test for creating new options

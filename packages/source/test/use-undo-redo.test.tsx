@@ -54,6 +54,11 @@ test("undo and redo retain empty text and cell coordinates containing zero", () 
     act(() => result.current.onCellEdited([0, 0], text("")));
     act(() => vi.runOnlyPendingTimers());
     expect(result.current.canUndo).toBe(true);
+    const laterSelection: GridSelection = {
+        ...selection,
+        current: { cell: [1, 0], range: { x: 1, y: 0, width: 1, height: 1 }, rangeStack: [] },
+    };
+    act(() => result.current.onGridSelectionChange(laterSelection));
     act(() => result.current.undo());
     expect(getCellContent()).toEqual(text("before"));
     expect(updateCells).toHaveBeenLastCalledWith([{ cell: [0, 0] }]);
@@ -61,6 +66,7 @@ test("undo and redo retain empty text and cell coordinates containing zero", () 
     expect(result.current.canRedo).toBe(true);
     act(() => result.current.redo());
     expect(getCellContent()).toEqual(text(""));
+    expect(result.current.gridSelection).toEqual(laterSelection);
     expect(updateCells).toHaveBeenCalledTimes(2);
 });
 

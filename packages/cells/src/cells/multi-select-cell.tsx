@@ -17,6 +17,8 @@ import { styled } from "@linaria/react";
 import Select, { type MenuProps, components, type StylesConfig } from "react-select";
 import CreatableSelect from "react-select/creatable";
 
+import { useMenuPortalTarget } from "./use-menu-portal-target.js";
+
 type SelectOption = { value: string; label?: string; color?: string };
 
 interface MultiSelectCellProps {
@@ -132,6 +134,7 @@ export type MultiSelectCell = CustomCell<MultiSelectCellProps>;
 
 const Editor: ReturnType<ProvideEditorCallback<MultiSelectCell>> = p => {
     const { value: cell, initialValue, onChange, onFinishedEditing, portalElementRef } = p;
+    const [menuPortalTarget, attachMenuPortal] = useMenuPortalTarget(portalElementRef);
     const { options: optionsIn, values: valuesIn, allowCreation, allowDuplicates } = cell.data;
 
     const theme = useTheme();
@@ -334,7 +337,7 @@ const Editor: ReturnType<ProvideEditorCallback<MultiSelectCell>> = p => {
 
     const SelectComponent = allowCreation ? CreatableSelect : Select;
     return (
-        <Wrap onKeyDown={onKeyDown} data-testid={"multi-select-cell"}>
+        <Wrap ref={attachMenuPortal} onKeyDown={onKeyDown} data-testid={"multi-select-cell"}>
             <SelectComponent
                 className="gdg-multi-select"
                 isMulti={true}
@@ -356,7 +359,7 @@ const Editor: ReturnType<ProvideEditorCallback<MultiSelectCell>> = p => {
                 value={resolveValues(value, options, allowDuplicates)}
                 onKeyDown={cell.readonly ? undefined : handleKeyDown}
                 menuPlacement={"auto"}
-                menuPortalTarget={portalElementRef?.current ?? document.getElementById("portal")}
+                menuPortalTarget={menuPortalTarget}
                 autoFocus={true}
                 openMenuOnFocus={true}
                 openMenuOnClick={true}

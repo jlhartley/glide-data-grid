@@ -13,6 +13,8 @@ import {
     TextCellEntry,
 } from "@glideapps/glide-data-grid";
 
+import { useMenuPortalTarget } from "./use-menu-portal-target.js";
+
 type CustomMenuProps = MenuProps<any>;
 
 const CustomMenu: React.FC<CustomMenuProps> = p => {
@@ -63,6 +65,7 @@ const ReadOnlyWrap = styled.div`
 
 const Editor: ReturnType<ProvideEditorCallback<DropdownCell>> = p => {
     const { value: cell, onFinishedEditing, initialValue, portalElementRef } = p;
+    const [menuPortalTarget, attachMenuPortal] = useMenuPortalTarget(portalElementRef);
     const { allowedValues, value: valueIn } = cell.data;
 
     const [value, setValue] = React.useState(valueIn);
@@ -94,7 +97,7 @@ const Editor: ReturnType<ProvideEditorCallback<DropdownCell>> = p => {
     }
 
     return (
-        <Wrap>
+        <Wrap ref={attachMenuPortal}>
             <Select
                 className="glide-select"
                 inputValue={inputValue}
@@ -151,7 +154,7 @@ const Editor: ReturnType<ProvideEditorCallback<DropdownCell>> = p => {
                         },
                     };
                 }}
-                menuPortalTarget={portalElementRef?.current ??  document.getElementById("portal")}
+                menuPortalTarget={menuPortalTarget}
                 autoFocus={true}
                 openMenuOnFocus={true}
                 components={{

@@ -301,13 +301,11 @@ export function useMockDataGenerator(numCols: number, readonly: boolean = true, 
         return colsMap.map(getGridColumn);
     }, [colsMap]);
 
-    const colsMapRef = React.useRef(colsMap);
-    colsMapRef.current = colsMap;
     const getCellContent = React.useCallback(
         ([col, row]: Item): GridCell => {
             let val = cache.current.get(col, row);
             if (val === undefined) {
-                val = colsMapRef.current[col].getContent();
+                val = colsMap[col].getContent();
                 if (!readonly && isTextEditableGridCell(val)) {
                     val = { ...val, readonly };
                 }
@@ -315,7 +313,7 @@ export function useMockDataGenerator(numCols: number, readonly: boolean = true, 
             }
             return val;
         },
-        [readonly]
+        [colsMap, readonly]
     );
 
     const getCellsForSelection = React.useCallback(
