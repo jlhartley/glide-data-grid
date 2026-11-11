@@ -2422,6 +2422,31 @@ describe("data-editor", () => {
         );
     });
 
+    test("Paste falls back to event data when the Clipboard API is unavailable", async () => {
+        const clipboard = navigator.clipboard;
+        Object.assign(navigator, { clipboard: undefined });
+        try {
+            const onPaste = vi.fn(() => true);
+            vi.useFakeTimers();
+            render(<EventedDataEditor {...basicProps} onPaste={onPaste} />, { wrapper: Context });
+            prep(false);
+            const canvas = screen.getByTestId("data-grid-canvas");
+            vi.spyOn(document, "activeElement", "get").mockImplementation(() => canvas);
+            sendClick(canvas, { clientX: 300, clientY: 36 + 32 * 2 + 16 });
+            await act(async () => {
+                fireEvent.paste(window, {
+                    clipboardData: {
+                        types: ["text/plain"],
+                        getData: () => "Alpha\tBeta",
+                    },
+                });
+            });
+            expect(onPaste).toHaveBeenCalledWith([1, 2], [["Alpha", "Beta"]]);
+        } finally {
+            Object.assign(navigator, { clipboard });
+        }
+    });
+
     test("Paste out of range does not crash", async () => {
         vi.useFakeTimers();
         render(<EventedDataEditor {...basicProps} onPaste={true} />, {
@@ -3581,6 +3606,26 @@ describe("data-editor", () => {
         });
 
         expect(spy).toBeCalledWith(8, 11);
+    });
+
+    test("Row reordering scrolls at the lower edge and stops after release", () => {
+        vi.useFakeTimers();
+        render(<EventedDataEditor {...basicProps} rowMarkers="number" onRowMoved={vi.fn()} />, {
+            wrapper: Context,
+        });
+        prep(false);
+        const canvas = screen.getByTestId("data-grid-canvas");
+        const scrollBy = vi.spyOn(Element.prototype, "scrollBy");
+        fireEvent.pointerDown(canvas, { clientX: 10, clientY: 300 });
+        fireEvent.pointerMove(canvas, { clientX: 10, clientY: 1005, buttons: 1 });
+        scrollBy.mockClear();
+        act(() => { vi.advanceTimersByTime(100); });
+        expect(scrollBy).toHaveBeenCalledWith(0, expect.any(Number));
+        expect(scrollBy.mock.calls.some(([, y]) => typeof y === "number" && y > 0)).toBe(true);
+        fireEvent.pointerUp(canvas, { clientX: 10, clientY: 1005 });
+        scrollBy.mockClear();
+        act(() => { vi.advanceTimersByTime(100); });
+        expect(scrollBy).not.toHaveBeenCalled();
     });
 
     test("Select range with mouse", async () => {
