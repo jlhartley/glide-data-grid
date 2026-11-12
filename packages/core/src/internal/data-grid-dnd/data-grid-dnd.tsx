@@ -75,6 +75,7 @@ export interface DataGridDndProps extends Props {
     readonly maxColumnWidth: number;
     readonly minColumnWidth: number;
     readonly lockColumns: number;
+    readonly setScrollDir: (dir: GridMouseEventArgs["scrollEdge"] | undefined) => void;
 }
 
 // Dear Past Jason,
@@ -117,6 +118,7 @@ const DataGridDnd: React.FunctionComponent<DataGridDndProps> = p => {
         onItemHovered,
         onDragStart,
         canvasRef,
+        setScrollDir
     } = p;
 
     const canResize = (onColumnResize ?? onColumnResizeEnd ?? onColumnResizeStart) !== undefined;
@@ -133,12 +135,13 @@ const DataGridDnd: React.FunctionComponent<DataGridDndProps> = p => {
             } else if (dragRow !== undefined && row !== undefined) {
                 setDragRowActive(true);
                 setDropRow(Math.max(0, row));
+                setScrollDir(args.scrollEdge);
                 // Don't emit onItemHovered if resizing or reordering a column or row.
             } else if (resizeCol === undefined && !dragColActive && !dragRowActive) {
                 onItemHovered?.(args);
             }
         },
-        [dragCol, dragRow, dropCol, onItemHovered, lockColumns, resizeCol, dragColActive, dragRowActive]
+        [dragCol, dragRow, dropCol, onItemHovered, lockColumns, resizeCol, dragColActive, dragRowActive, setScrollDir]
     );
 
     const canDragCol = onColumnMoved !== undefined;
