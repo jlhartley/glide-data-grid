@@ -65,14 +65,12 @@
         "react-dom": "^19.0.0"
     },
     "devDependencies": {
-        "@babel/cli": "catalog:",
         "baseline-browser-mapping": "catalog:",
         "eslint": "catalog:",
         "eslint-plugin-import": "catalog:",
         "eslint-plugin-react": "catalog:",
         "eslint-plugin-react-hooks": "catalog:",
         "react-resize-detector": "^12.3.0",
-        "tsc-esm-fix": "catalog:",
         "typescript": "catalog:"
     }
 }

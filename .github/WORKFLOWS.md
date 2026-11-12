@@ -61,15 +61,21 @@ introduce a project runtime pin.
 
 pnpm configuration lives in `pnpm-workspace.yaml`. A React catalog and workspace
 overrides keep React and React DOM at 19.2.0, matching the pre-migration runtime.
-The catalog also centralizes shared Linaria/build tools, TypeScript, TypeDoc,
-baseline browser data and ESLint plugins without additional overrides. All four
-workspace manifests use the same Babel CLI 7.28.6 and ESLint 9.39.3 catalog
-entries. These exact versions were already in use by the cells package; the
-root and other packages are brought up to that shared baseline. Public peer ranges and
+The catalog also centralizes Linaria, wyw-in-js CLI, TypeScript, TypeDoc,
+baseline browser data and ESLint plugins without additional overrides. Every
+workspace uses ESLint 9.39.3 from one catalog entry. Public peer ranges and
 react-resize-detector declarations remain unchanged.
 The `allowBuilds` map permits only esbuild's native-binary install script. Do not
 replace it with blanket build-script approval. The registry mapping stays in
 `.npmrc`, and the publishing workflows retain their existing authentication.
+
+Package builds invoke TypeScript and wyw-in-js; Babel CLI and tsc-esm-fix are
+not required. Storybook uses Vite, so the old Webpack framework, loader and
+CSS/TypeScript plugins are not direct dependencies. Storybook still brings
+Webpack transitively through its shared CSF plugin. The unused links addon and
+clean-css CLI are removed. Babel core and presets remain in use: preset-env
+handles class properties without the deprecated explicit proposal plugin in
+either Babel configuration.
 
 pnpm 12 adds a package-manager section to the lockfile, including the pinned
 pnpm's platform binaries. Commit that section with the dependency lockfile.
