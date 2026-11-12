@@ -9,6 +9,8 @@ catalog:
   react-dom: 19.2.0
 
   # Shared build and lint tools; catalog entries do not force transitive versions.
+  "@babel/cli": "7.28.6"
+  "eslint": "9.39.3"
   "@linaria/react": "^6.3.0"
   "@wyw-in-js/cli": "^1.0.6"
   "baseline-browser-mapping": "^2.10.8"

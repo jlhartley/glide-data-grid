@@ -65,9 +65,9 @@
         "react-dom": "^19.0.0"
     },
     "devDependencies": {
-        "@babel/cli": "^7.28.6",
+        "@babel/cli": "catalog:",
         "baseline-browser-mapping": "catalog:",
-        "eslint": "^9.39.3",
+        "eslint": "catalog:",
         "eslint-plugin-import": "catalog:",
         "eslint-plugin-react": "catalog:",
         "eslint-plugin-react-hooks": "catalog:",

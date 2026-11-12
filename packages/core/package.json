@@ -74,13 +74,13 @@
         "react-responsive-carousel": "^3.2.7"
     },
     "devDependencies": {
-        "@babel/cli": "^7.27.2",
+        "@babel/cli": "catalog:",
         "@glideapps/ts-helper": "6.0.0",
         "@skypack/package-check": "^0.2.2",
         "@vitest/coverage-v8": "^0.34.6",
         "@wyw-in-js/cli": "catalog:",
         "baseline-browser-mapping": "catalog:",
-        "eslint": "^9.39.1",
+        "eslint": "catalog:",
         "react-resize-detector": "^12.1.0",
         "tsc-esm-fix": "catalog:",
         "typedoc": "catalog:"

@@ -62,9 +62,10 @@ introduce a project runtime pin.
 pnpm configuration lives in `pnpm-workspace.yaml`. A React catalog and workspace
 overrides keep React and React DOM at 19.2.0, matching the pre-migration runtime.
 The catalog also centralizes shared Linaria/build tools, TypeScript, TypeDoc,
-baseline browser data and ESLint plugins without additional overrides. Babel CLI
-and ESLint itself retain their existing per-package declarations; converging their
-currently different resolutions is a separate upgrade. Public peer ranges and
+baseline browser data and ESLint plugins without additional overrides. All four
+workspace manifests use the same Babel CLI 7.28.6 and ESLint 9.39.3 catalog
+entries. These exact versions were already in use by the cells package; the
+root and other packages are brought up to that shared baseline. Public peer ranges and
 react-resize-detector declarations remain unchanged.
 The `allowBuilds` map permits only esbuild's native-binary install script. Do not
 replace it with blanket build-script approval. The registry mapping stays in
