@@ -1,6 +1,6 @@
 {
     "name": "root",
-    "version": "6.0.4-alpha27",
+    "version": "6.0.4-alpha28",
     "scripts": {
         "start": "pnpm run storybook",
         "version": "./update-version.sh",
