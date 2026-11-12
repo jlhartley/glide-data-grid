@@ -363,7 +363,7 @@ importers:
   packages/cells:
     dependencies:
       '@glideapps/glide-data-grid':
-        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha28
+        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha29
         version: link:../core
       '@linaria/react':
         specifier: 'catalog:'
@@ -422,7 +422,7 @@ importers:
         version: 4.17.21
       marked:
         specifier: ^16.0.10
-        version: 16.4.0
+        version: 16.4.1
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -464,7 +464,7 @@ importers:
   packages/source:
     dependencies:
       '@glideapps/glide-data-grid':
-        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha28
+        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha29
         version: link:../core
       lodash:
         specifier: ^4.17.19
@@ -3615,11 +3615,6 @@ packages:
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
-    hasBin: true
-
-  marked@16.4.0:
-    resolution: {integrity: sha512-CTPAcRBq57cn3R8n3hwc2REddc28hjR7RzDXQ+lXLmMJYqn20BaI2cGw6QjgZGIgVfp2Wdfw4aMzgNteQ6qJgQ==}
-    engines: {node: '>= 20'}
     hasBin: true
 
   marked@16.4.1:
@@ -8622,8 +8617,6 @@ snapshots:
       mdurl: 2.0.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
-
-  marked@16.4.0: {}
 
   marked@16.4.1: {}
 
