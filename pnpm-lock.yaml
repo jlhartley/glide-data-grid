@@ -166,6 +166,36 @@ overrides:
   react: 19.2.0
   react-dom: 19.2.0
 
+catalogs:
+  default:
+    typedoc:
+      specifier: ^0.28.14
+      version: 0.28.14
+    '@linaria/react':
+      specifier: ^6.3.0
+      version: 6.3.0
+    '@wyw-in-js/cli':
+      specifier: ^1.0.6
+      version: 1.0.6
+    baseline-browser-mapping:
+      specifier: ^2.10.8
+      version: 2.10.8
+    eslint-plugin-import:
+      specifier: ^2.32.0
+      version: 2.32.0
+    eslint-plugin-react:
+      specifier: ^7.37.5
+      version: 7.37.5
+    eslint-plugin-react-hooks:
+      specifier: ^7.0.1
+      version: 7.0.1
+    tsc-esm-fix:
+      specifier: ^3.1.2
+      version: 3.1.2
+    typescript:
+      specifier: ^5.9.3
+      version: 5.9.3
+
 importers:
 
   .:
@@ -204,7 +234,7 @@ importers:
         specifier: ^6.3.0
         version: 6.3.0
       '@linaria/react':
-        specifier: ^6.3.0
+        specifier: 'catalog:'
         version: 6.3.0(react@19.2.0)
       '@storybook/addon-docs':
         specifier: ^10.2.5
@@ -258,7 +288,7 @@ importers:
         specifier: ^0.8.1
         version: 0.8.1(typescript@5.9.3)
       '@wyw-in-js/cli':
-        specifier: ^1.0.6
+        specifier: 'catalog:'
         version: 1.0.6(typescript@5.9.3)
       '@wyw-in-js/vite':
         specifier: ^1.0.6
@@ -282,13 +312,13 @@ importers:
         specifier: ^9.39.1
         version: 9.39.1
       eslint-plugin-import:
-        specifier: ^2.32.0
+        specifier: 'catalog:'
         version: 2.32.0(@typescript-eslint/parser@8.46.3(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)
       eslint-plugin-react:
-        specifier: ^7.37.5
+        specifier: 'catalog:'
         version: 7.37.5(eslint@9.39.1)
       eslint-plugin-react-hooks:
-        specifier: ^7.0.1
+        specifier: 'catalog:'
         version: 7.0.1(eslint@9.39.1)
       eslint-plugin-sonarjs:
         specifier: ^3.0.5
@@ -339,13 +369,13 @@ importers:
         specifier: ^10.2.5
         version: 10.2.12(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       tsc-esm-fix:
-        specifier: ^3.1.2
+        specifier: 'catalog:'
         version: 3.1.2
       typedoc:
-        specifier: ^0.28.14
+        specifier: 'catalog:'
         version: 0.28.14(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: ^7.1.12
@@ -366,7 +396,7 @@ importers:
         specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha28
         version: link:../core
       '@linaria/react':
-        specifier: ^6.3.0
+        specifier: 'catalog:'
         version: 6.3.0(react@19.2.0)
       '@toast-ui/editor':
         specifier: 3.2.2
@@ -388,34 +418,34 @@ importers:
         specifier: ^7.28.6
         version: 7.28.6(@babel/core@7.29.0)
       baseline-browser-mapping:
-        specifier: ^2.10.8
+        specifier: 'catalog:'
         version: 2.10.8
       eslint:
         specifier: ^9.39.3
         version: 9.39.3
       eslint-plugin-import:
-        specifier: ^2.32.0
+        specifier: 'catalog:'
         version: 2.32.0(@typescript-eslint/parser@8.46.3(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.3)
       eslint-plugin-react:
-        specifier: ^7.37.5
+        specifier: 'catalog:'
         version: 7.37.5(eslint@9.39.3)
       eslint-plugin-react-hooks:
-        specifier: ^7.0.1
+        specifier: 'catalog:'
         version: 7.0.1(eslint@9.39.3)
       react-resize-detector:
         specifier: ^12.3.0
         version: 12.3.0(react@19.2.0)
       tsc-esm-fix:
-        specifier: ^3.1.2
+        specifier: 'catalog:'
         version: 3.1.2
       typescript:
-        specifier: ^5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/core:
     dependencies:
       '@linaria/react':
-        specifier: ^6.3.0
+        specifier: 'catalog:'
         version: 6.3.0(react@19.2.0)
       canvas-hypertxt:
         specifier: ^1.0.3
@@ -455,10 +485,10 @@ importers:
         specifier: ^0.34.6
         version: 0.34.6(vitest@0.34.6(happy-dom@20.1.0)(jsdom@26.1.0)(terser@5.44.0))
       '@wyw-in-js/cli':
-        specifier: ^1.0.6
+        specifier: 'catalog:'
         version: 1.0.6(typescript@5.9.3)
       baseline-browser-mapping:
-        specifier: ^2.10.8
+        specifier: 'catalog:'
         version: 2.10.8
       eslint:
         specifier: ^9.39.1
@@ -467,10 +497,10 @@ importers:
         specifier: ^12.1.0
         version: 12.3.0(react@19.2.0)
       tsc-esm-fix:
-        specifier: ^3.1.2
+        specifier: 'catalog:'
         version: 3.1.2
       typedoc:
-        specifier: ^0.28.5
+        specifier: 'catalog:'
         version: 0.28.14(typescript@5.9.3)
 
   packages/source:
@@ -492,25 +522,25 @@ importers:
         specifier: ^7.28.3
         version: 7.28.3(@babel/core@7.29.0)
       baseline-browser-mapping:
-        specifier: ^2.10.8
+        specifier: 'catalog:'
         version: 2.10.8
       eslint:
         specifier: ^9.39.1
         version: 9.39.1
       eslint-plugin-import:
-        specifier: ^2.32.0
+        specifier: 'catalog:'
         version: 2.32.0(@typescript-eslint/parser@8.46.3(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)
       eslint-plugin-react:
-        specifier: ^7.37.5
+        specifier: 'catalog:'
         version: 7.37.5(eslint@9.39.1)
       eslint-plugin-react-hooks:
-        specifier: ^7.0.1
+        specifier: 'catalog:'
         version: 7.0.1(eslint@9.39.1)
       react-resize-detector:
         specifier: ^12.3.0
         version: 12.3.0(react@19.2.0)
       tsc-esm-fix:
-        specifier: ^3.1.2
+        specifier: 'catalog:'
         version: 3.1.2
 
 packages:

@@ -55,7 +55,7 @@
     ],
     "dependencies": {
         "@glideapps/glide-data-grid": "workspace:@jlhartley/glide-data-grid@6.0.4-alpha28",
-        "@linaria/react": "^6.3.0",
+        "@linaria/react": "catalog:",
         "@toast-ui/editor": "3.2.2",
         "@toast-ui/react-editor": "3.2.3",
         "react-select": "^5.10.2"
@@ -66,13 +66,13 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.28.6",
-        "baseline-browser-mapping": "^2.10.8",
+        "baseline-browser-mapping": "catalog:",
         "eslint": "^9.39.3",
-        "eslint-plugin-import": "^2.32.0",
-        "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^7.0.1",
+        "eslint-plugin-import": "catalog:",
+        "eslint-plugin-react": "catalog:",
+        "eslint-plugin-react-hooks": "catalog:",
         "react-resize-detector": "^12.3.0",
-        "tsc-esm-fix": "^3.1.2",
-        "typescript": "^5.9.3"
+        "tsc-esm-fix": "catalog:",
+        "typescript": "catalog:"
     }
 }
