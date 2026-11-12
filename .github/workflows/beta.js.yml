@@ -41,7 +41,8 @@ jobs:
               with:
                   node-version: '22'
                   package-manager-cache: false
-            - run: corepack enable && pnpm --version
+            - uses: pnpm/action-setup@v6.1.1
+            - run: pnpm --version
             - run: pnpm install --frozen-lockfile
             - id: build
               run: pnpm run build
