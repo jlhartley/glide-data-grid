@@ -19,8 +19,9 @@ jobs:
               with:
                   node-version: '22'
                   package-manager-cache: false
-            - name: Enable repository pnpm version
-              run: corepack enable && pnpm --version
+            - name: Install repository pnpm version
+              uses: pnpm/action-setup@v6.1.1
+            - run: pnpm --version
             - name: Install locked dependencies
               run: pnpm install --frozen-lockfile
             - id: build

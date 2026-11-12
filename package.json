@@ -76,8 +76,8 @@
         "marked": "^16.4.1",
         "mini-css-extract-plugin": "^2.9.4",
         "prettier": "^3.6.2",
-        "react": "19.2.0",
-        "react-dom": "19.2.0",
+        "react": "catalog:",
+        "react-dom": "catalog:",
         "react-laag": "^2.0.5",
         "react-number-format": "^5.4.4",
         "react-responsive-carousel": "^3.2.23",
@@ -95,11 +95,5 @@
     "overrides": {
         "storybook": "$storybook"
     },
-    "packageManager": "pnpm@10.29.2",
-    "pnpm": {
-        "overrides": {
-            "react": "$react",
-            "react-dom": "$react-dom"
-        }
-    }
+    "packageManager": "pnpm@12.18.0"
 }

@@ -20,9 +20,9 @@ jobs:
               with:
                   node-version: '22'
                   package-manager-cache: false
+            - uses: pnpm/action-setup@v6.1.1
             - name: Install and Build 🔧
               run: |
-                  corepack enable
                   pnpm install --frozen-lockfile
                   pnpm run build-storybook
             - name: "Add .nojekyll 📄"

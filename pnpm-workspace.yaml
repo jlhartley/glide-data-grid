@@ -2,3 +2,16 @@ packages:
   - ./packages/core
   - ./packages/cells
   - ./packages/source
+
+# Keep every workspace on the same React runtime.
+catalog:
+  react: 19.2.0
+  react-dom: 19.2.0
+
+overrides:
+  react: "catalog:"
+  react-dom: "catalog:"
+
+# esbuild installs/verifies the native binary used by Vite and Storybook.
+allowBuilds:
+  esbuild: true
