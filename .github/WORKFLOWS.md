@@ -44,11 +44,22 @@ publication, inspect which versions already exist before retrying.
 pnpm --version # must be 12.18.0 in this checkout
 pnpm install --frozen-lockfile
 pnpm run build
+pnpm run typecheck
 pnpm run lint
 pnpm run test --run --coverage
 pnpm run test-source --run
 pnpm run test-cells --run
 ```
+
+## Type checking
+
+Build CI runs `pnpm run typecheck` as a blocking step after the package build.
+The command checks the complete core, cells and source projects, including
+stories and tests, plus the core type fixtures and React 19 component fixture.
+Run `pnpm run build` first so dependent packages can resolve the generated core
+declarations. Package builds alone exclude stories and tests from their
+TypeScript checks. The typecheck command uses `noEmit` and retains the existing
+compiler strictness and library-check settings.
 
 ## pnpm 12 migration
 
