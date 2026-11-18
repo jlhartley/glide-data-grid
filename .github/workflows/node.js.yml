@@ -26,6 +26,8 @@ jobs:
               run: pnpm install --frozen-lockfile
             - id: build
               run: pnpm run build
+            - name: Typecheck all workspaces and type fixtures
+              run: pnpm run typecheck
             - run: pnpm run lint
             - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
               run: pnpm run test --run --coverage

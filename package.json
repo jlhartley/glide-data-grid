@@ -16,6 +16,7 @@
         "test-source": "pnpm --dir packages/source run test",
         "test-cells": "pnpm --dir packages/cells run test",
         "lint": "pnpm run test:lint && pnpm -r run lint",
+        "typecheck": "tsc -p packages/core/tsconfig.json --noEmit && tsc -p packages/cells/tsconfig.json --noEmit && tsc -p packages/source/tsconfig.json --noEmit && tsc -p packages/core/tsconfig.type-tests.json && pnpm run test:types:react19",
         "test:types:react19": "tsc -p packages/core/tsconfig.react19.json",
         "test:lint": "node --test config/test/*.test.mjs"
     },
