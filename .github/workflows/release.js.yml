@@ -37,6 +37,15 @@ jobs:
                   RELEASE_TAG: ${{ inputs.tag }}
                   RELEASE_CHANNEL: latest
               run: node .github/scripts/validate-release.cjs
+            - name: Require typecheck support in the release tag
+              run: |
+                  node -e '
+                    const { scripts } = require("./package.json");
+                    if (!scripts?.typecheck?.trim()) {
+                      console.error("The selected tag has no typecheck script. Use a new release tag that includes the full typecheck command.");
+                      process.exit(1);
+                    }
+                  '
             - uses: actions/setup-node@v7.1.0
               with:
                   node-version: '22'
@@ -46,6 +55,8 @@ jobs:
             - run: pnpm install --frozen-lockfile
             - id: build
               run: pnpm run build
+            - name: Typecheck all workspaces and type fixtures
+              run: pnpm run typecheck
             - run: pnpm run lint
             - if: ${{ !cancelled() && steps.build.outcome == 'success' }}
               run: pnpm run test --run --coverage
