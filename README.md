@@ -40,28 +40,53 @@ You can also visit our [main site](https://grid.glideapps.com).
 
 # ⚡ Quick Start
 
-This fork requires React 19 and React DOM 19. Install the data grid:
+This fork requires React 19 and React DOM 19. Its packages are distributed through GitHub Packages.
 
-```shell
-npm i @glideapps/glide-data-grid
+Add these lines to your application's `.npmrc`:
+
+```ini
+@jlhartley:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
 ```
 
-You may also need to install the peer dependencies if you don't have them already:
+Set `GITHUB_PACKAGES_TOKEN` in your local environment or inject it from your CI secret store. Use a GitHub personal access token (classic) with `read:packages` from an account that has read access to the packages. Commit only the environment variable reference in `.npmrc`.
+
+Install the fork's core package:
 
 ```shell
-npm i lodash marked react-responsive-carousel
+npm install --save-exact @jlhartley/glide-data-grid@6.0.4-alpha29
 ```
 
-Create a new `DataEditor` wherever you need to display lots and lots of data
+If you use the extra cells or data source hooks, install the corresponding packages at the same version:
+
+```shell
+npm install --save-exact @jlhartley/glide-data-grid-cells@6.0.4-alpha29 @jlhartley/glide-data-grid-source@6.0.4-alpha29
+```
+
+Import `DataEditor` and the required stylesheet:
+
+```ts
+import DataEditor from "@jlhartley/glide-data-grid";
+import "@jlhartley/glide-data-grid/dist/index.css";
+```
+
+## Keeping existing `@glideapps` imports
+
+If your app already imports from `@glideapps`, use npm aliases in place of the direct installs above. Install only the aliases for the packages your app uses:
+
+```shell
+npm install --save-exact \
+  '@glideapps/glide-data-grid@npm:@jlhartley/glide-data-grid@6.0.4-alpha29' \
+  '@glideapps/glide-data-grid-cells@npm:@jlhartley/glide-data-grid-cells@6.0.4-alpha29' \
+  '@glideapps/glide-data-grid-source@npm:@jlhartley/glide-data-grid-source@6.0.4-alpha29'
+```
+
+With the core alias installed, your existing `@glideapps/glide-data-grid` and `@glideapps/glide-data-grid/dist/index.css` imports work as written.
+
+Render the grid with your columns and cell data:
 
 ```tsx
 <DataEditor getCellContent={getData} columns={columns} rows={numRows} />
-```
-
-Don't forget to import mandatory CSS
-
-```ts
-import "@glideapps/glide-data-grid/dist/index.css";
 ```
 
 Making your columns is easy
