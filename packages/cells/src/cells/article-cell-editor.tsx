@@ -33,7 +33,7 @@ const Wrapper = styled.div`
 `;
 
 const ArticleCellEditor: ProvideEditorComponent<ArticleCell> = p => {
-    const [tempValue, setTempValue] = React.useState(p.value.data.markdown);
+    const editorRef = React.useRef<Editor>(null);
 
     const onKeyDown = React.useCallback((e: React.KeyboardEvent) => {
         e.stopPropagation();
@@ -44,10 +44,11 @@ const ArticleCellEditor: ProvideEditorComponent<ArticleCell> = p => {
             ...p.value,
             data: {
                 ...p.value.data,
-                markdown: tempValue,
+                // TOAST UI change events contain the editor mode, not the document.
+                markdown: editorRef.current?.getInstance().getMarkdown() ?? p.value.data.markdown,
             },
         });
-    }, [p, tempValue]);
+    }, [p]);
 
     const onClose = React.useCallback(() => {
         p.onFinishedEditing(undefined);
@@ -64,11 +65,11 @@ const ArticleCellEditor: ProvideEditorComponent<ArticleCell> = p => {
     return (
         <Wrapper id="gdg-markdown-wysiwyg" onKeyDown={onKeyDown}>
             <Editor
+                ref={editorRef}
                 initialEditType="wysiwyg"
                 autofocus={true}
                 initialValue={p.value.data.markdown}
                 hideModeSwitch={true}
-                onChange={setTempValue}
                 height="75vh"
                 usageStatistics={false}
                 toolbarItems={[
