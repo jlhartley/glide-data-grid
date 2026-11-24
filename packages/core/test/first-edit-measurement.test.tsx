@@ -25,21 +25,17 @@ test.each([false, true])("preserves initial typing with the real React scheduler
         { wrapper: Context }
     );
     prep();
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await vi.dynamicImportSettled();
     const canvas = screen.getByTestId("data-grid-canvas");
     sendClick(canvas, { clientX: 300, clientY: 84 });
     const g = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean };
     const was = g.IS_REACT_ACT_ENVIRONMENT;
     g.IS_REACT_ACT_ENVIRONMENT = false;
-    let latency: number | undefined;
-    canvas.focus();
-    await new Promise(resolve => setTimeout(resolve, 50));
-    const start = performance.now();
-    const focus = (e: Event) => {
-        if ((e.target as Element).matches("input,textarea")) latency ??= performance.now() - start;
-    };
-    document.addEventListener("focusin", focus);
     try {
+        canvas.focus();
+        await vi.waitFor(() => expect(document.activeElement).toBe(canvas));
+        // Let focus-driven grid work finish before measuring the first edit.
+        await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
         for (const key of number ? "12345" : "edited") {
             const el = document.activeElement!;
             el.dispatchEvent(
@@ -56,16 +52,16 @@ test.each([false, true])("preserves initial typing with the real React scheduler
             }
             await new Promise(resolve => setTimeout(resolve, 75));
         }
-        await new Promise(resolve => setTimeout(resolve, 400));
+        // Wait until the editor has focus before committing. The typing above still races its first reveal.
+        await vi.waitFor(() => expect(document.activeElement?.matches("input,textarea")).toBe(true));
         document.activeElement!.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-        await new Promise(resolve => setTimeout(resolve, 30));
-        expect(latency).toBeDefined();
-        expect(saved).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ data: number ? 12345 : "edited" })
+        await vi.waitFor(() =>
+            expect(saved).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ data: number ? 12345 : "edited" })
+            )
         );
     } finally {
-        document.removeEventListener("focusin", focus);
         g.IS_REACT_ACT_ENVIRONMENT = was;
         standardAfterEach();
     }

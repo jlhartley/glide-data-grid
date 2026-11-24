@@ -178,10 +178,12 @@ describe("preloadableLazy", () => {
         // Not preloaded: the module arrives a microtask after the first render asks for it.
         const { Component } = preloadableLazy<Props>(async () => ({ default: Stateful }));
 
-        let setLabel: (label: string) => void = () => undefined;
+        let setLabel: ((label: string) => void) | undefined;
         const App = () => {
             const [label, set] = React.useState<string | undefined>(undefined);
-            setLabel = set;
+            React.useEffect(() => {
+                setLabel = set;
+            }, []);
             return (
                 <React.Suspense fallback={<Fallback />}>
                     {label === undefined ? null : <Component label={label} />}
@@ -195,19 +197,16 @@ describe("preloadableLazy", () => {
         const container = document.createElement("div");
         document.body.append(container);
         const root = createRoot(container);
-        const settle = async () => await new Promise(resolve => window.setTimeout(resolve, 50));
         try {
             root.render(<App />);
-            await settle();
+            await vi.waitFor(() => expect(setLabel).toBeDefined());
 
-            React.startTransition(() => setLabel("a"));
-            await settle();
-            expect(container.textContent).toBe("a/a");
+            React.startTransition(() => setLabel!("a"));
+            await vi.waitFor(() => expect(container.textContent).toBe("a/a"));
 
             // A remount here would lose what was typed into an editor.
-            setLabel("b");
-            await settle();
-            expect(container.textContent).toBe("a/b");
+            setLabel!("b");
+            await vi.waitFor(() => expect(container.textContent).toBe("a/b"));
             expect(mounts).toBe(1);
         } finally {
             root.unmount();
