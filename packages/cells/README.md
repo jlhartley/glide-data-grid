@@ -59,7 +59,13 @@ const getCellContent = React.useCallback(() => {
 
 This fork requires React 19 and React DOM 19.
 
-## Note on ArticleCell
+## ArticleCell: planned removal
+
+This fork intends to remove ArticleCell as a feature, including its renderer, exported types, entry in `allCells`, and TOAST UI dependencies. TOAST UI Editor is [no longer maintained](https://github.com/nhn/tui.editor), and maintaining a rich document editor is outside this fork's intended scope. There are no plans to replace it with another editor library.
+
+ArticleCell remains available for now; no removal release or date has been set. Avoid new dependencies on this cell. Existing consumers should plan to provide their own custom renderer and editor if they need this functionality. Removing ArticleCell will be a breaking change and should be announced in the release notes.
+
+### Current usage
 
 The ArticleCell uses `@toast-ui/editor` to provide its editor. To make sure it works correctly your project will need to import the css file it depends on.
 
