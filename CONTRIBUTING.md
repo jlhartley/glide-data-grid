@@ -4,10 +4,9 @@
 
 If you'd like to set up glide data grid locally and contribute, the easiest way to get up and running
 is to use Codespaces if you have access to it. For local development, clone the
-repository and use a current Node 22 release (minimum 22.12.0) and pnpm 12.18.0.
-The root `.nvmrc` selects Node 22 to match CI; with nvm, run `nvm install` and
-`nvm use` before `pnpm install --frozen-lockfile`. Node 24 and newer also satisfy
-the development requirement. Corepack is not required.
+repository and use a current Node 26 LTS release (minimum 26.13.0) and pnpm 12.18.0.
+The root `.nvmrc` selects Node 26 to match CI; with nvm, run `nvm install` and
+`nvm use` before `pnpm install --frozen-lockfile`. Corepack is not required.
 
 #### Steps
 

@@ -1,10 +1,10 @@
 # Fork CI and publication
 
-CI uses Node 22 and `pnpm/action-setup@v6.1.1` to install the
+CI uses Node 26 and `pnpm/action-setup@v6.1.1` to install the
 `packageManager` pin (pnpm 12.18.0). Corepack is not required.
-Local development follows the same Node 22 major via `.nvmrc`. Use a current
-Node 22 release (at least 22.12.0, as declared in the root `engines.node`);
-Node 24 and newer also satisfy this development requirement. If using nvm,
+Local development follows the same Node 26 major via `.nvmrc`. Use a current
+Node 26 release (at least 26.13.0, as declared in the root `engines.node`);
+Node 26 is the Active LTS development and CI baseline. If using nvm,
 run `nvm install` and `nvm use` from the repository root, then check
 `node --version` and reinstall dependencies with `pnpm install --frozen-lockfile`.
 The three workspace packages build in dependency order. Lint is a separate,

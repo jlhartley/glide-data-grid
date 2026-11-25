@@ -48,7 +48,7 @@ jobs:
                   '
             - uses: actions/setup-node@v7.1.0
               with:
-                  node-version: '22'
+                  node-version: '26'
                   package-manager-cache: false
             - uses: pnpm/action-setup@v6.1.1
             - run: pnpm --version
@@ -68,7 +68,7 @@ jobs:
             - name: Configure GitHub Packages authentication
               uses: actions/setup-node@v7.1.0
               with:
-                  node-version: '22'
+                  node-version: '26'
                   package-manager-cache: false
                   registry-url: https://npm.pkg.github.com
                   scope: '@jlhartley'

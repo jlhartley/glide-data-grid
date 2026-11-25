@@ -74,10 +74,9 @@ cross-browser confirmation remain outstanding.
 The browser check now uses the repository's `@playwright/test` development
 dependency, root `playwright.config.ts`, and `pnpm test:browser` command. Install
 the locked dependencies and Playwright's matching Chromium once. First select
-a current Node 22 release (minimum 22.12.0); `.nvmrc` selects Node 22 to match CI.
+a current Node 26 LTS release (minimum 26.13.0); `.nvmrc` selects Node 26 to match CI.
 With nvm, run `nvm install` followed by `nvm use` from the repository root.
-Node 24 and newer also satisfy the development requirement. Confirm the active
-version before installing:
+Confirm the active version before installing:
 
 ```sh
 node --version
