@@ -366,7 +366,7 @@ importers:
   packages/cells:
     dependencies:
       '@glideapps/glide-data-grid':
-        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha29
+        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha30
         version: link:../core
       '@linaria/react':
         specifier: 'catalog:'
@@ -467,7 +467,7 @@ importers:
   packages/source:
     dependencies:
       '@glideapps/glide-data-grid':
-        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha29
+        specifier: workspace:@jlhartley/glide-data-grid@6.0.4-alpha30
         version: link:../core
       lodash:
         specifier: ^4.17.19
