@@ -2,6 +2,11 @@
 
 CI uses Node 22 and `pnpm/action-setup@v6.1.1` to install the
 `packageManager` pin (pnpm 12.18.0). Corepack is not required.
+Local development follows the same Node 22 major via `.nvmrc`. Use a current
+Node 22 release (at least 22.12.0, as declared in the root `engines.node`);
+Node 24 and newer also satisfy this development requirement. If using nvm,
+run `nvm install` and `nvm use` from the repository root, then check
+`node --version` and reinstall dependencies with `pnpm install --frozen-lockfile`.
 The three workspace packages build in dependency order. Lint is a separate,
 required step. ESLint 9 uses flat configuration, with the official compatibility
 utilities preserving existing rules and older plugin APIs.
@@ -67,8 +72,8 @@ The package-manager pin is project-specific: developers can keep a newer global
 pnpm without downgrading it to work on this fork. Use a current pnpm installation
 that can select the version from `packageManager`. CI installs the declared
 version directly after checkout, including the tagged commit in release jobs.
-Node remains on 22 in CI; this change does not select a global Node version or
-introduce a project runtime pin.
+pnpm's package-manager selection does not change the active Node version.
+Select Node separately using `.nvmrc` or your preferred version manager.
 
 pnpm configuration lives in `pnpm-workspace.yaml`. A React catalog and workspace
 overrides keep React and React DOM at 19.2.0, matching the pre-migration runtime.

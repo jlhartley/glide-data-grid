@@ -3,7 +3,11 @@
 ### Setting Up Codespaces
 
 If you'd like to set up glide data grid locally and contribute, the easiest way to get up and running
-is to use Codespaces if you have access to it. If you do not, simply cloning the repo and running `npm install` also works!
+is to use Codespaces if you have access to it. For local development, clone the
+repository and use a current Node 22 release (minimum 22.12.0) and pnpm 12.18.0.
+The root `.nvmrc` selects Node 22 to match CI; with nvm, run `nvm install` and
+`nvm use` before `pnpm install --frozen-lockfile`. Node 24 and newer also satisfy
+the development requirement. Corepack is not required.
 
 #### Steps
 
@@ -15,7 +19,8 @@ is to use Codespaces if you have access to it. If you do not, simply cloning the
 Once codespaces is up and running make sure `jq` is installed and then:
 
 ```bash
-npm run install && npm run storybook
+pnpm install --frozen-lockfile
+pnpm run storybook
 ```
 
 ## Forking the data grid?
