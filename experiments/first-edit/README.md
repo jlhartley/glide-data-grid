@@ -3,7 +3,7 @@
 Base: jlhartley/glide-data-grid `d4c0f7632b2b0d3225959fc67e7e6b0a5568a21b`.
 React/React DOM: 19.2.0. Node: 24.22.3. Date: 23 November 2026.
 
-## Findings
+## Findings from PR #27
 
 The fork reproduces initial-character loss using native keyboard events and React's
 real scheduler in jsdom. `act` alone masks Suspense reveal delays, so there are
@@ -27,7 +27,7 @@ one passing test and two failures: the Text editor was not immediately present,
 and drawing Number cells did not preload its editor. The adapted tests also
 verify subsequent typing and the final committed values.
 
-## Correction
+## Editor preloading in PR #27
 
 Adapted from [upstream PR #1203](https://github.com/glideapps/glide-data-grid/pull/1203)
 by Jake Levirne (commit `75520e13b6835f0e6a6a67f19e3c1aa979d4132c`).
@@ -44,10 +44,7 @@ by Jake Levirne (commit `75520e13b6835f0e6a6a67f19e3c1aa979d4132c`).
   existing Suspense behaviour. This change does **not** buffer early keystrokes
   while a chunk is still downloading; cold/slow network editing remains a limit.
 
-No public interfaces, exports, dependencies, manifests or lockfiles change.
-The rapid-Enter race in upstream #1201 is outside this change.
-
-## Production build evidence
+## Production build evidence from PR #27
 
 Built the same minimal Vite production consumer against the core package before
 and after the patch:
@@ -66,20 +63,17 @@ benchmark was performed.
 
 ## Browser reproduction
 
-Chromium launch was blocked by the execution environment's Unix socket policy
-(`socket() failed: Operation not permitted`). Escalated execution is disabled.
-**No local Playwright browser results are claimed.** Production browser and
-cross-browser confirmation remain outstanding.
-
 The browser check now uses the repository's `@playwright/test` development
 dependency, root `playwright.config.ts`, and `pnpm test:browser` command. Install
-the locked dependencies and Playwright's matching Chromium once. First select
-a current Node 26 LTS release (minimum 26.13.0); `.nvmrc` selects Node 26 to match CI.
+the locked dependencies with pnpm 12.18.0 and install Playwright's matching
+Chromium once. First select a current Node 26 LTS release (minimum 26.13.0).
+The root `.nvmrc` selects Node 26 to match CI.
 With nvm, run `nvm install` followed by `nvm use` from the repository root.
 Confirm the active version before installing:
 
 ```sh
 node --version
+pnpm --version
 pnpm install --frozen-lockfile
 pnpm exec playwright install chromium
 ```
@@ -99,13 +93,22 @@ Codex environment variable to configure.
 The ten tests use a fresh browser context for each of five Text and five Number
 trials. They wait for network idle, select the cell through the scroller, and
 wait for grid focus (selection defers focus to an animation frame). They then
-type at 75 ms per key without waiting for editor focus, assert the complete
-input, then wait before Enter so they do not exercise the separate rapid-Enter
-issue. Saved content is checked with a bounded polling assertion. Focus gap,
+type at 75 ms per key without waiting for editor focus and assert the complete
+input (`edited` for Text, `12,345` for Number in the configured `en-US` locale).
+They keep a deliberate pause before Enter to exclude the separate rapid-Enter
+issue and assert the committed string or number with bounded polling. Focus gap,
 saved value, React version, key/focus events and activation keys are attached
-to test results even when content assertions fail;
-latency is diagnostic, with no performance threshold. Failed tests retain traces
+to test results even when content assertions fail. Focus gap is diagnostic.
+Failed tests retain traces
 under `test-results/`.
+
+The browser suite covers first edits after preload in Chromium. Cold or slow
+chunk downloads and other browsers are outside its coverage. To repeat the
+full suite five additional times with retries disabled, run:
+
+```sh
+pnpm test:browser --repeat-each=6 --retries=0
+```
 
 To see the browser or use Playwright's debugger:
 
@@ -120,7 +123,7 @@ require administrator access). The default command uses Playwright's managed
 Chromium, not a hardcoded `/usr/bin/chromium`. This suite is opt-in and does not
 change the existing Build, Beta or Release workflow gates.
 
-## Validation
+## Validation from PR #27
 
 - Final core suite: **496 tests passed** across 41 files.
 - Cells: **66 tests passed**. Source: **12 tests passed**.
@@ -134,5 +137,4 @@ change the existing Build, Beta or Release workflow gates.
 - ESLint passed for all three changed production source files; whitespace
   validation passed. No dependency or lockfile changes are included.
 
-Browser execution remains unverified for the environment reason above. The fix
-was validated on the fork's pinned React 19.2.0, not a separately installed 19.3.0.
+These historical checks used the fork's pinned React 19.2.0.

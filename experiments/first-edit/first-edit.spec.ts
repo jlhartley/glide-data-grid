@@ -18,7 +18,8 @@ for (const kind of ["Text", "Number"] as const) {
     for (let trial = 1; trial <= 5; trial++) {
         test(`${kind} preserves the first edit (trial ${trial})`, async ({ page }, testInfo) => {
             const text = kind === "Number" ? "12345" : "edited";
-            const expected = kind === "Number" ? 12345 : text;
+            const expectedInput = kind === "Number" ? "12,345" : text;
+            const expectedSaved = kind === "Number" ? 12345 : text;
             try {
                 await page.goto(kind === "Number" ? "/?number" : "/");
                 // This is intentionally a warmed-chunk check. Cold downloads are outside its scope.
@@ -33,11 +34,11 @@ for (const kind of ["Text", "Number"] as const) {
 
                 const input = page.locator("input:focus, textarea:focus");
                 // Check content before Enter too, so a commit failure cannot hide character loss.
-                await expect(input).toHaveValue(text);
+                await expect(input).toHaveValue(expectedInput);
                 // Keep rapid-Enter out of this regression: allow the edited state to settle.
                 await page.waitForTimeout(400);
                 await page.keyboard.press("Enter");
-                await expect.poll(() => page.evaluate(() => window.results.saved)).toBe(expected);
+                await expect.poll(() => page.evaluate(() => window.results.saved)).toBe(expectedSaved);
 
                 const results = await page.evaluate(() => window.results);
                 expect(results.latency).not.toBeNull();
