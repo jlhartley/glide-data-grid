@@ -1,6 +1,9 @@
 {
     "name": "root",
     "version": "6.0.4-alpha29",
+    "engines": {
+        "node": ">=26.13.0"
+    },
     "scripts": {
         "start": "pnpm run storybook",
         "version": "./update-version.sh",
@@ -15,6 +18,7 @@
         "test": "pnpm --dir packages/core run test",
         "test-source": "pnpm --dir packages/source run test",
         "test-cells": "pnpm --dir packages/cells run test",
+        "test:browser": "playwright test",
         "lint": "pnpm run test:lint && pnpm -r run lint",
         "typecheck": "tsc -p packages/core/tsconfig.json --noEmit && tsc -p packages/cells/tsconfig.json --noEmit && tsc -p packages/source/tsconfig.json --noEmit && tsc -p packages/core/tsconfig.type-tests.json && pnpm run test:types:react19",
         "test:types:react19": "tsc -p packages/core/tsconfig.react19.json",
@@ -39,6 +43,7 @@
         "@faker-js/faker": "^7.6.0",
         "@linaria/core": "^6.3.0",
         "@linaria/react": "catalog:",
+        "@playwright/test": "^1.65.1",
         "@storybook/addon-docs": "^10.2.5",
         "@storybook/react-vite": "^10.2.5",
         "@testing-library/dom": "^10.4.1",
