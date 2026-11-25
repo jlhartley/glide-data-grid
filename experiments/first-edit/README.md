@@ -71,27 +71,47 @@ Chromium launch was blocked by the execution environment's Unix socket policy
 **No local Playwright browser results are claimed.** Production browser and
 cross-browser confirmation remain outstanding.
 
-After installing workspace dependencies and Playwright in your development
-environment, run from the repository root:
+The browser check now uses the repository's `@playwright/test` development
+dependency, root `playwright.config.ts`, and `pnpm test:browser` command. Install
+the locked dependencies and Playwright's matching Chromium once:
 
 ```sh
-pnpm --dir packages/core run build
-pnpm exec vite build experiments/first-edit --config experiments/first-edit/vite.config.mjs
-pnpm exec vite preview experiments/first-edit --config experiments/first-edit/vite.config.mjs --port 4173
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
 ```
 
-In another terminal:
+Then run from the repository root:
 
 ```sh
-CHROMIUM_EXECUTABLE=/usr/bin/chromium node experiments/first-edit/check.cjs --assert-full
+pnpm test:browser
 ```
 
-The runner uses a fresh page/context for each of five Text and five Number
-trials, waits for network idle, types at 75 ms per key, then waits before Enter
-so it does not exercise the separate rapid-Enter issue. It prints focus gap,
-saved value and React version. Omit `--assert-full` when measuring the base.
-Playwright must be resolvable by Node; the optional runtime module path is for
-this execution environment only.
+Playwright builds core and the Vite production fixture, starts a preview server
+on port 4173, waits for readiness, runs the checks, and stops the server. Keep
+that port free; an existing server is deliberately not reused, to avoid testing
+stale assets. There is no separate server terminal, system Chromium path, or
+Codex environment variable to configure.
+
+The ten tests use a fresh browser context for each of five Text and five Number
+trials. They wait for network idle, type at 75 ms per key, assert the complete
+input, then wait before Enter so they do not exercise the separate rapid-Enter
+issue. Saved content is checked with a bounded polling assertion. Focus gap,
+saved value and React version are attached to each successful test result;
+latency is diagnostic, with no performance threshold. Failed tests retain traces
+under `test-results/`.
+
+To see the browser or use Playwright's debugger:
+
+```sh
+pnpm test:browser --headed
+pnpm test:browser --debug
+```
+
+If browser launch reports missing system libraries, install Playwright's browser
+prerequisites with `pnpm exec playwright install --with-deps chromium` (this may
+require administrator access). The default command uses Playwright's managed
+Chromium, not a hardcoded `/usr/bin/chromium`. This suite is opt-in and does not
+change the existing Build, Beta or Release workflow gates.
 
 ## Validation
 
