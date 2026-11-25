@@ -20,7 +20,9 @@ for (const kind of ["Text", "Number"] as const) {
             await page.goto(kind === "Number" ? "/?number" : "/");
             // This is intentionally a warmed-chunk check. Cold downloads are outside its scope.
             await page.waitForLoadState("networkidle");
-            await page.locator("canvas").first().click({ position: { x: 100, y: 50 } });
+            // The transparent scroller is the grid's pointer-event surface above its canvas.
+            // Clicking the canvas locator times out waiting for this intentional overlay to move.
+            await page.locator(".dvn-scroller").click({ position: { x: 100, y: 50 }, timeout: 5_000 });
             await page.keyboard.type(text, { delay: 75 });
 
             const input = page.locator("input:focus, textarea:focus");
