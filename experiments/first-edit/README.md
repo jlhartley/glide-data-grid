@@ -97,10 +97,13 @@ stale assets. There is no separate server terminal, system Chromium path, or
 Codex environment variable to configure.
 
 The ten tests use a fresh browser context for each of five Text and five Number
-trials. They wait for network idle, type at 75 ms per key, assert the complete
+trials. They wait for network idle, select the cell through the scroller, and
+wait for grid focus (selection defers focus to an animation frame). They then
+type at 75 ms per key without waiting for editor focus, assert the complete
 input, then wait before Enter so they do not exercise the separate rapid-Enter
 issue. Saved content is checked with a bounded polling assertion. Focus gap,
-saved value and React version are attached to each successful test result;
+saved value, React version, key/focus events and activation keys are attached
+to test results even when content assertions fail;
 latency is diagnostic, with no performance threshold. Failed tests retain traces
 under `test-results/`.
 
