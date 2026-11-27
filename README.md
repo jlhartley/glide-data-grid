@@ -12,10 +12,10 @@
   <img alt="Glide Data Grid with sample data" src="https://raw.githubusercontent.com/glideapps/glide-data-grid/master/media/data-grid.png">
 </picture>
 
-[![Version](https://img.shields.io/npm/v/@glideapps/glide-data-grid?color=blue&label=latest&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/releases)
+[![Upstream version](https://img.shields.io/npm/v/@glideapps/glide-data-grid?color=blue&label=upstream&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/releases)
 [![React 19](https://img.shields.io/badge/React-19-00ADD8?style=for-the-badge&logo=react)](https://reactjs.org)
-[![Code Coverage](https://img.shields.io/coverallsCoverage/github/glideapps/glide-data-grid?color=457aba&label=Cover&style=for-the-badge)](https://coveralls.io/github/glideapps/glide-data-grid)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@glideapps/glide-data-grid?color=success&label=bundle&style=for-the-badge)](https://bundlephobia.com/package/@glideapps/glide-data-grid)
+[![Upstream code coverage](https://img.shields.io/coverallsCoverage/github/glideapps/glide-data-grid?color=457aba&label=Upstream_Cover&style=for-the-badge)](https://coveralls.io/github/glideapps/glide-data-grid)
+[![Upstream npm bundle size](https://img.shields.io/bundlephobia/minzip/@glideapps/glide-data-grid?color=success&label=upstream_bundle&style=for-the-badge)](https://bundlephobia.com/package/@glideapps/glide-data-grid)
 [![License](https://img.shields.io/github/license/glideapps/glide-data-grid?color=red&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/blob/main/LICENSE)
 [![Made By Glide](https://img.shields.io/badge/❤_Made_by-Glide-11CCE5?style=for-the-badge&logo=none)](https://www.glideapps.com/jobs)
 
@@ -54,13 +54,13 @@ Set `GITHUB_PACKAGES_TOKEN` in your local environment or inject it from your CI 
 Install the fork's core package:
 
 ```shell
-npm install --save-exact @jlhartley/glide-data-grid@6.0.4-alpha29
+npm install --save-exact @jlhartley/glide-data-grid@6.0.4-alpha30
 ```
 
 If you use the extra cells or data source hooks, install the corresponding packages at the same version:
 
 ```shell
-npm install --save-exact @jlhartley/glide-data-grid-cells@6.0.4-alpha29 @jlhartley/glide-data-grid-source@6.0.4-alpha29
+npm install --save-exact @jlhartley/glide-data-grid-cells@6.0.4-alpha30 @jlhartley/glide-data-grid-source@6.0.4-alpha30
 ```
 
 Import `DataEditor` and the required stylesheet:
@@ -76,9 +76,9 @@ If your app already imports from `@glideapps`, use npm aliases in place of the d
 
 ```shell
 npm install --save-exact \
-  '@glideapps/glide-data-grid@npm:@jlhartley/glide-data-grid@6.0.4-alpha29' \
-  '@glideapps/glide-data-grid-cells@npm:@jlhartley/glide-data-grid-cells@6.0.4-alpha29' \
-  '@glideapps/glide-data-grid-source@npm:@jlhartley/glide-data-grid-source@6.0.4-alpha29'
+  '@glideapps/glide-data-grid@npm:@jlhartley/glide-data-grid@6.0.4-alpha30' \
+  '@glideapps/glide-data-grid-cells@npm:@jlhartley/glide-data-grid-cells@6.0.4-alpha30' \
+  '@glideapps/glide-data-grid-source@npm:@jlhartley/glide-data-grid-source@6.0.4-alpha30'
 ```
 
 With the core alias installed, your existing `@glideapps/glide-data-grid` and `@glideapps/glide-data-grid/dist/index.css` imports work as written.
@@ -167,7 +167,7 @@ Yes!
 
 **Can I render my own cells?**
 
-Yes, but the renderer has to use HTML Canvas. [Simple example](https://glideapps.github.io/glide-data-grid/?path=/story/glide-data-grid-dataeditor-demos--draw-custom-cells) in our Storybook.
+Yes, but the renderer has to use HTML Canvas. [Simple example](https://glideapps.github.io/glide-data-grid/?path=/story/glide-data-grid-dataeditor-demos--custom-drawing) in our Storybook.
 
 **Why does Data Grid use HTML Canvas?**
 

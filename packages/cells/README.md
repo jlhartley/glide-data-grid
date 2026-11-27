@@ -4,13 +4,17 @@
 </h1>
 <p align="center">Additional cells and features for Glide Data Grid</p>
 
-[![Version](https://img.shields.io/npm/v/@glideapps/glide-data-grid-cells?color=blue&label=latest&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/releases)
+[![Upstream version](https://img.shields.io/npm/v/@glideapps/glide-data-grid-cells?color=blue&label=upstream&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/releases)
 [![React 19](https://img.shields.io/badge/React-19-00ADD8?style=for-the-badge&logo=react)](https://reactjs.org)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@glideapps/glide-data-grid-cells?color=success&label=bundle&style=for-the-badge)](https://bundlephobia.com/package/@glideapps/glide-data-grid-cells)
+[![Upstream npm bundle size](https://img.shields.io/bundlephobia/minzip/@glideapps/glide-data-grid-cells?color=success&label=upstream_bundle&style=for-the-badge)](https://bundlephobia.com/package/@glideapps/glide-data-grid-cells)
 [![License](https://img.shields.io/github/license/glideapps/glide-data-grid?color=red&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/blob/main/LICENSE)
 [![Made By Glide](https://img.shields.io/badge/❤_Made_by-Glide-11CCE5?style=for-the-badge&logo=none)](https://www.glideapps.com/jobs)
 
-This fork requires React 19 and React DOM 19.
+This fork requires React 19 and React DOM 19. Packages are distributed through GitHub Packages.
+
+Follow the [fork installation instructions](https://github.com/jlhartley/glide-data-grid#-quick-start) for authentication, pinned package versions, and optional npm aliases.
+
+The `@glideapps` imports in the examples below assume you installed the corresponding npm aliases.
 
 ![Data Grid](https://raw.githubusercontent.com/glideapps/glide-data-grid/master/data-grid.jpg)
 
