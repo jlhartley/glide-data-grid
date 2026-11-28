@@ -12,16 +12,16 @@
   <img alt="Glide Data Grid with sample data" src="https://raw.githubusercontent.com/glideapps/glide-data-grid/master/media/data-grid.png">
 </picture>
 
-[![Version](https://img.shields.io/npm/v/@glideapps/glide-data-grid?color=blue&label=latest&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/releases)
+[![Upstream version](https://img.shields.io/npm/v/@glideapps/glide-data-grid?color=blue&label=upstream&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/releases)
 [![React 19](https://img.shields.io/badge/React-19-00ADD8?style=for-the-badge&logo=react)](https://reactjs.org)
-[![Code Coverage](https://img.shields.io/coverallsCoverage/github/glideapps/glide-data-grid?color=457aba&label=Cover&style=for-the-badge)](https://coveralls.io/github/glideapps/glide-data-grid)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@glideapps/glide-data-grid?color=success&label=bundle&style=for-the-badge)](https://bundlephobia.com/package/@glideapps/glide-data-grid)
+[![Upstream code coverage](https://img.shields.io/coverallsCoverage/github/glideapps/glide-data-grid?color=457aba&label=Upstream_Cover&style=for-the-badge)](https://coveralls.io/github/glideapps/glide-data-grid)
+[![Upstream npm bundle size](https://img.shields.io/bundlephobia/minzip/@glideapps/glide-data-grid?color=success&label=upstream_bundle&style=for-the-badge)](https://bundlephobia.com/package/@glideapps/glide-data-grid)
 [![License](https://img.shields.io/github/license/glideapps/glide-data-grid?color=red&style=for-the-badge)](https://github.com/glideapps/glide-data-grid/blob/main/LICENSE)
 [![Made By Glide](https://img.shields.io/badge/❤_Made_by-Glide-11CCE5?style=for-the-badge&logo=none)](https://www.glideapps.com/jobs)
 
 # 👩‍💻 Demo and features
 
-Lot's of fun examples are in our [Storybook](https://quicktype.github.io/glide-data-grid).
+Lot's of fun examples are in our [Storybook](https://glideapps.github.io/glide-data-grid).
 
 You can also visit our [main site](https://grid.glideapps.com).
 
@@ -40,17 +40,11 @@ You can also visit our [main site](https://grid.glideapps.com).
 
 # ⚡ Quick Start
 
-This fork requires React 19 and React DOM 19. Install the data grid:
+This fork requires React 19 and React DOM 19. Packages are distributed through GitHub Packages.
 
-```shell
-npm i @glideapps/glide-data-grid
-```
+Follow the [fork installation instructions](https://github.com/jlhartley/glide-data-grid#-quick-start) for authentication, pinned package versions, and optional npm aliases.
 
-You may also need to install the peer dependencies if you don't have them already:
-
-```shell
-npm i lodash marked react-responsive-carousel
-```
+The `@glideapps` imports in the examples below assume you installed the corresponding npm aliases.
 
 Create a new `DataEditor` wherever you need to display lots and lots of data
 
@@ -104,7 +98,7 @@ function getData([col, row]: Item): GridCell {
 
 ## Full API documentation
 
-The full [API documentation is on the main site](https://grid.glideapps.com/docs/index.html).
+The full [API documentation is on the main site](https://docs.grid.glideapps.com/).
 
 # 📒 FAQ
 
@@ -128,7 +122,7 @@ Data Grid is agnostic about the way you load/store/generate/mutate your data. Wh
 
 **Does it do sorting, searching, and filtering?**
 
-Search is included. You provide the trigger, we do the search. [Example](https://quicktype.github.io/glide-data-grid/?path=/story/glide-data-grid-docs--search) in our storybook.
+Search is included. You provide the trigger, we do the search. [Example](https://glideapps.github.io/glide-data-grid/?path=/story/glide-data-grid-docs--search) in our storybook.
 
 Filtering and sorting are something you would have to implement with your data source. There are hooks for adding column header menus if you want that.
 
@@ -140,7 +134,7 @@ Yes!
 
 **Can I render my own cells?**
 
-Yes, but the renderer has to use HTML Canvas. [Simple example](https://quicktype.github.io/glide-data-grid/?path=/story/glide-data-grid-dataeditor-demos--draw-custom-cells) in our Storybook.
+Yes, but the renderer has to use HTML Canvas. [Simple example](https://glideapps.github.io/glide-data-grid/?path=/story/glide-data-grid-dataeditor-demos--custom-drawing) in our Storybook.
 
 **Why does Data Grid use HTML Canvas?**
 
